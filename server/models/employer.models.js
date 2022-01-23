@@ -3,48 +3,31 @@ const mongoose = require('mongoose');
 const EmployerSchema = new mongoose.Schema({
     firstName: {
         type: String,
-        required: [
-            true,
-            'Please enter your first name.'
-        ]
+        required: true
     },
     lastName: {
         type: String,
-        required: [
-            true,
-            'Please enter your last name.'
-        ]
+        required: true
     },
     organization: {
         type: String,
-        required: [
-            true,
-            'Please enter your company or organization name.'
-        ]
-    },
-    quizzes: {
-        type: [mongoose.Schema.Types.ObjectId]
+        required: true
     },
     email: {
         type: String,
-        required: [
-            true,
-            'Email is required.'
-        ],
-        unique: true,
-        validate: {
-            validator: val => /^([\w-\.]+@([\w-]+\.)+[\w-]+)?$/.test(val),
-            message: 'Please enter a valid email address.'
-        }
+        required: true,
+        unique: true
     },
     password: {
         type: String,
-        required: [
-            true,
-            'Password of at least 8 characters is required for registering'
-        ],
-        minlength: 8
-    }
+        required: true
+    },
+    quizzes: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Quiz'
+        }
+    ]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Employer', EmployerSchema);

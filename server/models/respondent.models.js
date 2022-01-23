@@ -3,46 +3,36 @@ const mongoose = require('mongoose');
 const RespondentSchema = new mongoose.Schema({
     firstName: {
         type: String,
-        required: [
-            true,
-            'Please enter your first name.'
-        ]
+        required: true
     },
     lastName: {
         type: String,
-        required: [
-            true,
-            'Please enter your last name.'
-        ]
+        required: true
     },
     school: {
         type: String,
-        required: [
-            true,
-            'Please enter your company or organization name.'
-        ]
+        required: true
     },
     dateOfBirth: {
         type: String,
-        required: [
-            true,
-            'Please enter the date of birth'
-        ]
+        required: true
     },
     score: Number,
     email: {
         type: String,
-        required: [
-            true,
-            'Email is required.'
-        ],
-        unique: true,
-        validate: {
-            validator: val => /^([\w-\.]+@([\w-]+\.)+[\w-]+)?$/.test(val),
-            message: 'Please enter a valid email address.'
-        }
+        required: true,
+        unique: true
     },
-    quizzes: [mongoose.Schema.Types.ObjectId]
+    quizzes: [{
+        quiz_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Quiz', 
+        },
+        questionsAnswered: [{
+            question_id: mongoose.Types.ObjectId,
+            answerGiven: String
+        }]
+    }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Respondent', RespondentSchema);

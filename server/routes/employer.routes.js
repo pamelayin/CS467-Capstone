@@ -8,13 +8,13 @@ const { check, validationResult } = require('express-validator');
 
 const Employer = require('../models/employer.models');
 
-router.post('/',[
+router.post('/',
     check('firstName', 'Please enter your first name').not().isEmpty(),
     check('lastName', 'Please enter your last name').not().isEmpty(),
     check('organization', 'Please enter your company or organization name').not().isEmpty(),
     check('email', 'Please enter a valid email').isEmail(),
     check('password', 'Password of at least 8 characters is required for registering').isLength({ min: 8 })
-], async(req, res) => {
+, async(req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -23,6 +23,8 @@ router.post('/',[
     const { firstName, lastName, organization, email, password } = req.body;
 
     try {
+
+        // Check if user is already registered
         let user = await Employer.findOne({ email });
 
         if(user) {
