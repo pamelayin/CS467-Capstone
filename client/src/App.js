@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Register from './components/auth/Register';
 import PrivateRoute from './components/routes/PrivateRoute';
 import Home from './components/pages/Home';
+import ContactUs from './components/pages/ContactUs';
 import Login from './components/auth/Login';
 import ManageAccount from "./components/pages/ManageAccount";
 import EditProfile from "./components/pages/EditProfile";
@@ -29,6 +30,8 @@ function App() {
 								element={<PrivateRoute component={EditProfile} />}
 							/>
 							<Route path="/quizlist" element={<PrivateRoute component={QuizList} />} />
+              <Route path='/ContactUs' element={<ContactUs />} />
+              <Route path='/Home' element={<Home />} />
 						</Routes>
 					</div>
 				</Fragment>
