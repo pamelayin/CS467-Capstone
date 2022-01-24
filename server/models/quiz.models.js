@@ -1,22 +1,24 @@
 const mongoose = require('mongoose');
 
 const QuizSchema = new mongoose.Schema({
-    employer_id: mongoose.Schema.Types.ObjectId,
+    title: {
+        type: String,
+        required: true
+    },
+    employer_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Employer'
+    },
     questions: [{
+        question_id: mongoose.Types.ObjectId,
         question: {
             type: String,
-            required: [
-                true,
-                'Please enter a question for a quiz'
-            ]
+            required: true
         },
         answerOptions: [String],
         points: {
             type: Number,
-            required: [
-                true,
-                'Enter the number of points available for the question'
-            ]
+            required: true
         },
         answer: [String]
     }],
