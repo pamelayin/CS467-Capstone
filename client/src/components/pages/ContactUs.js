@@ -15,26 +15,48 @@ const ContactUs = () => {
                 <Col sm={3}>
                 <Nav variant="pills" className="flex-column">
                     <Nav.Item>
-                        <Nav.Link eventKey="first">Tab 1</Nav.Link>
+                        <Nav.Link eventKey="first">How to Contact QuizBanana</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                        <Nav.Link eventKey="second">Tab 2</Nav.Link>
+                        <Nav.Link eventKey="second">How to Create Test</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                        <Nav.Link eventKey="thrid">Tab 3</Nav.Link>
+                        <Nav.Link eventKey="thrid">How to Analyze Survey Results</Nav.Link>
                     </Nav.Item>                    
                 </Nav>
                 </Col>
                 <Col sm={9}>
                 <Tab.Content>
                     <Tab.Pane eventKey="first">
-                    Some say thy fault is youth, some wantonness; Some say thy grace is youth and gentle sport; Both grace and faults are lov'd of more and less: Thou mak'st faults graces that to thee resort. As on the finger of a throned queen The basest jewel will be well esteem'd, So are those errors that in thee are seen To truths translated, and for true things deem'd. How many lambs might the stern wolf betray, If like a lamb he could his looks translate!
+                        <span style={{fontWeight: 500}}>Email: </span><br />
+                            We offer 24/7 English email support for all customers! 
+                            In order to keep your account secure, please contact us from the email address on file for your account.<br /><br />
+                        <span style={{fontWeight: 500}}>Phone: </span><br />
+                            We also offer phone support Mon-Fri from 8am-5pm Pacific Time.<br /><br />
+                            *You will be able to find our contact information below.
                     </Tab.Pane>
                     <Tab.Pane eventKey="second">
-                    Cupid laid by his brand and fell asleep: A maid of Dian's this advantage found, And his love-kindling fire did quickly steep In a cold valley-fountain of that ground; Which borrow'd from this holy fire of Love, A dateless lively heat, still to endure, And grew a seeting bath, which yet men prove Against strange maladies a sovereign cure. But at my mistress' eye Love's brand new-fired, The boy for trial needs would touch my breast;
+                        <span style={{fontWeight: 500}}>Creating Quiz</span><br />
+                            Click Create Quiz in the upper-right corner of dashboard. <br /><br />
+                        <span style={{fontWeight: 500}}>Question Type</span><br />
+                            We have several open-ended and closed-ended question types. 
+                            The settings within a question allow you to control the type of data the question will collect. 
+                            Make sure you pick the right question type for your quiz. <br /><br />
+                        <span style={{fontWeight: 500}}>Adding and Editing</span><br />
+                            Add new questions to your survey clicking +New Question on the Design page. And, you can edit anytime before you complete the quiz design.
                     </Tab.Pane>
                     <Tab.Pane eventKey="thrid">
-                    Americano by his brand and fell asleep: A maid of Dian's this advantage found, And his love-kindling fire did quickly steep In a cold valley-fountain of that ground; Which borrow'd from this holy fire of Love, A dateless lively heat, still to endure, And grew a seeting bath, which yet men prove Against strange maladies a sovereign cure. But at my mistress' eye Love's brand new-fired, The boy for trial needs would touch my breast;
+                        <span style={{fontWeight: 500}}>Understanding your quiz results</span><br />
+                            View the past quize will display all quizzes you send out, click the one you want to see the results. 
+                            You can see a summary view of your quiz results; browse individual responses as well by clicking a specific responder.
+                            It also allows you modify the individual test reseult. <br /><br />
+                        <span style={{fontWeight: 500}}>Missing responses</span><br />
+                            Responses are recorded in the Analyze Results section of your quiz. 
+                            Please check the result page if you think there are mssing responses. <br /><br />
+                        <span style={{fontWeight: 500}}>Sharing your quiz result</span><br />
+                            Unfortunately, we do not support the quiz sharing at this moment. 
+                            We are trying out best to provide sharing service as soon as possible <br /><br />
+                      
                     </Tab.Pane>
                 </Tab.Content>
                 </Col>
@@ -44,7 +66,12 @@ const ContactUs = () => {
             <div>
                 <Container style={{marginTop:30, marginBottom:15}}>
                     <span class="mb-0 h3" style={{marginBottom:5}}> Contact Us </span><br/>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                    QuizBanana’s mission is to be ‘Earth’s most customer-centric company’, and our Customer Service team is an essential part of that mission. 
+                    Through our innovative and technologies developed by our “CS” team, we support customers from multiple locations around the nation. 
+                    We consider each contact an opportunity to advocate for customers and provide support via phone and email. 
+                    
+                    Working in a dynamic and fast paced environment, our CS team is continuously raising the bar on customer experience by advocating and 
+                    inventing for customers, playing a key role in leading the way towards QuizBanana’s ultimate goal to be Earth’s most customer-centric company.
                     <br/>
                     <br/>
                     Phone: (123) 789 - 5678
