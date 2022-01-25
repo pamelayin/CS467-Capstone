@@ -13,7 +13,7 @@ const Dashboard = () => {
                     <a href="#">Create Quiz</a> 
                 </div>
                 <div className='dash-card-cell'>
-                    <a href="#">Past Quizzes</a> 
+                    <a href="/quizlist">Past Quizzes</a> 
                 </div>
                 <div className='dash-card-cell'>
                     <a href="#"> Mailing List (TBD)</a> 
@@ -21,10 +21,10 @@ const Dashboard = () => {
             </div>
             <div className='dash-card-row'>
                 <div className='dash-card-cell'>
-                    <a href="#">  Manage Account</a> 
+                    <a href="/account">  Manage Account</a> 
                 </div>
                 <div className='dash-card-cell'>
-                    <a href="ContactUs"> Customer Service</a> 
+                    <a href="/contact"> Customer Service</a> 
                 </div>
                 <div className='dash-card-cell'>
                     <a href="#"> <img src = {require("../../assets/logo_small_two.png")} className='img-fluid shadow-4'/></a> 

@@ -20,13 +20,23 @@ export const useAuth = () => {
     return [state, dispatch];
 };
 
+var route1 = '';
+var route2 = '';
+if(process.env.NODE_ENV === 'production') {
+    route1 = '/api/auth';
+    route2 = '/api/employer'
+} else {
+    route1 = 'http://localhost:7000/api/auth';
+    route2 = 'http://localhost:7000/api/employer';
+}
+
 //Load User
 export const loadUser = async(dispatch) => {
     //Load token into global headers. Private Route.
     setAuthToken(localStorage.token);
 
     try {
-        const res = await axios.get('http://localhost:7000/api/auth');
+        const res = await axios.get(route1);
 
         dispatch({
             type: USER_LOADED,
@@ -49,7 +59,7 @@ export const registerUser = async(dispatch, formData) => {
     };
 
     try {
-        const res = await axios.post('http://localhost:7000/api/employer', formData, config);
+        const res = await axios.post(route2, formData, config);
 
         dispatch({
             type: REGISTER_SUCCESS,
@@ -76,7 +86,7 @@ export const loginUser = async(dispatch, formData) => {
     };
 
     try {
-        const res = await axios.post('http://localhost:7000/api/auth', formData, config);
+        const res = await axios.post(route1, formData, config);
 
         dispatch({
             type: LOGIN_SUCCESS,

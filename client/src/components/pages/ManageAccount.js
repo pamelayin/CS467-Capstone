@@ -42,7 +42,7 @@ function ManageAccount() {
 									</Col>
 								</Row>
 							</Card.Title>
-							<Card.Link style={{ float: "right" }} href="#">
+							<Card.Link style={{ float: "right" }} href="/editprofile">
 								Update Profile
 							</Card.Link>
 						</Card.Body>

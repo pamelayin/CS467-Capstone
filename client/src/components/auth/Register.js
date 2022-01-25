@@ -125,37 +125,6 @@ const Register = props => {
                 </Row>
             </Container>
         </Fragment>
-        // <div className='container h-100 border solid black 1px' style={{ padding: '1rem' }}>
-        //     <div className='row h-100 justify-content-center'>
-        //         <form className='col-12' onSubmit={onSubmit}>
-        //             <div className="form-group">
-        //                 <label htmlFor="firstName">First Name</label>
-        //                 <input type="text" className='form-control' name='firstName' placeholder='First Name' value={firstName} onChange={onChange} />
-        //             </div>
-        //             <div className="form-group">
-        //                 <label htmlFor="lastName">Last Name</label>
-        //                 <input type="text" className="form-control" name="lastName" placeholder='Last Name' value={lastName} onChange={onChange} />
-        //             </div>
-        //             <div className="form-group">
-        //                 <label htmlFor="organization">Organization</label>
-        //                 <input type="text" className="form-control" name="organization" placeholder='Organization' value={organization} onChange={onChange} />
-        //             </div>
-        //             <div className="form-group">
-        //                 <label htmlFor="email">Email</label>
-        //                 <input type="email" className="form-control" name="email" placeholder="Email" value={email} onChange={onChange} />
-        //             </div>
-        //             <div className="form-group">
-        //                 <label htmlFor='password'>Password</label>
-        //                 <input type="password" className="form-control" name='password' placeholder="Password" value={password} onChange={onChange} />
-        //             </div>
-        //             <div className="form-group">
-        //                 <label htmlFor="confirmPassword">Confirm Password</label>
-        //                 <input type="password" className="form-control" name="confirmPassword" placeholder="Confirm Password" value={confirmPassword} onChange={onChange} />
-        //             </div>
-        //             <button type="submit" className="btn btn-primary" style={{ marginTop: '1rem' }}>Register</button>
-        //         </form>
-        //     </div>
-        // </div>
     )
 }
 

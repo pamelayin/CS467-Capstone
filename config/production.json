@@ -1,0 +1,4 @@
+{
+    "mongoURI": "mongodb+srv://QuizBanana:QuizBanana@quizbanana.filve.mongodb.net/QuizBanana?retryWrites=true&w=majority",
+    "jwtSecret": "superSecret$$"
+}
