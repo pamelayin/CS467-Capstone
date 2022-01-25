@@ -5,7 +5,6 @@ import {Nav, Tab, Row, Col, Container} from 'react-bootstrap';
 const ContactUs = () => {
     return (
         <div>
-            <Navigation greeting = "Customer Service"/>
             <div>
                 <Container style={{marginTop:30, marginBottom:15}}>
                     <span class="mb-0 h3">Frequently Asked Questions</span>

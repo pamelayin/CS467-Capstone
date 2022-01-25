@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import { useAuth, logout } from '../../context/auth/AuthState';
 
 import { Nav, Navbar, Container } from 'react-bootstrap';
@@ -38,7 +38,7 @@ const Navigation = ({greeting}) => {
                     <Navbar.Collapse className="justify-content-end">
                         <Navbar.Text style={{paddingRight:20}}>
                             <span className='navFont'>
-                                <Nav.Link href="Home">Dashboard</Nav.Link>
+                                <Nav.Link href="/">Dashboard</Nav.Link>
                             </span>
                         </Navbar.Text>
                         <Navbar.Text>
@@ -51,7 +51,8 @@ const Navigation = ({greeting}) => {
             </Navbar>
             <div>
                 <ColoredLine color = "#FFC300"/>
-            </div>         
+            </div>
+            <Outlet />         
         </div>
     )
 };
