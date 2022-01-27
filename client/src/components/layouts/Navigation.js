@@ -1,8 +1,9 @@
-import React, { Fragment } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import React, { Fragment, useContext, useEffect } from 'react';
+import {  Outlet, useLocation } from 'react-router-dom';
 import { useAuth, logout } from '../../context/auth/AuthState';
 
 import { Nav, Navbar, Container } from 'react-bootstrap';
+import GreetContext from '../../context/NavText/GreetContext';
 
 //https://www.codegrepper.com/code-examples/html/horizontal+line+html+react
 const ColoredLine = ({ color }) => (
@@ -16,16 +17,30 @@ const ColoredLine = ({ color }) => (
     />
 );
 
-const Navigation = ({greeting}) => {
+const Navigation = () => {
     const [authState, authDispatch] = useAuth();
     const { isAuthenticated, user } = authState;
+    const { greeting, setGreeting } = useContext(GreetContext);
+    const location = useLocation();
+
+    useEffect(() => {
+        if(location.pathname === '/contact') {
+            setGreeting('Customer Service')
+        } else if(location.pathname === '/account') {
+            setGreeting('Manage Account');
+        } else if(location.pathname === '/editprofile') {
+            setGreeting('Edit Profile');
+        } else if(location.pathname === '/quizlist') {
+            setGreeting('Quiz List');
+        }
+    }, [location, location.pathname, setGreeting, authDispatch]);
 
     const onLogout = () => {
         logout(authDispatch);
     };
 
     return (
-        <div>         
+        <Fragment>         
             <Navbar>
                 <Container className="justify-content-end" style={{paddingRight:'2%', marginBottom:-10}}>
                     <img src = {require("../../assets/logo_small_two.png")}/>
@@ -33,7 +48,11 @@ const Navigation = ({greeting}) => {
             </Navbar>
             <Navbar style = {{paddingBottom:0}}>
                 <Container>
-                <Navbar.Brand style={{ 'padding': '0.3rem', 'fontSize': '1.4rem' }}> {greeting} {isAuthenticated && user && user.firstName} {isAuthenticated && user && user.lastName}</Navbar.Brand>
+                <Navbar.Brand style={{ 'padding': '0.3rem', 'fontSize': '1.4rem' }}>
+                    {greeting}{' '}
+                    {location.pathname === '/' && isAuthenticated && user && user.firstName}{' '}
+                    {location.pathname === '/' && isAuthenticated && user && user.lastName} 
+                    </Navbar.Brand>
                     <Navbar.Toggle />
                     <Navbar.Collapse className="justify-content-end">
                         <Navbar.Text style={{paddingRight:20}}>
@@ -53,7 +72,7 @@ const Navigation = ({greeting}) => {
                 <ColoredLine color = "#FFC300"/>
             </div>
             <Outlet />         
-        </div>
+        </Fragment>
     )
 };
 

@@ -3,15 +3,17 @@ import { Navigate, Link } from 'react-router-dom';
 import { useAuth, registerUser, clearErrors } from '../../context/auth/AuthState';
 
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
+import AlertRegister from '../Alerts/AlertRegister';
+import RegLoginNav from '../layouts/RegLoginNav';
 
 const Register = props => {
     const [authState, authDispatch] = useAuth();
     const { error, isAuthenticated } = authState;
+    const [alert, setShowAlert] = useState(false);
 
     useEffect(() => {
-        if(error === 'User already exists') {
-            alert(error);
-            clearErrors(authDispatch);
+        if(error) {
+            setShowAlert(true)
         }
     }, [error, isAuthenticated, props.history, authDispatch]);
 
@@ -26,24 +28,22 @@ const Register = props => {
 
     const { firstName, lastName, organization, email, password, confirmPassword } = user;
 
-    const onChange = event => setUser({ ...user, [event.target.name]: event.target.value });
+    const onChange = event => {
+        setUser({ ...user, [event.target.name]: event.target.value });
+        setShowAlert(false);
+        clearErrors(authDispatch);
+    }
 
     const onSubmit = event => {
         event.preventDefault();
 
-        if(firstName === '' || lastName === '' || organization === '' || email === '' || password === '') {
-            alert('Please fill out each field appropriately!');
-        } else if(confirmPassword.toString() !== password.toString()) {
-            alert('Passwords do not match!');
-        } else {
-            registerUser(authDispatch, {
-                firstName,
-                lastName,
-                organization,
-                email,
-                password
-            });
-        }
+        registerUser(authDispatch, {
+            firstName,
+            lastName,
+            organization,
+            email,
+            password
+        });
     }
 
     if(isAuthenticated) return <Navigate to='/' />;
@@ -51,10 +51,11 @@ const Register = props => {
     return (
         <Fragment>
             <Container>
-                <h1 className='shadow-sm text-primary p-3 text-center rounded'>Quiz Banana</h1>
+                <RegLoginNav />
                 <Row className='mt-5'>
+                    <AlertRegister user={user} alert={alert} setShowAlert={setShowAlert} />
                     <Col lg={5} md={6} sm={12} className='p-5 m-auto shadow-sm rounded-lg'>
-                        <h1 className='shadow-sm text-primary p-3 text-center rounded'>Sign Up</h1>
+                        <h1 className='shadow-sm p-3 text-center rounded' style={{ color: 'black' }}>Sign Up</h1>
                         <Form onSubmit={onSubmit}>
                             <Form.Group>
                                 <Form.Label htmlFor='firstName'>First Name</Form.Label>
@@ -89,7 +90,7 @@ const Register = props => {
                             <Form.Group>
                                 <Form.Label htmlFor='email'>Email Address</Form.Label>
                                 <Form.Control 
-                                    type='email' 
+                                    type='text' 
                                     name='email' 
                                     placeholder='Email' 
                                     value={email} 
@@ -116,9 +117,9 @@ const Register = props => {
                                     onChange={onChange}
                                 />
                             </Form.Group>
-                            <Button variant='primary btn-block' type='submit' style={{ 'marginTop': '2rem'}}>Sign Up</Button>
+                            <Button variant='warning btn-block' type='submit' style={{ 'marginTop': '2rem'}}>Sign Up</Button>
                             <div style={{ 'marginTop': '0.5rem'}}>
-                                <Link to='/login'>Already a Member?</Link>
+                                <Link to='/login' style={{ color: 'black' }}>Already a Member?</Link>
                             </div>
                         </Form>
                     </Col>
