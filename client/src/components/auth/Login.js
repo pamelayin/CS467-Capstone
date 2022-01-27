@@ -3,15 +3,17 @@ import { Navigate, Link } from 'react-router-dom';
 import { useAuth, loginUser, clearErrors } from '../../context/auth/AuthState';
 
 import { Form, Container, Row, Col, Button } from 'react-bootstrap';
+import RegLoginNav from '../layouts/RegLoginNav';
+import AlertLogin from '../Alerts/AlertLogin';
 
 const Login = () => {
     const [authState, authDispatch] = useAuth();
     const { error, isAuthenticated } = authState;
+    const [alert, setShowAlert] = useState(false);
 
     useEffect(() => {
-        if(error === 'Invalid Credentials') {
-            alert(error);
-            clearErrors(authDispatch);
+        if(error) {
+            setShowAlert(true);
         }
     }, [error, isAuthenticated, authDispatch]);
 
@@ -22,18 +24,19 @@ const Login = () => {
 
     let { email, password } = user;
     
-    const onChange = event => setUser({ ...user, [event.target.name]: event.target.value });
+    const onChange = event => {
+        setUser({ ...user, [event.target.name]: event.target.value });
+        setShowAlert(false);
+        clearErrors(authDispatch);
+    }
 
     const onSubmit = event => {
         event.preventDefault();
-        if(email === '' || password === '') {
-            alert('Please fill in all fields appropriately')
-        } else {
-            loginUser(authDispatch, {
-                email,
-                password
-            });
-        }
+        
+        loginUser(authDispatch, {
+            email,
+            password
+        });
     }
 
     if(isAuthenticated) return <Navigate to='/' />;
@@ -41,10 +44,11 @@ const Login = () => {
     return (
         <Fragment>
             <Container>
-                <h1 className='shadow-sm text-primary p-3 text-center rounded'>Quiz Banana</h1>
+                <RegLoginNav />
                 <Row className='mt-5'>
+                    <AlertLogin user={user} alert={alert} setShowAlert={setShowAlert} />
                     <Col lg={5} md={6} sm={12} className='p-5 m-auto shadow-sm rounded-lg'>
-                        <h1 className='shadow-sm text-primary p-3 text-center rounded'>Login</h1>
+                        <h1 className='shadow-sm p-3 text-center rounded' style={{ color: 'black' }}>Login</h1>
                         <Form onSubmit={onSubmit}>
                             <Form.Group>
                                 <Form.Label htmlFor='email'>Email Address</Form.Label>
@@ -66,9 +70,9 @@ const Login = () => {
                                     onChange={onChange}
                                 />
                             </Form.Group>
-                            <Button variant='primary btn-block' type='submit' style={{ 'marginTop': '2rem'}}>Login</Button>
+                            <Button variant='warning btn-block' type='submit' style={{ 'marginTop': '2rem'}}>Login</Button>
                             <div style={{ 'marginTop': '0.5rem'}}>
-                                <Link to='/register'>Not Signed Up Yet?</Link>
+                                <Link to='/register' style={{ color: 'black' }}>Not Signed Up Yet?</Link>
                             </div>
                         </Form>
                     </Col>

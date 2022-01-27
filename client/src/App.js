@@ -1,6 +1,5 @@
-import React, { Fragment } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+import React, { Fragment, useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Register from './components/auth/Register';
 import PrivateRoute from './components/routes/PrivateRoute';
@@ -13,48 +12,51 @@ import Dashboard from './components/layouts/Dashboard';
 import Navigation from './components/layouts/Navigation';
 
 import AuthState from './context/auth/AuthState';
+import GreetContext from './context/NavText/GreetContext';
+
 
 function App() {
+  const [greeting, setGreeting] = useState('Welcome');
+  const value = { greeting, setGreeting };
   return (
     <AuthState>
-      <BrowserRouter>
-        <Fragment>
-          <div className='container'>
-            <Routes>
-              <Route path='/register' element={<Register />} />
-              <Route path='/login' element={<Login />} />
-              <Route 
-                path='/' 
-                element={<PrivateRoute 
-                  component={
-                    () => (<Navigation greeting={'Welcome'} />)
-                  } />}>
+      <GreetContext.Provider value={value}>
+        <BrowserRouter>
+          <Fragment>
+            <div className='container'>
+              <Routes>
+                <Route path='/register' element={<Register />} />
+                <Route path='/login' element={<Login />} />
                 <Route 
-                  index 
-                  element={<PrivateRoute component={Dashboard} />} 
-                />
-                <Route
-                  path="/account"
-                  element={<PrivateRoute component={ManageAccount} />}
-                />
-                <Route
-                  path="/editprofile"
-                  element={<PrivateRoute component={EditProfile} />}
-                />
-                <Route 
-                  path="/quizlist" 
-                  element={<PrivateRoute component={QuizList} />} 
-                />
-                <Route 
-                  path='contact' 
-                  element={<PrivateRoute 
-                  component={ContactUs} />} 
-                />
-              </Route>
-            </Routes>
-          </div>
-        </Fragment>
-      </BrowserRouter>
+                  path='/' 
+                  element={<PrivateRoute component={Navigation} />}>
+                  <Route 
+                    index 
+                    element={<PrivateRoute component={Dashboard} />} 
+                  />
+                  <Route
+                    path="/account"
+                    element={<PrivateRoute component={ManageAccount} />}
+                  />
+                  <Route
+                    path="/editprofile"
+                    element={<PrivateRoute component={EditProfile} />}
+                  />
+                  <Route 
+                    path="/quizlist" 
+                    element={<PrivateRoute component={QuizList} />} 
+                  />
+                  <Route 
+                    path='contact' 
+                    element={<PrivateRoute 
+                    component={ContactUs} />} 
+                  />
+                </Route>
+              </Routes>
+            </div>
+          </Fragment>
+        </BrowserRouter>
+      </GreetContext.Provider>
     </AuthState>
 	);
 }

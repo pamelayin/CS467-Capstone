@@ -20,14 +20,14 @@ export const useAuth = () => {
     return [state, dispatch];
 };
 
-var route1 = '';
-var route2 = '';
+var AUTH_ROUTE = '';
+var EMPLOYER_ROUTE = '';
 if(process.env.NODE_ENV === 'production') {
-    route1 = '/api/auth';
-    route2 = '/api/employer'
+    AUTH_ROUTE = '/api/auth';
+    EMPLOYER_ROUTE = '/api/employer'
 } else {
-    route1 = 'http://localhost:7000/api/auth';
-    route2 = 'http://localhost:7000/api/employer';
+    AUTH_ROUTE = 'http://localhost:7000/api/auth';
+    EMPLOYER_ROUTE = 'http://localhost:7000/api/employer';
 }
 
 //Load User
@@ -36,7 +36,7 @@ export const loadUser = async(dispatch) => {
     setAuthToken(localStorage.token);
 
     try {
-        const res = await axios.get(route1);
+        const res = await axios.get(AUTH_ROUTE);
 
         dispatch({
             type: USER_LOADED,
@@ -59,7 +59,7 @@ export const registerUser = async(dispatch, formData) => {
     };
 
     try {
-        const res = await axios.post(route2, formData, config);
+        const res = await axios.post(EMPLOYER_ROUTE, formData, config);
 
         dispatch({
             type: REGISTER_SUCCESS,
@@ -71,7 +71,7 @@ export const registerUser = async(dispatch, formData) => {
     } catch (err) {
         dispatch({
             type: REGISTER_FAIL,
-            payload: err.response.data.msg
+            payload: err.response.data.msg || err.response.data.errors[0].msg
         });
     }
 };
@@ -86,7 +86,7 @@ export const loginUser = async(dispatch, formData) => {
     };
 
     try {
-        const res = await axios.post(route1, formData, config);
+        const res = await axios.post(AUTH_ROUTE, formData, config);
 
         dispatch({
             type: LOGIN_SUCCESS,
@@ -98,7 +98,7 @@ export const loginUser = async(dispatch, formData) => {
     } catch (err) {
         dispatch({
             type: LOGIN_FAIL,
-            payload: err.response.data.msg
+            payload: err.response.data.msg || err.response.data.errors[0].msg
         })
     }
 }

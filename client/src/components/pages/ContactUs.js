@@ -1,5 +1,4 @@
 import React from 'react'
-import Navigation from '../layouts/Navigation'
 import {Nav, Tab, Row, Col, Container} from 'react-bootstrap';
 
 const ContactUs = () => {
@@ -7,7 +6,7 @@ const ContactUs = () => {
         <div>
             <div>
                 <Container style={{marginTop:30, marginBottom:15}}>
-                    <span class="mb-0 h3">Frequently Asked Questions</span>
+                    <span className="mb-0 h3">Frequently Asked Questions</span>
                 </Container>
             <Tab.Container id="left-tabs-example" defaultActiveKey="first">
             <Row>
@@ -64,7 +63,7 @@ const ContactUs = () => {
             </div>
             <div>
                 <Container style={{marginTop:30, marginBottom:15}}>
-                    <span class="mb-0 h3" style={{marginBottom:5}}> Contact Us </span><br/>
+                    <span className="mb-0 h3" style={{marginBottom:5}}> Contact Us </span><br/>
                     QuizBanana’s mission is to be ‘Earth’s most customer-centric company’, and our Customer Service team is an essential part of that mission. 
                     Through our innovative and technologies developed by our “CS” team, we support customers from multiple locations around the nation. 
                     We consider each contact an opportunity to advocate for customers and provide support via phone and email. 

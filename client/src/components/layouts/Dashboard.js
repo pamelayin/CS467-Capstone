@@ -1,6 +1,6 @@
 import React from 'react'
 import {Container, Table} from 'react-bootstrap';
-import{NavLink as RouterNavLink} from 'react-router-dom';
+import{NavLink as RouterNavLink, Link } from 'react-router-dom';
 
 const Dashboard = () => {
     const currentYear = new Date().getFullYear();

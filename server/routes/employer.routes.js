@@ -8,12 +8,36 @@ const { check, validationResult } = require('express-validator');
 
 const Employer = require('../models/employer.models');
 
+
 router.post('/',
-    check('firstName', 'Please enter your first name').not().isEmpty(),
-    check('lastName', 'Please enter your last name').not().isEmpty(),
-    check('organization', 'Please enter your company or organization name').not().isEmpty(),
-    check('email', 'Please enter a valid email').isEmail(),
-    check('password', 'Password of at least 8 characters is required for registering').isLength({ min: 8 })
+    check('firstName', 'Appropriately enter your first name with a min of 2 characters and a max of 30')
+        .not()
+        .isEmpty()
+        .withMessage('Please enter your first name')
+        .isAlphanumeric('en-US',{ignore: ' '})
+        .withMessage('Only characters are allowed for your first and last name')
+        .isLength({ min: 2, max: 30})
+        .withMessage('A min length of 2 characters and a max of 30 characters is required for your first and last name'),
+    check('lastName', 'Appropriately enter your last name with a min of 2 characters and a max of 30')
+        .not()
+        .isEmpty()
+        .withMessage('Please enter your last name')
+        .isAlphanumeric('en-US',{ignore: ' '})
+        .withMessage('Only characters are allowed for your first and last name')
+        .isLength({ min: 2, max: 30})
+        .withMessage('A min length of 2 characters and a max of 30 characters is required for your first and last name'),
+    check('organization', 'Please enter your company or organization name')
+        .not()
+        .isEmpty(),
+    check('email', 'Please enter a valid email')
+        .isEmail()
+        .not()
+        .isEmpty(),
+    check('password', 'Password of at least 8 characters is required for registering')
+        .isLength({ min: 8 })
+        .not()
+        .isEmpty()
+        .withMessage('Please enter your password')
 , async(req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
