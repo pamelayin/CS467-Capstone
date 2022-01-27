@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
 import { Container, Form, Button, Row, Col } from "react-bootstrap";
+import { useAuth } from "../../context/auth/AuthState";
 
 function EditProfile() {
+	const [authState] = useAuth();
+	const { isAuthenticated, user } = authState;
 	const [validated, setValidated] = useState(false);
+
 
 	const handleSubmit = (event) => {
 		const form = event.currentTarget;
@@ -18,7 +20,7 @@ function EditProfile() {
 		}
 	};
 	return (
-		<Container>
+		<Container className="w-75">
 			<h1 className="my-5">Edit Profile</h1>
 			<div className="w-75 p-3 my-3">
 				<Form noValidate validated={validated} onSubmit={handleSubmit}>
@@ -28,7 +30,7 @@ function EditProfile() {
 							<Form.Control
 								required
 								type="text"
-								defaultValue=""
+								defaultValue={isAuthenticated && user && user.firstName}
 								placeholder="Enter First Name"
 							/>
 							<Form.Control.Feedback type="invalid">
@@ -41,7 +43,7 @@ function EditProfile() {
 							<Form.Control
 								required
 								type="text"
-								defaultValue=""
+								defaultValue={isAuthenticated && user && user.lastName}
 								placeholder="Enter Last Name"
 							/>
 							<Form.Control.Feedback type="invalid">
@@ -54,7 +56,7 @@ function EditProfile() {
 						<Form.Control
 							required
 							type="email"
-							defaultValue=""
+							defaultValue={isAuthenticated && user && user.email}
 							placeholder="Enter Email"
 						/>
 						<Form.Control.Feedback type="invalid">
@@ -66,7 +68,7 @@ function EditProfile() {
 						<Form.Control
 							required
 							type="text"
-							defaultValue=""
+							defaultValue={isAuthenticated && user && user.organization}
 							placeholder="Enter Organization"
 						/>
 						<Form.Control.Feedback type="invalid">
@@ -78,12 +80,17 @@ function EditProfile() {
 							<Button className="mx-5 my-3" variant="primary" type="submit">
 								Submit
 							</Button>
-							<Button variant="outline-primary" type="submit">
+							<a
+								className="btn btn-outline-primary"
+								href="/account"
+								role="button"
+							>
 								Cancel
-							</Button>
+							</a>
 						</div>
 					</Form.Group>
 				</Form>
+				<a href="/delete" style={{ color: "red" }}>Delete My Account</a>
 			</div>
 		</Container>
 	);
