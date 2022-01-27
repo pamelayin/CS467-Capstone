@@ -14,7 +14,7 @@ router.post('/',
         .not()
         .isEmpty()
         .withMessage('Please enter your first name')
-        .isAlpha()
+        .isAlphanumeric('en-US',{ignore: ' '})
         .withMessage('Only characters are allowed for your first and last name')
         .isLength({ min: 2, max: 30})
         .withMessage('A min length of 2 characters and a max of 30 characters is required for your first and last name'),
@@ -22,7 +22,7 @@ router.post('/',
         .not()
         .isEmpty()
         .withMessage('Please enter your last name')
-        .isAlpha()
+        .isAlphanumeric('en-US',{ignore: ' '})
         .withMessage('Only characters are allowed for your first and last name')
         .isLength({ min: 2, max: 30})
         .withMessage('A min length of 2 characters and a max of 30 characters is required for your first and last name'),
