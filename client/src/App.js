@@ -13,6 +13,7 @@ import Navigation from './components/layouts/Navigation';
 
 import AuthState from './context/auth/AuthState';
 import GreetContext from './context/NavText/GreetContext';
+import CreateQuiz from './components/pages/CreateQuiz';
 
 
 function App() {
@@ -47,10 +48,16 @@ function App() {
                     element={<PrivateRoute component={QuizList} />} 
                   />
                   <Route 
-                    path='contact' 
+                    path='/contact' 
                     element={<PrivateRoute 
                     component={ContactUs} />} 
                   />
+                  <Route 
+                    path='/createquiz' 
+                    element={<PrivateRoute 
+                    component={CreateQuiz} />} 
+                  />
+  
                 </Route>
               </Routes>
             </div>
