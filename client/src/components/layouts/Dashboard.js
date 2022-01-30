@@ -8,7 +8,7 @@ const Dashboard = () => {
     return (
 			<div>
 				<Container style={{ marginTop: 30, marginBottom: 15 }}>
-					<span class="mb-0 h3">Dashboard / Access your services</span>
+					<span className="mb-0 h3">Dashboard / Access your services</span>
 				</Container>
 				<div className="dash-card-row">
 					<div className="dash-card-cell">
