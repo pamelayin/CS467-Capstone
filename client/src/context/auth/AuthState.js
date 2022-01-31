@@ -13,7 +13,10 @@ import {
     LOGOUT,
     CLEAR_ERRORS,
     PASSWORD_CHANGE_SUCCESS,
-    PASSWORD_CHANGE_FAIL
+    PASSWORD_CHANGE_FAIL,
+    UPDATE_USER_SUCCESS,
+    UPDATE_USER_FAIL,
+    DELETE_USER,
 } from '../types';
 
 // Creat custom hook to use auth context
@@ -47,7 +50,8 @@ export const loadUser = async(dispatch) => {
 
     } catch (err) {
         dispatch({
-            type: AUTH_ERROR
+            type: AUTH_ERROR,
+            payload: err.response.data.msg || err.response.data.errors[0].msg
         });
     }
 };
@@ -131,6 +135,45 @@ export const changePassword = async(dispatch, formData) => {
 
 //Logout User
 export const logout = (dispatch) => dispatch({ type: LOGOUT });
+
+//update user info
+export const updateUser = () => async (dispatch, formData, _id) => {
+
+    try {
+		const res = await axios.put(AUTH_ROUTE + `/${_id}`, formData);
+
+		dispatch({
+			type: UPDATE_USER_SUCCESS,
+			payload: res.data,
+        });
+
+	} catch (err) {
+		dispatch({
+			type: UPDATE_USER_FAIL,
+			payload: err.response.data.msg || err.response.data.errors[0].msg
+		});
+	}
+};
+
+//delete user
+export const deleteUser = async (dispatch, _id) => {
+    try {
+		await axios.delete(AUTH_ROUTE + `/${_id}`);
+
+		dispatch({
+			type: DELETE_USER,
+			payload: _id,
+        });
+        
+        logout(dispatch);
+
+	} catch (err) {
+		dispatch({
+			type: AUTH_ERROR,
+			payload: err.response.data.msg || err.response.data.errors[0].msg,
+		});
+	}
+};
 
 //Clear Errors
 export const clearErrors = (dispatch) => dispatch({ type: CLEAR_ERRORS });

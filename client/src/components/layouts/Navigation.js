@@ -32,6 +32,8 @@ const Navigation = () => {
             setGreeting('Edit Profile');
         } else if(location.pathname === '/quizlist') {
             setGreeting('Quiz List');
+        } else if (location.pathname === '/temp') {
+            setGreeting('Quiz Stats Temp')
         }
     }, [location, location.pathname, setGreeting, authDispatch]);
 

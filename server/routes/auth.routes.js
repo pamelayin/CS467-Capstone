@@ -64,22 +64,36 @@ router.get('/', auth, async(req, res) => {
 router.put(
 	"/:id",
 	auth,
-	check("firstName", "Please enter your first name")
+	check(
+		"firstName",
+		"Appropriately enter your first name with a min of 2 characters and a max of 30"
+	)
 		.not()
 		.isEmpty()
-		.isLength({ max: 30 })
-		.isAlpha(),
-	check("lastName", "Please enter your last name")
+		.withMessage("Please enter your first name")
+		.isAlpha("en-US", { ignore: " " })
+		.withMessage("Only characters are allowed for your first and last name")
+		.isLength({ min: 1, max: 30 })
+		.withMessage(
+			"A min length of 1 character and a max of 30 characters is required for your first and last name"
+		),
+	check(
+		"lastName",
+		"Appropriately enter your last name with a min of 2 characters and a max of 30"
+	)
 		.not()
 		.isEmpty()
-		.isLength({ max: 30 })
-		.isAlpha(),
+		.withMessage("Please enter your last name")
+		.isAlpha("en-US", { ignore: " " })
+		.withMessage("Only characters are allowed for your first and last name")
+		.isLength({ min: 1, max: 30 })
+		.withMessage(
+			"A min length of 1 character and a max of 30 characters is required for your first and last name"
+		),
 	check("organization", "Please enter your company or organization name")
 		.not()
-		.isEmpty()
-		.isLength({ max: 30 })
-		.isAlphanumeric('en-US',{ignore: ' '}),
-	check("email", "Please enter a valid email").isEmail(),
+		.isEmpty(),
+	check("email", "Please enter a valid email").isEmail().not().isEmpty(),
 	async (req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
@@ -103,8 +117,8 @@ router.put(
 				{ $set: employerEdits },
 				{ new: true }
 			);
-            console.log(user);
-            res.json(user);
+			console.log(user);
+			res.json(user);
 		} catch (err) {
 			console.error(err.message);
 			res.status(500).send("Server Error");
