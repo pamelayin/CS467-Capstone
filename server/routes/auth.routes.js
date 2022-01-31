@@ -55,7 +55,6 @@ router.get('/', auth, async(req, res) => {
     try {
         const user = await Employer.findById(req.user.id).select('-password');
         res.status(200).json(user);
-        console.log(user);
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: 'Server Error' });
@@ -63,12 +62,9 @@ router.get('/', auth, async(req, res) => {
 });
 
 router.put(
-	"/:id",
-	auth,
-	check(
-		"firstName",
-		"Appropriately enter your first name with a min of 2 characters and a max of 30"
-	)
+	"/",
+	auth, [
+	check("firstName")
 		.not()
 		.isEmpty()
 		.withMessage("Please enter your first name")
@@ -78,10 +74,7 @@ router.put(
 		.withMessage(
 			"A min length of 1 character and a max of 30 characters is required for your first and last name"
 		),
-	check(
-		"lastName",
-		"Appropriately enter your last name with a min of 2 characters and a max of 30"
-	)
+	check("lastName")
 		.not()
 		.isEmpty()
 		.withMessage("Please enter your last name")
@@ -94,7 +87,7 @@ router.put(
 	check("organization", "Please enter your company or organization name")
 		.not()
 		.isEmpty(),
-	check("email", "Please enter a valid email").isEmail().not().isEmpty(),
+	check("email", "Please enter a valid email").isEmail().not().isEmpty()],
 	async (req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
@@ -114,12 +107,12 @@ router.put(
 				return res.status(404).json({ msg: "User not found" });
 			}
 			user = await Employer.findByIdAndUpdate(
-				req.params.id,
+				req.user.id,
 				{ $set: employerEdits },
 				{ new: true }
 			);
 			console.log(user);
-			res.json(user);
+			res.status(200).json(user);
 		} catch (err) {
 			console.error(err.message);
 			res.status(500).send("Server Error");
@@ -127,7 +120,7 @@ router.put(
 	}
 );
 
-router.delete("/:id", auth, async (req, res) => {
+router.delete("/", auth, async (req, res) => {
     try {
         let user = await Employer.findById(req.user.id).select("-password");
 
@@ -135,9 +128,9 @@ router.delete("/:id", auth, async (req, res) => {
             return res.status(404).json({ msg: "User not found" });
         }
 		
-        await Employer.findByIdAndDelete(req.params.id);
+        await Employer.findByIdAndDelete(req.user.id);
 
-        res.json({ msg: "Employer profile has been deleted." });
+        res.status(204).json({ msg: "Employer profile has been deleted." });
 
 	} catch (err) {
 		console.error(err.message);
@@ -145,21 +138,21 @@ router.delete("/:id", auth, async (req, res) => {
 	}
 });
 
-router.patch('/:id', auth, [
-    check('password')
+router.patch('/', [
+    check('password', 'Please enter your current password')
         .not()
         .isEmpty()
-        .withMessage('Please enter your current password')
-        .isLength({ min: 8 })
-        .withMessage('Password of at least 8 characters is required')
         .exists(),
-    check('newPassword')
+    check('newPassword', 'Please enter a new password.')
         .not()
         .isEmpty()
-        .withMessage('Please enter a new password')
         .isLength({ min: 8 })
-        .withMessage('Password of at least 8 characters is required')
-], async(req, res) => {
+        .withMessage('New password must at least 8 characters.'),
+    check('confirmNewPassword')
+        .not()
+        .equals('newPassword')
+        .withMessage('New password does not match!')
+], auth, async(req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -168,9 +161,7 @@ router.patch('/:id', auth, [
     let { password, newPassword } = req.body;
 
     try {
-        let user = await Employer.findById(req.params.id);
-
-        console.log(req.params.id)
+        const user = await Employer.findById(req.user.id).select('password');
 
         if(!user) {
             return res.status(400).json({ msg: 'Invalid Credentials' });
@@ -186,11 +177,11 @@ router.patch('/:id', auth, [
         newPassword = await bcrypt.hash(newPassword, salt);
 
         await Employer.findByIdAndUpdate(
-            req.params.id,
+            req.user.id,
             { $set: { 'password': newPassword }}, { new: true }
         );
 
-        res.status(202).json({ msg: 'Password Updated!' });
+        res.status(204).json({ msg: 'Password Updated!' });
     } catch (err) {
         console.log(err.message);
         res.status(500).json({ msg: err.message });

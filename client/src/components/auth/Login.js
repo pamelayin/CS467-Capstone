@@ -12,7 +12,7 @@ const Login = () => {
     const [alert, setShowAlert] = useState(false);
 
     useEffect(() => {
-        if(error) {
+        if(error === 'Invalid Credentials') {
             setShowAlert(true);
         }
     }, [error, isAuthenticated, authDispatch]);
@@ -32,11 +32,16 @@ const Login = () => {
 
     const onSubmit = event => {
         event.preventDefault();
-        
-        loginUser(authDispatch, {
-            email,
-            password
-        });
+
+        if(error) {
+            setShowAlert(true);
+            clearErrors(authDispatch);
+        } else {
+            loginUser(authDispatch, {
+                email,
+                password
+            });
+        }
     }
 
     if(isAuthenticated) return <Navigate to='/' />;

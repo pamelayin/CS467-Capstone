@@ -22,8 +22,8 @@ function App() {
 	const value = { greeting, setGreeting };
 	return (
 		<AuthState>
-			<QuizState>
-				<GreetContext.Provider value={value}>
+			<GreetContext.Provider value={value}>
+				<QuizState>
 					<BrowserRouter>
 						<Fragment>
 							<div className="container">
@@ -33,41 +33,42 @@ function App() {
 									<Route
 										path="/"
 										element={<PrivateRoute component={Navigation} />}
-									/>
-									<Route
-										index
-										element={<PrivateRoute component={Dashboard} />}
-									/>
-									<Route
-										path="/account"
-										element={<PrivateRoute component={ManageAccount} />}
-									/>
-									<Route
-										path="/editprofile"
-										element={<PrivateRoute component={EditProfile} />}
-									/>
-									<Route
-										path="/quizlist"
-										element={<PrivateRoute component={QuizList} />}
-									/>
-									<Route
-										path="contact"
-										element={<PrivateRoute component={ContactUs} />}
-									/>
-                  <Route 
-                    path='/createquiz' 
-                    element={<PrivateRoute component={CreateQuiz} />} 
-                  />
-									<Route
-										path="temp"
-										element={<PrivateRoute component={QuizDashboard} />}
-									/>
+									>
+										<Route
+											index
+											element={<PrivateRoute component={Dashboard} />}
+										/>
+										<Route
+											path="/account"
+											element={<PrivateRoute component={ManageAccount} />}
+										/>
+										<Route
+											path="/editprofile"
+											element={<PrivateRoute component={EditProfile} />}
+										/>
+										<Route
+											path="/quizlist"
+											element={<PrivateRoute component={QuizList} />}
+										/>
+										<Route
+											path="contact"
+											element={<PrivateRoute component={ContactUs} />}
+										/>
+										<Route 
+											path='/createquiz' 
+											element={<PrivateRoute component={CreateQuiz} />} 
+										/>
+										<Route
+											path="temp"
+											element={<PrivateRoute component={QuizDashboard} />}
+										/>
+									</Route>
 								</Routes>
 							</div>
 						</Fragment>
 					</BrowserRouter>
-				</GreetContext.Provider>
-			</QuizState>
+				</QuizState>
+			</GreetContext.Provider>
 		</AuthState>
 	);
 }

@@ -1,10 +1,14 @@
-import React from "react";
-import { Container, Row, Col, Card} from "react-bootstrap";
+import React, { useState } from "react";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import { useAuth } from "../../context/auth/AuthState";
+
+import ChangePasswordModal from "./ChangePasswordModal";
 
 function ManageAccount() {
     const [authState] = useAuth();
 	const { isAuthenticated, user } = authState;
+
+	const [showModal, setShowModal] = useState(false);
 
 	return (
 		<Container>
@@ -59,11 +63,13 @@ function ManageAccount() {
 							</Card.Link>
 							<Card.Link
 								style={{ float: "right" }}
-								className="mx-3"
-								href="/editprofile"
+								className="mx-5"
+								href="#"
+								onClick={() => setShowModal(true)}
 							>
 								Update Password
 							</Card.Link>
+							{showModal ? <ChangePasswordModal showModal={showModal} setShowModal={setShowModal} /> : !showModal}
 						</Card.Body>
 					</Card>
 				</Col>

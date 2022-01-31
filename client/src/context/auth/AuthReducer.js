@@ -8,6 +8,8 @@ import {
     LOGIN_FAIL,
     LOGOUT,
     CLEAR_ERRORS,
+    PASSWORD_CHANGE_SUCCESS,
+    PASSWORD_CHANGE_FAIL,
     UPDATE_USER_SUCCESS,
     UPDATE_USER_FAIL,
     DELETE_USER
@@ -80,18 +82,29 @@ const authReducer = (state, action) => {
 			case UPDATE_USER_SUCCESS:
 				return {
                     ...state,
-                    user: action.payload,
+                    user: state.user._id === action.payload._id ? action.payload : state.user,
 					isAuthenticated: true,
 					loading: false,
 				};
             case UPDATE_USER_FAIL:
-            return {
-                ...state,
-                isAuthenticated: true,
-                loading: false, 
-                error: action.payload
-                }
-
+				return {
+					...state,
+					loading: false, 
+					error: action.payload
+				}
+        	case PASSWORD_CHANGE_SUCCESS:
+				return {
+					...state,
+					...action.payload,
+					isAuthenticated: true,
+					loading: false
+				}
+        	case PASSWORD_CHANGE_FAIL:
+				return {
+					...state,
+					loading: true,
+					error: action.payload
+				}
 			case DELETE_USER:
 				return {
 					...state,

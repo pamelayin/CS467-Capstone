@@ -11,10 +11,12 @@ import {
     LOGIN_SUCCESS,
     LOGIN_FAIL,
     LOGOUT,
+    CLEAR_ERRORS,
+    PASSWORD_CHANGE_SUCCESS,
+    PASSWORD_CHANGE_FAIL,
     UPDATE_USER_SUCCESS,
     UPDATE_USER_FAIL,
     DELETE_USER,
-    CLEAR_ERRORS
 } from '../types';
 
 // Creat custom hook to use auth context
@@ -77,6 +79,8 @@ export const registerUser = async(dispatch, formData) => {
             type: REGISTER_FAIL,
             payload: err.response.data.msg || err.response.data.errors[0].msg
         });
+
+        console.log(err.response);
     }
 };
 
@@ -106,32 +110,66 @@ export const loginUser = async(dispatch, formData) => {
         })
     }
 }
+
+export const changePassword = async(dispatch, formData) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+    try {
+        const res = await axios.patch(AUTH_ROUTE, formData, config);
+
+        dispatch({
+            type: PASSWORD_CHANGE_SUCCESS,
+            payload: res.data
+        });
+
+        loadUser(dispatch);
+
+    } catch (err) {
+        dispatch({
+            type: PASSWORD_CHANGE_FAIL,
+            payload: err.response.data.msg || err.response.data.errors[0].msg
+        });
+    }
+};
+
 //Logout User
 export const logout = (dispatch) => dispatch({ type: LOGOUT });
 
 //update user info
-export const updateUser = () => async (dispatch, formData, _id) => {
+export const updateUser = async (dispatch, formData) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
 
     try {
-		const res = await axios.put(AUTH_ROUTE + `/${_id}`, formData);
+		const res = await axios.put(AUTH_ROUTE, formData, config);
 
 		dispatch({
 			type: UPDATE_USER_SUCCESS,
 			payload: res.data,
         });
 
+        console.log(res.data);
+
 	} catch (err) {
 		dispatch({
 			type: UPDATE_USER_FAIL,
 			payload: err.response.data.msg || err.response.data.errors[0].msg
 		});
+
+        console.log(err.response);
 	}
 };
 
 //delete user
 export const deleteUser = async (dispatch, _id) => {
     try {
-		await axios.delete(AUTH_ROUTE + `/${_id}`);
+		await axios.delete(AUTH_ROUTE);
 
 		dispatch({
 			type: DELETE_USER,
