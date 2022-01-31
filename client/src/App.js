@@ -8,13 +8,14 @@ import Login from "./components/auth/Login";
 import ManageAccount from "./components/pages/ManageAccount";
 import EditProfile from "./components/pages/EditProfile";
 import QuizList from "./components/pages/QuizList";
+import Dashboard from './components/layouts/Dashboard';
+import Navigation from './components/layouts/Navigation';
+import CreateQuiz from './components/pages/CreateQuiz';
 import QuizDashboard from "./components/pages/QuizDashboard";
-import Dashboard from "./components/layouts/Dashboard";
-import Navigation from "./components/layouts/Navigation";
-import GreetContext from "./context/NavText/GreetContext";
 
 import AuthState from "./context/auth/AuthState";
 import QuizState from "./context/quiz/QuizState";
+import GreetContext from "./context/NavText/GreetContext";
 
 function App() {
 	const [greeting, setGreeting] = useState("Welcome");
@@ -53,6 +54,10 @@ function App() {
 										path="contact"
 										element={<PrivateRoute component={ContactUs} />}
 									/>
+                  <Route 
+                    path='/createquiz' 
+                    element={<PrivateRoute component={CreateQuiz} />} 
+                  />
 									<Route
 										path="temp"
 										element={<PrivateRoute component={QuizDashboard} />}
