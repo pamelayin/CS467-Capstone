@@ -7,7 +7,9 @@ import {
     LOGIN_SUCCESS,
     LOGIN_FAIL,
     LOGOUT,
-    CLEAR_ERRORS
+    CLEAR_ERRORS,
+    PASSWORD_CHANGE_SUCCESS,
+    PASSWORD_CHANGE_FAIL
 } from '../types';
 
 const authReducer = (state, action) => {
@@ -72,6 +74,19 @@ const authReducer = (state, action) => {
                 isAuthenticated: false,
                 loading: true,
                 user: null,
+                error: action.payload
+            }
+        case PASSWORD_CHANGE_SUCCESS:
+            return {
+                ...state,
+                ...action.payload,
+                isAuthenticated: true,
+                loading: false
+            }
+        case PASSWORD_CHANGE_FAIL:
+            return {
+                ...state,
+                loading: true,
                 error: action.payload
             }
         default:

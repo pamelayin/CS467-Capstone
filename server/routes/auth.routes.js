@@ -55,7 +55,6 @@ router.get('/', auth, async(req, res) => {
     try {
         const user = await Employer.findById(req.user.id).select('-password');
         res.status(200).json(user);
-        console.log(user);
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: 'Server Error' });
@@ -131,21 +130,17 @@ router.delete("/:id", auth, async (req, res) => {
 	}
 });
 
-router.patch('/:id', auth, [
-    check('password')
+router.patch('/', [
+    check('password', 'Please enter your current password')
         .not()
         .isEmpty()
-        .withMessage('Please enter your current password')
-        .isLength({ min: 8 })
-        .withMessage('Password of at least 8 characters is required')
         .exists(),
-    check('newPassword')
+    check('newPassword', 'Please enter a new password.')
         .not()
         .isEmpty()
-        .withMessage('Please enter a new password')
         .isLength({ min: 8 })
-        .withMessage('Password of at least 8 characters is required')
-], async(req, res) => {
+        .withMessage('New password must at least 8 characters.')
+], auth, async(req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -154,9 +149,7 @@ router.patch('/:id', auth, [
     let { password, newPassword } = req.body;
 
     try {
-        let user = await Employer.findById(req.params.id);
-
-        console.log(req.params.id)
+        const user = await Employer.findById(req.user.id).select('password');
 
         if(!user) {
             return res.status(400).json({ msg: 'Invalid Credentials' });
@@ -172,7 +165,7 @@ router.patch('/:id', auth, [
         newPassword = await bcrypt.hash(newPassword, salt);
 
         await Employer.findByIdAndUpdate(
-            req.params.id,
+            req.user.id,
             { $set: { 'password': newPassword }}, { new: true }
         );
 

@@ -72,7 +72,7 @@ const Login = () => {
                             </Form.Group>
                             <Button variant='warning btn-block' type='submit' style={{ 'marginTop': '2rem'}}>Login</Button>
                             <div style={{ 'marginTop': '0.5rem'}}>
-                                <Link to='/register' style={{ color: 'black' }}>Not Signed Up Yet?</Link>
+                                <Link to='/register' style={{ color: 'black' }} onClick={clearErrors}>Not Signed Up Yet?</Link>
                             </div>
                         </Form>
                     </Col>

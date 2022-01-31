@@ -119,7 +119,7 @@ const Register = props => {
                             </Form.Group>
                             <Button variant='warning btn-block' type='submit' style={{ 'marginTop': '2rem'}}>Sign Up</Button>
                             <div style={{ 'marginTop': '0.5rem'}}>
-                                <Link to='/login' style={{ color: 'black' }}>Already a Member?</Link>
+                                <Link to='/login' style={{ color: 'black' }} onClick={clearErrors}>Already a Member?</Link>
                             </div>
                         </Form>
                     </Col>
