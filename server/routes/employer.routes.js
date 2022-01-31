@@ -14,18 +14,18 @@ router.post('/',
         .not()
         .isEmpty()
         .withMessage('Please enter your first name')
-        .isAlphanumeric('en-US',{ignore: ' '})
+        .isAlpha('en-US',{ignore: ' '})
         .withMessage('Only characters are allowed for your first and last name')
-        .isLength({ min: 2, max: 30})
+        .isLength({ min: 1, max: 30})
         .withMessage('A min length of 2 characters and a max of 30 characters is required for your first and last name'),
     check('lastName', 'Appropriately enter your last name with a min of 2 characters and a max of 30')
         .not()
         .isEmpty()
         .withMessage('Please enter your last name')
-        .isAlphanumeric('en-US',{ignore: ' '})
+        .isAlpha('en-US',{ignore: ' '})
         .withMessage('Only characters are allowed for your first and last name')
-        .isLength({ min: 2, max: 30})
-        .withMessage('A min length of 2 characters and a max of 30 characters is required for your first and last name'),
+        .isLength({ min: 1, max: 30})
+        .withMessage('A min length of 1 character and a max of 30 characters is required for your first and last name'),
     check('organization', 'Please enter your company or organization name')
         .not()
         .isEmpty(),
@@ -46,48 +46,53 @@ router.post('/',
     
     const { firstName, lastName, organization, email, password } = req.body;
 
-    try {
+		try {
+			// Check if user is already registered
+			let user = await Employer.findOne({ email });
 
-        // Check if user is already registered
-        let user = await Employer.findOne({ email });
+			if (user) {
+				return res.status(400).json({ msg: "User already exists" });
+			}
 
-        if(user) {
-            return res.status(400).json({ msg: 'User already exists' });
-        }
+			// Create new user
+			user = new Employer({
+				firstName,
+				lastName,
+				organization,
+				email,
+				password,
+			});
 
-        // Create new user
-        user = new Employer({
-            firstName,
-            lastName,
-            organization,
-            email,
-            password
-        });
+			const salt = await bcrypt.genSalt(10);
+			user.password = await bcrypt.hash(password, salt);
 
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(password, salt);
+			await user.save();
 
-        await user.save();
+			const payload = {
+				user: {
+					id: user.id,
+				},
+			};
+			const jwtSecret = config.get("jwtSecret");
+			jwt.sign(
+				payload,
+				jwtSecret,
+				{
+					expiresIn: 360000,
+				},
+				(err, token) => {
+					if (err) throw err;
+					res.status(201).json({ token });
+				}
+			);
 
-        const payload = {
-            user: {
-                id: user.id
-            }
-        }
-        const jwtSecret = config.get('jwtSecret');
-        jwt.sign(payload, jwtSecret, {
-            expiresIn: 360000
-        }, (err, token) => {
-            if(err) throw err;
-            res.status(201).json({ token });
-        });
-
-        //For Testing Purposes only
-        // return res.status(201).json({ user });
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ msg: err.message });
-    }
-});
+			//For Testing Purposes only
+			// return res.status(201).json({ user });
+		} catch (err) {
+			console.error(err.message);
+			res.status(500).json({ msg: err.message });
+		}
+	}
+);
 
 module.exports = router;

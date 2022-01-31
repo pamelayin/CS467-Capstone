@@ -18,48 +18,48 @@ function ManageAccount() {
 						<Card.Body>
 							<Card.Title>
 								<Row className="mx-auto my-3">
-									<Col xs={12} md={4}>
+									<Col md={12} lg={4}>
 										Full Name
 									</Col>
-									<Col xs={12} md={8}>
+									<Col md={12} lg={8}>
 										{isAuthenticated && user && user.firstName}{" "}
 										{isAuthenticated && user && user.lastName}
 									</Col>
 								</Row>
 
 								<Row className="mx-auto my-3">
-									<Col xs={12} md={4}>
+									<Col md={12} lg={4}>
 										Organization
 									</Col>
-									<Col xs={12} md={8}>
+									<Col md={12} lg={8}>
 										{isAuthenticated && user && user.organization}
 									</Col>
 								</Row>
 								<Row className="mx-auto my-3">
-									<Col xs={12} md={4}>
+									<Col md={12} lg={4}>
 										Email
 									</Col>
-									<Col xs={12} md={8}>
+									<Col md={12} lg={8}>
 										{isAuthenticated && user && user.email}
 									</Col>
 								</Row>
 
 								<Row className="mx-auto my-3">
-									<Col xs={12} md={4}>
+									<Col md={12} lg={4}>
 										Password
 									</Col>
-									<Col xs={12} md={8}>
+									<Col md={12} lg={8}>
 										***********
 									</Col>
 								</Row>
 							</Card.Title>
 							<br />
-							<Card.Link className="mx-5 my-5" href="/editprofile">
+							<Card.Link className="mx-3" href="/editprofile">
 								Update Profile
 							</Card.Link>
 							<Card.Link
 								style={{ float: "right" }}
-								className="mx-5"
+								className="mx-3"
 								href="/editprofile"
 							>
 								Update Password
