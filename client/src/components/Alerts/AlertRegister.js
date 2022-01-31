@@ -1,16 +1,15 @@
 import React from 'react';
 
-import { useAuth, clearErrors } from '../../context/auth/AuthState';
+import { useAuth } from '../../context/auth/AuthState';
 
 import { Toast, Row, Col } from 'react-bootstrap';
 
-const AlertRegister = ({ user, alert, setShowAlert }) => {
-    const [authState, authDispatch] = useAuth();
+const AlertRegister = ({ password, confirmPassword, alert, setShowAlert }) => {
+    const [authState] = useAuth();
     const { error } = authState;
 
     const toggleSetAlert = () => {
         setShowAlert(!alert);
-        clearErrors(authDispatch);
     }
 
     return (
@@ -25,7 +24,7 @@ const AlertRegister = ({ user, alert, setShowAlert }) => {
                     />
                     <strong className="me-auto">Error</strong>
                     </Toast.Header>
-                    <Toast.Body>{user.password.toString() !== user.confirmPassword.toString() ? 'Passwords do not match' : error}</Toast.Body>
+                    <Toast.Body>{password.toString() !== confirmPassword.toString() ? 'Passwords do not match' : error}</Toast.Body>
                 </Toast>
             </Col>
         </Row>

@@ -79,6 +79,8 @@ export const registerUser = async(dispatch, formData) => {
             type: REGISTER_FAIL,
             payload: err.response.data.msg || err.response.data.errors[0].msg
         });
+
+        console.log(err.response);
     }
 };
 
@@ -137,28 +139,37 @@ export const changePassword = async(dispatch, formData) => {
 export const logout = (dispatch) => dispatch({ type: LOGOUT });
 
 //update user info
-export const updateUser = () => async (dispatch, formData, _id) => {
+export const updateUser = async (dispatch, formData) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
 
     try {
-		const res = await axios.put(AUTH_ROUTE + `/${_id}`, formData);
+		const res = await axios.put(AUTH_ROUTE, formData, config);
 
 		dispatch({
 			type: UPDATE_USER_SUCCESS,
 			payload: res.data,
         });
 
+        console.log(res.data);
+
 	} catch (err) {
 		dispatch({
 			type: UPDATE_USER_FAIL,
 			payload: err.response.data.msg || err.response.data.errors[0].msg
 		});
+
+        console.log(err.response);
 	}
 };
 
 //delete user
 export const deleteUser = async (dispatch, _id) => {
     try {
-		await axios.delete(AUTH_ROUTE + `/${_id}`);
+		await axios.delete(AUTH_ROUTE);
 
 		dispatch({
 			type: DELETE_USER,

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Container, Form, Button, Row, Col } from "react-bootstrap";
-import { deleteUser, updateUser, useAuth, clearErrors } from "../../context/auth/AuthState";
+import { deleteUser, updateUser, useAuth, clearErrors, logout } from "../../context/auth/AuthState";
 import AlertEditProfile from '../Alerts/AlertEditProfile';
 import AlertModal from "../Alerts/AlertModal";
-import { LOGOUT, UPDATE_USER_SUCCESS, UPDATE_USER_FAIL } from "../../context/types";
+import { Navigate } from "react-router-dom";
 
 function EditProfile() {
 	const [authState, authDispatch] = useAuth();
-	const { isAuthenticated, user, error} = authState;
+	const { isAuthenticated, user, error } = authState;
 	const [alert, setShowAlert] = useState(false);
 
 	const [userData, setUserData] = useState({
@@ -18,30 +18,18 @@ function EditProfile() {
 	});
 
 	useEffect(() => {
-		setUserData({
-			firstName: isAuthenticated && user && user.firstName,
-			lastName: isAuthenticated && user && user.lastName,
-			organization: isAuthenticated && user && user.organization,
-			email: isAuthenticated && user && user.email,
-		});
-	}, [isAuthenticated, user, authDispatch]);
-
-
-	useEffect(() => {
-		if (UPDATE_USER_FAIL) {
-			console.log(UPDATE_USER_FAIL.payload);
+		if (error) {
 			setShowAlert(true);
-			
 		}
-	}, [error, isAuthenticated, authDispatch]);
-	// const findErrors(() => {
-	// 	const alphaReg = /^[a-zA-Z]+$/;
-	// 	const { firstName, lastName, email, organization } = form
-	// 	const newErrors = {}
-	// 	if (!firstName || firstName === '') newErrors.firstName = 'First name cannot be blank.'
-	// 	else if (firstName.length < 1 || firstName.length > 30) newErrors.firstName = 'First name must be between 1 and 30 characters long.'
-	// 	else if (!alphaReg.test(firstName)) newErrors.firstName
-	// });
+		if(user) {
+			setUserData({
+				firstName: isAuthenticated && user && user.firstName,
+				lastName: isAuthenticated && user && user.lastName,
+				organization: isAuthenticated && user && user.organization,
+				email: isAuthenticated && user && user.email,
+			});
+		}
+	}, [isAuthenticated, user, authDispatch, error]);
 
 	const {
 		firstName,
@@ -53,29 +41,21 @@ function EditProfile() {
 
 	const onChange = (event) => {
 		setUserData({ ...userData, [event.target.name]: event.target.value });
-		console.log(userData)
 		setShowAlert(false);
 		clearErrors(authDispatch);
 	};
 	
 	const onSubmit = (event) => {
-
 		event.preventDefault();
-
-		updateUser(authDispatch, userData, user._id);
-		if (UPDATE_USER_FAIL) {
-			console.log(error);
-			setShowAlert(true);
-		} 
-
-		// if (UPDATE_USER) return <Navigate to="/account" />
-		
+		updateUser(authDispatch, userData);
+		setShowAlert(true);
 	};
+
 	// delete modal
-	const [type, setType] = useState();
+	const [type, setType] = useState('');
 	const [id, setId] = useState();
 	const [displayModal, setDisplayModal] = useState(false);
-	const [deleteMessage, setDeleteMessage] = useState();
+	const [deleteMessage, setDeleteMessage] = useState('');
 
 
 	// source: https://codemoto.io/coding/react/react-delete-confirmation-modal
@@ -97,7 +77,7 @@ function EditProfile() {
 	const deleteAccount = () => {
 		deleteUser(authDispatch, id);
 		clearErrors(authDispatch);
-		alert("Your account has been successfully deleted.");
+		// alert("Your account has been successfully deleted.");
 		// this would go to sign up page w/ errors and greeting as edit profile on top
 		// if (LOGOUT) return <Navigate to="/register" />;
 	};
@@ -107,15 +87,14 @@ function EditProfile() {
 		<Container className="w-75">
 			<h1 className="my-5">Edit Profile</h1>
 			<div className="w-75 p-3 my-3">
-				<AlertEditProfile user={userData} alert={alert} setShowAlert={setShowAlert} />
+				<AlertEditProfile alert={alert} setShowAlert={setShowAlert} />
 				<Form onSubmit={onSubmit}>
 					<Row className="mb-3">
 						<Form.Group as={Col} >
-							<Form.Label>First Name</Form.Label>
+							<Form.Label htmlFor="firstName">First Name</Form.Label>
 							<Form.Control 
-						
+								value={firstName}
 								type="text"
-								defaultValue={firstName}
 								placeholder="Enter First Name"
 								name="firstName"
 								onChange={onChange}
@@ -123,11 +102,11 @@ function EditProfile() {
 						</Form.Group>
 
 						<Form.Group as={Col} >
-							<Form.Label>Last Name</Form.Label>
+							<Form.Label htmlFor="lastName">Last Name</Form.Label>
 							<Form.Control
 								
 								type="text"
-								defaultValue={lastName}
+								value={lastName}
 								placeholder="Enter Last Name"
 								name="lastName"
 								onChange={onChange}
@@ -139,7 +118,7 @@ function EditProfile() {
 						<Form.Control
 						
 							type="email"
-							defaultValue={email}
+							value={email}
 							placeholder="Enter Email"
 							name="email"
 							onChange={onChange}
@@ -151,7 +130,7 @@ function EditProfile() {
 						<Form.Control
 					
 							type="text"
-							defaultValue={organization}
+							value={organization}
 							placeholder="Enter Organization"
 							name="organization"
 							onChange={onChange}

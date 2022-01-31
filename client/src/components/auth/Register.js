@@ -13,7 +13,12 @@ const Register = props => {
 
     useEffect(() => {
         if(error) {
-            setShowAlert(true)
+            setShowAlert(true);
+            // clearErrors(authDispatch);
+        }
+        if(error === 'No token, authorization denied') {
+            setShowAlert(false);
+            clearErrors(authDispatch);
         }
     }, [error, isAuthenticated, props.history, authDispatch]);
 
@@ -36,6 +41,8 @@ const Register = props => {
 
     const onSubmit = event => {
         event.preventDefault();
+        // if(error) setShowAlert(true);
+        // if(error === 'Password of at least 8 characters is required for registering') setShowAlert(true);
 
         registerUser(authDispatch, {
             firstName,
@@ -53,7 +60,7 @@ const Register = props => {
             <Container>
                 <RegLoginNav />
                 <Row className='mt-5'>
-                    <AlertRegister user={user} alert={alert} setShowAlert={setShowAlert} />
+                    <AlertRegister password={password} confirmPassword={confirmPassword} alert={alert} setShowAlert={setShowAlert} />
                     <Col lg={5} md={6} sm={12} className='p-5 m-auto shadow-sm rounded-lg'>
                         <h1 className='shadow-sm p-3 text-center rounded' style={{ color: 'black' }}>Sign Up</h1>
                         <Form onSubmit={onSubmit}>
@@ -119,7 +126,7 @@ const Register = props => {
                             </Form.Group>
                             <Button variant='warning btn-block' type='submit' style={{ 'marginTop': '2rem'}}>Sign Up</Button>
                             <div style={{ 'marginTop': '0.5rem'}}>
-                                <Link to='/login' style={{ color: 'black' }} onClick={clearErrors}>Already a Member?</Link>
+                                <Link to='/login' style={{ color: 'black' }}>Already a Member?</Link>
                             </div>
                         </Form>
                     </Col>

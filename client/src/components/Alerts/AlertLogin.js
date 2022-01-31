@@ -1,15 +1,10 @@
 import React from 'react';
 
-import { useAuth, clearErrors } from '../../context/auth/AuthState';
-
 import { Toast, Row, Col } from 'react-bootstrap';
 
 const AlertLogin = ({ user, alert, setShowAlert }) => {
-    const [authDispatch] = useAuth();
-
     const toggleSetAlert = () => {
         setShowAlert(!alert);
-        clearErrors(authDispatch);
     }
 
     return (

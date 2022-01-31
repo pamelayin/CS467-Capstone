@@ -12,6 +12,7 @@ const ChangePasswordModal = ({ showModal, setShowModal }) => {
     useEffect(() => {
         if(error) {
             setShowAlert(true);
+            // clearErrors(authDispatch);
         }
     }, [error, isAuthenticated, authDispatch, alert]);
 
@@ -37,8 +38,8 @@ const ChangePasswordModal = ({ showModal, setShowModal }) => {
 
     const onSubmit = event => {
         event.preventDefault();
-        if(error) {
-            setShowModal(true)
+        if(newPassword !== confirmNewPassword) {
+            setShowAlert(true);
         } else {
             changePassword(authDispatch, { password, newPassword });
             setUserInfo({
@@ -66,10 +67,10 @@ const ChangePasswordModal = ({ showModal, setShowModal }) => {
                     <Container>
                         <Row className='mt-5'>
                             <AlertChangePassword 
-                                newPassword={newPassword} 
-                                confirmNewPassword={confirmNewPassword} 
                                 alert={alert} 
-                                setShowAlert={setShowAlert} 
+                                setShowAlert={setShowAlert}
+                                newPassword={newPassword}
+                                confirmNewPassword={confirmNewPassword}
                             />
                             <Col lg={5} md={6} sm={12} className='p-5 m-auto shadow-sm rounded-lg'>
                                 <Form onSubmit={onSubmit}>

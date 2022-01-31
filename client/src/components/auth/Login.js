@@ -12,7 +12,7 @@ const Login = () => {
     const [alert, setShowAlert] = useState(false);
 
     useEffect(() => {
-        if(error) {
+        if(error === 'Invalid Credentials') {
             setShowAlert(true);
         }
     }, [error, isAuthenticated, authDispatch]);
@@ -32,11 +32,16 @@ const Login = () => {
 
     const onSubmit = event => {
         event.preventDefault();
-        
-        loginUser(authDispatch, {
-            email,
-            password
-        });
+
+        if(error) {
+            setShowAlert(true);
+            clearErrors(authDispatch);
+        } else {
+            loginUser(authDispatch, {
+                email,
+                password
+            });
+        }
     }
 
     if(isAuthenticated) return <Navigate to='/' />;
@@ -72,7 +77,7 @@ const Login = () => {
                             </Form.Group>
                             <Button variant='warning btn-block' type='submit' style={{ 'marginTop': '2rem'}}>Login</Button>
                             <div style={{ 'marginTop': '0.5rem'}}>
-                                <Link to='/register' style={{ color: 'black' }} onClick={clearErrors}>Not Signed Up Yet?</Link>
+                                <Link to='/register' style={{ color: 'black' }}>Not Signed Up Yet?</Link>
                             </div>
                         </Form>
                     </Col>

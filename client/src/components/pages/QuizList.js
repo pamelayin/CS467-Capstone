@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import moment from 'moment';
+// import moment from 'moment';
 import { Container, Table } from "react-bootstrap";
 import { useAuth } from "../../context/auth/AuthState";
 import { useQuizzes, getQuizzes, deleteQuiz } from "../../context/quiz/QuizState";
@@ -68,7 +68,7 @@ function QuizList() {
 								<td>{quiz.title}</td>
 								<td>{quiz.totalScore} points</td>
 								<td>{quiz.timeLimit} minutes</td>
-								<td>{moment(quiz.createdAt).format("YYYY-MM-DD HH:mm")}</td>
+								{/* <td>{moment(quiz.createdAt).format("YYYY-MM-DD HH:mm")}</td> */}
 								<td>
 									<a className="mx-3" href="/">
 										view/edit

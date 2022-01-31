@@ -37,7 +37,11 @@ router.post('/',
         .isLength({ min: 8 })
         .not()
         .isEmpty()
-        .withMessage('Please enter your password')
+        .withMessage('Please enter your password'),
+	check('confirmPassword')
+		.not()
+		.equals('password')
+		.withMessage('Passwords do not match!')
 , async(req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {

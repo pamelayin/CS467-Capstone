@@ -6,7 +6,7 @@ import ChangePasswordModal from "./ChangePasswordModal";
 
 function ManageAccount() {
     const [authState] = useAuth();
-	const { isAuthenticated, user, error } = authState;
+	const { isAuthenticated, user } = authState;
 
 	const [showModal, setShowModal] = useState(false);
 
