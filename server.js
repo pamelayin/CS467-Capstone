@@ -2,14 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const path = require('path');
-const bodyParser = require('body-parser');
 
 //init middleware
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(bodyParser.urlencoded({ extended: true }));
 
 //connect to DB
 connectDB();
