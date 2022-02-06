@@ -71,14 +71,12 @@ function QuizList() {
 								<td>{quiz.timeLimit} minutes</td>
 								<td>{moment(quiz.createdAt).format("YYYY-MM-DD HH:mm")}</td>
 								<td>
-									{/* <a className="mx-3" href="/quiz"> */}
 									<Link
 										to={`/quiz/${quiz._id}`}
 										className="mx-3"
 										onClick={() => setQuiz(quizDispatch, quiz)}
 									>
 										view/edit
-										{/* </a> */}
 									</Link>
 									<a href="#" onClick={() => showModal(quiz._id)}>
 										delete
