@@ -10,7 +10,7 @@ const QuizSchema = new mongoose.Schema({
         ref: 'Employer'
     },
     questions: [{
-        question_id: mongoose.Types.ObjectId,
+        // question_id: mongoose.Types.ObjectId,
         question: {
             type: String,
             required: true
@@ -20,10 +20,12 @@ const QuizSchema = new mongoose.Schema({
             type: Number,
             required: true
         },
-        answer: [String]
+        answer: [String],
+        questionType: String
+
     }],
     timeLimit: Number,
-    totalScore: Number
+    // totalScore: Number
 }, { timestamps: true });
 
 module.exports = mongoose.model('Quiz', QuizSchema);
