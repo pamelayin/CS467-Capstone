@@ -3,7 +3,9 @@ import axios from 'axios';
 import QuizContext from './QuizContext';
 import QuizReducer from './QuizReducer';
 import {
-	GET_QUIZZES,
+    GET_QUIZZES,
+    GET_QUIZ,
+    SET_QUIZ,
 	DELETE_QUIZ,
 	QUIZ_ERROR,
 	CLEAR_ERRORS,
@@ -37,6 +39,38 @@ export const getQuizzes = async(dispatch) => {
         dispatch({
             type: QUIZ_ERROR,
             payload: err.response.msg
+        });
+    }
+};
+
+//get quiz
+export const getQuiz = async (dispatch, quiz) => {
+    try {
+		const res = await axios.get(route + `/${quiz._id}`);
+
+		dispatch({
+			type: GET_QUIZ,
+			payload: res.data,
+        });
+
+	} catch (err) {
+		dispatch({
+			type: QUIZ_ERROR,
+			payload: err.response.data.msg || err.response.data.errors[0].msg,
+		});
+	}
+};
+
+export const setQuiz = async (dispatch, quiz) => {
+    try {
+        dispatch({
+            type: SET_QUIZ,
+            payload: quiz
+        });
+    } catch (err) {
+        dispatch({
+            type: QUIZ_ERROR,
+            payload: err.response.data.msg || err.response.data.errors[0].msg,
         });
     }
 };

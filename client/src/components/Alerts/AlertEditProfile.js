@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { useAuth, clearErrors } from '../../context/auth/AuthState';
 import { Toast, Row, Col } from 'react-bootstrap';
 
@@ -22,13 +21,14 @@ const AlertEditProfile = ({ alert, setShowAlert }) => {
                         className="rounded me-2"
                         alt=""
                     />
-                    <strong className="me-auto">Error</strong>
+                        {error ? (<strong className="me-auto">Error</strong>) : (<strong className="me-auto">Success</strong>)}
                     </Toast.Header>
                     {error ? (
                         <Toast.Body>{error}</Toast.Body>
                     ) : (
                         <Toast.Body>Your profile has successfully been updated! You will now be directed to your account page</Toast.Body>
-                    )}
+                    
+                    )}                    
                 </Toast>
             </Col>
         </Row>

@@ -8,9 +8,9 @@ import Login from "./components/auth/Login";
 import ManageAccount from "./components/pages/ManageAccount";
 import EditProfile from "./components/pages/EditProfile";
 import QuizList from "./components/pages/QuizList";
-import Dashboard from './components/layouts/Dashboard';
-import Navigation from './components/layouts/Navigation';
-import CreateQuiz from './components/pages/CreateQuiz';
+import Dashboard from "./components/layouts/Dashboard";
+import Navigation from "./components/layouts/Navigation";
+import CreateQuiz from "./components/pages/CreateQuiz";
 import QuizDashboard from "./components/pages/QuizDashboard";
 
 import AuthState from "./context/auth/AuthState";
@@ -51,15 +51,15 @@ function App() {
 											element={<PrivateRoute component={QuizList} />}
 										/>
 										<Route
-											path="contact"
+											path="/contact"
 											element={<PrivateRoute component={ContactUs} />}
 										/>
-										<Route 
-											path='/createquiz' 
-											element={<PrivateRoute component={CreateQuiz} />} 
+										<Route
+											path="/createquiz"
+											element={<PrivateRoute component={CreateQuiz} />}
 										/>
 										<Route
-											path="temp"
+											path="/quiz/:id"
 											element={<PrivateRoute component={QuizDashboard} />}
 										/>
 									</Route>

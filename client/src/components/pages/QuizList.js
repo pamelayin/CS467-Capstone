@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
-// import moment from 'moment';
+import moment from "moment";
 import { Container, Table } from "react-bootstrap";
 import { useAuth } from "../../context/auth/AuthState";
-import { useQuizzes, getQuizzes, deleteQuiz } from "../../context/quiz/QuizState";
+import {
+	useQuizzes,
+	getQuizzes,
+	setQuiz,
+	deleteQuiz,
+} from "../../context/quiz/QuizState";
 import AlertModal from "../Alerts/AlertModal";
+import { Link } from "react-router-dom";
 
 function QuizList() {
 	const [authState] = useAuth();
@@ -17,21 +23,14 @@ function QuizList() {
 	}, [quizDispatch]);
 
 	// delete modal
-	const [type, setType] = useState();
 	const [id, setId] = useState();
 	const [displayModal, setDisplayModal] = useState(false);
 	const [deleteMessage, setDeleteMessage] = useState();
 
 	// source: https://codemoto.io/coding/react/react-delete-confirmation-modal
-	const showModal = (type, id) => {
-		setType(type);
+	const showModal = (id) => {
 		setId(id);
-		if (type === "quiz") {
-			setDeleteMessage(
-				"Are you sure you want to delete this quiz?"
-			);
-		}
-
+		setDeleteMessage("Are you sure you want to delete this quiz?");
 		setDisplayModal(true);
 	};
 
@@ -40,7 +39,7 @@ function QuizList() {
 	};
 
 	const onDelete = () => {
-		deleteQuiz(quizDispatch, id);	
+		deleteQuiz(quizDispatch, id);
 		hideModal();
 	};
 
@@ -53,6 +52,7 @@ function QuizList() {
 						<th>#</th>
 						<th>Quiz ID</th>
 						<th>Quiz Title</th>
+						<th>Questions</th>
 						<th>Total Points</th>
 						<th>Time Limit</th>
 						<th>Created At</th>
@@ -66,14 +66,21 @@ function QuizList() {
 								<td>{index + 1}</td>
 								<td>{quiz._id}</td>
 								<td>{quiz.title}</td>
+								<td>{quiz.questions.length}</td>
 								<td>{quiz.totalScore} points</td>
 								<td>{quiz.timeLimit} minutes</td>
-								{/* <td>{moment(quiz.createdAt).format("YYYY-MM-DD HH:mm")}</td> */}
+								<td>{moment(quiz.createdAt).format("YYYY-MM-DD HH:mm")}</td>
 								<td>
-									<a className="mx-3" href="/">
+									{/* <a className="mx-3" href="/quiz"> */}
+									<Link
+										to={`/quiz/${quiz._id}`}
+										className="mx-3"
+										onClick={() => setQuiz(quizDispatch, quiz)}
+									>
 										view/edit
-									</a>
-									<a href="#" onClick={() => showModal("quiz", quiz._id)}>
+										{/* </a> */}
+									</Link>
+									<a href="#" onClick={() => showModal(quiz._id)}>
 										delete
 									</a>
 								</td>
@@ -83,7 +90,6 @@ function QuizList() {
 						showModal={displayModal}
 						confirmModal={onDelete}
 						hideModal={hideModal}
-						type={type}
 						id={id}
 						message={deleteMessage}
 					/>
