@@ -366,9 +366,7 @@ function CreateQuiz(props) {
 					questionObj["answerOptions"].push(notes[i][answer]);
 				}
 			}
-			var answerArray = []
-			answerArray.push(notes[i]["AnswerKey"].split(","));
-			questionObj["anwer"] = answerArray
+			questionObj["answer"] = notes[i]["AnswerKey"].split(",");
 			questionObj["points"] = 3;
 
 			questionArray.push(questionObj);

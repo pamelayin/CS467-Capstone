@@ -51,7 +51,7 @@ router.post(
 		check("questions.*.question").not().isEmpty(),
 		check("questions.*.answerOptions").isArray().not().isEmpty(),
 		check("questions.*.points").not().isEmpty(),
-		// check("questions.*.answer").isArray().not().isEmpty(),
+		check("questions.*.answer").isArray().not().isEmpty(),
 		check('timeLimit').not().isEmpty(),
 		// check('totalScore').not().isEmpty()
 	],
