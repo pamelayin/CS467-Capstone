@@ -4,6 +4,11 @@ import { Modal, Button } from "react-bootstrap";
 // source: https://codemoto.io/coding/react/react-delete-confirmation-modal
 const AlertModal = ({ showModal, hideModal, message, confirmModal, type, id }) => {
 
+	var showCloseButton = true;
+	if (type === 'reconfirm') {
+		showCloseButton = false;
+	}
+		
 	return (
 		<Modal
 			show={showModal}
@@ -18,10 +23,11 @@ const AlertModal = ({ showModal, hideModal, message, confirmModal, type, id }) =
 				{message}
 			</Modal.Body>
 			<Modal.Footer>
-				<Button variant="secondary" onClick={hideModal}>
+				{showCloseButton? (<Button variant="secondary" onClick={hideModal}>
 					Close
-				</Button>
-				<Button variant="danger" onClick={() => confirmModal(type, id)}>Confirm</Button>
+				</Button>) : (<> </>)}
+				
+				<Button variant="danger" onClick={() => confirmModal(id)}>Confirm</Button>
 			</Modal.Footer>
 		</Modal>
 

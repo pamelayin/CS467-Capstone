@@ -12,7 +12,7 @@ const Dashboard = () => {
 				</Container>
 				<div className="dash-card-row">
 					<div className="dash-card-cell">
-						<a href="#">Create Quiz</a>
+						<a href="/createquiz">Create Quiz</a>
 					</div>
 					<div className="dash-card-cell">
 						<a href="/quizlist">Past Quizzes</a>

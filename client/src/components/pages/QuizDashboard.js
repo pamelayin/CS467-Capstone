@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Container, Table, Row, Col } from "react-bootstrap";
 import { useAuth } from "../../context/auth/AuthState";
-import { useQuizzes, getQuiz, getQuizzes} from "../../context/quiz/QuizState";
+import { useQuizzes, getQuiz } from "../../context/quiz/QuizState";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
 
-function QuizList() {
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+function QuizDashboard() {
 	const [authState] = useAuth();
 	const { isAuthenticated, user } = authState;
 
@@ -11,23 +15,49 @@ function QuizList() {
 	const { quiz } = quizState;
 
 	useEffect(() => {
-		getQuizzes(quizDispatch);
-	}, [quizDispatch]);
+		getQuiz(quizDispatch, quiz);
+	}, []);
+
+	const completionData = {
+		labels: ["Not Completed", "Completed"],
+		datasets: [
+			{
+				label: "Quiz Completion Chart",
+				data: [15, 85],
+				backgroundColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)"],
+				hoverOffset: 20,
+				hoverBorderWidth: 2,
+				offset: 5,
+			},
+		],
+	};
 
 	return (
-		<Container>
-			<h1 className="my-5">Quiz Dashboard</h1>
+		<Container className="w-75">
+			<h1 className="my-5">Quiz Dashboard - {quiz.title} </h1>
 			<Row>
 				<Col>
 					<h4>Info</h4>
 					<Table responsive>
 						<tbody>
 							<tr>
-								<td>Total Quizzes Sent Out</td>
+								<td>Total Points</td>
+								<td>{quiz.totalScore}</td>
+							</tr>
+							<tr>
+								<td>Time Limit</td>
+								<td>{quiz.timeLimit}</td>
+							</tr>
+							<tr>
+								<td>Number of Questions</td>
+								<td>{quiz.questions.length}</td>
+							</tr>
+							<tr>
+								<td>Quizzes Sent Out</td>
 								<td>100</td>
 							</tr>
 							<tr>
-								<td>Total Quizzes Taken</td>
+								<td>Quizzes Taken</td>
 								<td>100</td>
 							</tr>
 						</tbody>
@@ -61,7 +91,8 @@ function QuizList() {
 			</Row>
 			<Row>
 				<Col>
-					<h4>Chart 1</h4>
+					<h4 style={{ textAlign: "center" }}>Quiz Completion Status</h4>
+					<Doughnut data={completionData} />
 					<br />
 					<br />
 				</Col>
@@ -114,4 +145,4 @@ function QuizList() {
 	);
 }
 
-export default QuizList;
+export default QuizDashboard;
