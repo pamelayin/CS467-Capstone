@@ -19,7 +19,7 @@ function Questions(props) {
     <div>
         <Container>
           <Row>
-            <Col sm={9}> <span style={{fontWeight:500, fontSize:25}}>{props.id + 1}.{props.Question}</span></Col>
+            <Col sm={9}> <span name='Question' style={{fontWeight:500, fontSize:25}}>{props.id + 1}.{props.Question}</span></Col>
             <Col sm={3} style = {{textAlign:"right"}}>
               <Button  variant="danger" size="sm" onClick={handleClick}>Delete</Button>{' '}
               <Button  variant="secondary" size="sm" onClick={handleEdit}>Edit</Button>

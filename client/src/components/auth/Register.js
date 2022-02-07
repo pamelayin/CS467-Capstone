@@ -14,7 +14,6 @@ const Register = props => {
     useEffect(() => {
         if(error) {
             setShowAlert(true);
-            // clearErrors(authDispatch);
         }
         if(error === 'No token, authorization denied') {
             setShowAlert(false);
@@ -51,6 +50,7 @@ const Register = props => {
             email,
             password
         });
+        clearErrors(authDispatch);
     }
 
     if(isAuthenticated) return <Navigate to='/' />;

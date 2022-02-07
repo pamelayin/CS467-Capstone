@@ -1,42 +1,44 @@
 import React, { useState } from "react";
-import Navigation from '../layouts/Navigation'
+// import Navigation from '../layouts/Navigation'
 import {Button, Modal, Form, FormControl, InputGroup, Container} from 'react-bootstrap'
 import DynamicForm from '../utils/DynamicForm'
 import Questions from '../utils/Questions'
 
+import { createQuiz, useQuizzes } from '../../context/quiz/QuizState';
+
 const ColoredLine = ({ color }) => (
-  <hr
-      style={{
-          color: color,
-          backgroundColor: color,
-          height: 1,
-      }}
-  />
+    <hr
+        style={{
+            color: color,
+            backgroundColor: color,
+            height: 1,
+        }}
+    />
 );
 
-function CreateQuiz (props){
-
+const CreateQuiz = () => {
+    const [quizDispatch] = useQuizzes();
     const [notes, setNotes] = useState([]);
 
     //Temp data to hold edit data
     const [tempNote, setTemp] = useState({
-      id:0,
-      Question: "",
-      Type:"NA",
-      Choice1: "",
-      Choice2: "",
-      Choice3: "",
-      Choice4: "",
-      Choice5: "",
-      Choice6: "",
-      AnswerKey:"",
-      Sel2Open: true,
-      Sel3Open: true,
-      Sel4Open: true,
-      Sel5Open: true,
-      Sel6Open: true,
-      AnsKeyOpen: true,
-      show: false,
+        id:0,
+        Question: "",
+        Type:"NA",
+        Choice1: "",
+        Choice2: "",
+        Choice3: "",
+        Choice4: "",
+        Choice5: "",
+        Choice6: "",
+        AnswerKey:"",
+        Sel2Open: true,
+        Sel3Open: true,
+        Sel4Open: true,
+        Sel5Open: true,
+        Sel6Open: true,
+        AnsKeyOpen: true,
+        show: false,
     });
 
     // function to sync the temp with actual data
@@ -274,8 +276,9 @@ function CreateQuiz (props){
     }
 
     function onSubmit(event){
-      console.log(notes)
-      event.preventDefault();
+        console.log(notes)
+        event.preventDefault();
+        createQuiz(quizDispatch, { notes });
     }
 
     return (
@@ -308,7 +311,7 @@ function CreateQuiz (props){
             {notes.length >= 1 &&
               <div style={{textAlign:'right'}}><Button variant="warning" onClick={onSubmit}>Complete</Button></div>
             }
-      </div>
+        </div>
     );
 }
 

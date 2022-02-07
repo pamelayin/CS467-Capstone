@@ -15,3 +15,4 @@ export const DELETE_USER = 'DELETE_USER';
 export const GET_QUIZZES = 'GET_QUIZZES';
 export const DELETE_QUIZ = 'DELETE_QUIZ';
 export const QUIZ_ERROR = "QUIZ_ERROR";
+export const CREATE_QUIZ = 'CREATE_QUIZ';

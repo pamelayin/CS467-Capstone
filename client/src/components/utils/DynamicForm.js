@@ -142,7 +142,7 @@ function DynamicForm(props) {
         <div style={{marginBottom: 'auto', width:'100%', height:'auto', display:'block'}}>
             <div style={{float:'left', width:'25%', }}>
                 <Container style={{marginBottom:15}}>
-                    <span class="mb-0 h3">Create your quiz</span>
+                    <span className="mb-0 h3">Create your quiz</span>
                 </Container>
                 <Container>
                     Please read this carefully and follow the instruction to create your quiz <br/><br/>

@@ -22,12 +22,12 @@ const AlertEditProfile = ({ alert, setShowAlert }) => {
                         className="rounded me-2"
                         alt=""
                     />
-                    <strong className="me-auto">Error</strong>
+                    <strong className="me-auto">{error ? 'Error' : 'Success'}</strong>
                     </Toast.Header>
                     {error ? (
                         <Toast.Body>{error}</Toast.Body>
                     ) : (
-                        <Toast.Body>Your profile has successfully been updated! You will now be directed to your account page</Toast.Body>
+                        <Toast.Body>Your profile has successfully been updated!</Toast.Body>
                     )}
                 </Toast>
             </Col>
