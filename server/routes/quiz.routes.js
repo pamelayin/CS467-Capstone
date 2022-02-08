@@ -47,7 +47,7 @@ router.post(
 	[
 		check("title", "Title of quiz is required").not().isEmpty(),
 		check("questions.*.question").not().isEmpty().withMessage('Must enter a question'),
-		check("questions.*.answerOptions").isLength({ min: 2 }).withMessage('Two answer options are needed to complete the question'),
+		// check("questions.*.answerOptions").isLength({ min: 2 }).withMessage('Two answer options are needed to complete the question'),
 		check("questions.*.points").not().isEmpty().isInt({ min: 1 }).withMessage('Minimum point value is 1 for the newly created question(s)'),
 		check("questions.*.answer").isArray().isLength({ min: 1 }).withMessage('At least one answer must be provided'),
 		check("timeLimit").not().isEmpty().isInt({ min: 1 }).withMessage('A value greater than zero must be given for the time limit'),

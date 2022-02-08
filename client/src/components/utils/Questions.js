@@ -42,7 +42,7 @@ function Questions(props) {
 					(props.Type === "MC" && <span>Multiple Choice</span>) ||
 					(props.Type === "FR" && <span>Free Response</span>)}
 	
-                {props.points && <p style={instyle}>Points: {props.points}</p>}
+                {props.points >= 0 && <p style={instyle}>Points: {props.points}</p>}
 				{props.Choice1 !== "" && <p style={instyle}>1. {props.Choice1}</p>}
 				{props.Choice2 !== "" && <p style={instyle}>2. {props.Choice2}</p>}
 				{props.Choice3 !== "" && <p style={instyle}>3. {props.Choice3}</p>}
