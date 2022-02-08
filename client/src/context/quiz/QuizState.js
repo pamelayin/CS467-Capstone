@@ -9,6 +9,7 @@ import {
 	DELETE_QUIZ,
 	QUIZ_ERROR,
 	CLEAR_ERRORS,
+    CREATE_QUIZ,
 } from "../types";
 
 // Creat custom hook to use auth context
@@ -34,6 +35,8 @@ export const getQuizzes = async(dispatch) => {
             type: GET_QUIZZES,
             payload: res.data
         });
+
+        console.log(res.data);
 
     } catch (err) {
         dispatch({
@@ -91,6 +94,24 @@ export const deleteQuiz = async (dispatch, _id) => {
 			payload: err.response.data.msg || err.response.data.errors[0].msg,
 		});
 	}
+};
+
+//create quiz
+export const createQuiz = async(dispatch, formData) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    try {
+        const res = await axios.post(route, formData, config);
+
+        dispatch({ type: CREATE_QUIZ, payload: res.data });
+
+    } catch (err) {
+        dispatch({ type: QUIZ_ERROR, payload: err.response.data.msg || err.response.data.errors[0].msg });
+    }
 };
 
 //Clear Errors

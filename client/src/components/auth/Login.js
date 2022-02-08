@@ -14,6 +14,7 @@ const Login = () => {
     useEffect(() => {
         if(error === 'Invalid Credentials') {
             setShowAlert(true);
+            clearErrors(authDispatch);
         }
     }, [error, isAuthenticated, authDispatch]);
 
@@ -35,7 +36,7 @@ const Login = () => {
 
         if(error) {
             setShowAlert(true);
-            clearErrors(authDispatch);
+            // clearErrors(authDispatch);
         } else {
             loginUser(authDispatch, {
                 email,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
 	Button,
 	Modal,
@@ -6,13 +6,14 @@ import {
 	FormControl,
 	InputGroup,
 	Container,
-	Row,
-	Col,
 } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+
 import Questions from "../utils/Questions";
-import { useAuth } from "../../context/auth/AuthState";
 import DynamicForm from "../utils/DynamicForm";
-import axios from "axios";
+import CreateQuizAlert from '../Alerts/CreateQuizAlert';
+
+import { clearErrors, createQuiz, useQuizzes } from '../../context/quiz/QuizState';
 
 const ColoredLine = ({ color }) => (
 	<hr
@@ -25,13 +26,30 @@ const ColoredLine = ({ color }) => (
 );
 
 function CreateQuiz(props) {
-	const [quiz, formatQuiz] = useState({});
 	const [notes, setNotes] = useState([]);
+    const [quizState, quizDispatch] = useQuizzes();
+    const [title, setTitle] = useState('');
+    const [timeLimit, setTimeLimit] = useState(0);
+    const [alert, setShowAlert] = useState(false);
+    
+    const navigate = useNavigate();
+    const { error } = quizState;
+
+    useEffect(() => {
+        if(error) {
+            setShowAlert(true);
+            setTimeout(() => {
+                clearErrors(quizDispatch);
+                setShowAlert(false);
+            }, 5000);
+        }
+    }, [error, quizDispatch]);
 
 	//Temp data to hold edit data
 	const [tempNote, setTemp] = useState({
 		id: 0,
 		Question: "",
+        points: 0,
 		Type: "NA",
 		Choice1: "",
 		Choice2: "",
@@ -52,6 +70,7 @@ function CreateQuiz(props) {
 	// function to sync the temp with actual data
 	function tempSync(passedNotes) {
 		tempNote.Question = passedNotes[tempNote.id].Question;
+        tempNote.points = passedNotes[tempNote.id].points;
 		tempNote.Type = passedNotes[tempNote.id].Type;
 		tempNote.Choice1 = passedNotes[tempNote.id].Choice1;
 		tempNote.Choice2 = passedNotes[tempNote.id].Choice2;
@@ -82,14 +101,23 @@ function CreateQuiz(props) {
 									type="text"
 									name="Question"
 									onChange={createTemp}
-									defaultValue={tempNote.Question}
+									value={tempNote.Question}
+								/>
+							</Form.Group>
+                            <Form.Group className="mb-3">
+								<Form.Label>Points:</Form.Label>
+								<Form.Control
+									type="text"
+									name="points"
+									onChange={createTemp}
+									value={tempNote.points}
 								/>
 							</Form.Group>
 							<Form.Group className="mb-3">
 								<Form.Select
 									name="Type"
 									onChange={createTemp}
-									defaultValue={tempNote.Type}
+									value={tempNote.Type}
 								>
 									<option value="NA" selected hidden>
 										Question type
@@ -105,7 +133,7 @@ function CreateQuiz(props) {
 									type="text"
 									name="Choice1"
 									onChange={createTemp}
-									defaultValue={tempNote.Choice1}
+									value={tempNote.Choice1}
 									placeholder="Selection 1"
 									disabled={tempNote.Sel1Open}
 								/>
@@ -113,7 +141,7 @@ function CreateQuiz(props) {
 									type="text"
 									name="Choice2"
 									onChange={createTemp}
-									defaultValue={tempNote.Choice2}
+									value={tempNote.Choice2}
 									placeholder="Selection 2"
 									disabled={tempNote.Sel2Open}
 								/>
@@ -121,7 +149,7 @@ function CreateQuiz(props) {
 									type="text"
 									name="Choice3"
 									onChange={createTemp}
-									defaultValue={tempNote.Choice3}
+									value={tempNote.Choice3}
 									placeholder="Selection 3"
 									disabled={tempNote.Sel3Open}
 								/>
@@ -129,7 +157,7 @@ function CreateQuiz(props) {
 									type="text"
 									name="Choice4"
 									onChange={createTemp}
-									defaultValue={tempNote.Choice4}
+									value={tempNote.Choice4}
 									placeholder="Selection 4"
 									disabled={tempNote.Sel4Open}
 								/>
@@ -137,7 +165,7 @@ function CreateQuiz(props) {
 									type="text"
 									name="Choice5"
 									onChange={createTemp}
-									defaultValue={tempNote.Choice5}
+									value={tempNote.Choice5}
 									placeholder="Selection 5"
 									disabled={tempNote.Sel5Open}
 								/>
@@ -145,7 +173,7 @@ function CreateQuiz(props) {
 									type="text"
 									name="Choice6"
 									onChange={createTemp}
-									defaultValue={tempNote.Choice6}
+									value={tempNote.Choice6}
 									placeholder="Selection 6"
 									disabled={tempNote.Sel6Open}
 								/>
@@ -155,7 +183,7 @@ function CreateQuiz(props) {
 									type="text"
 									name="AnswerKey"
 									onChange={createTemp}
-									defaultValue={tempNote.AnswerKey}
+									value={tempNote.AnswerKey}
 									placeholder="AnswerKey"
 									disabled={tempNote.AnsKeyOpen}
 								/>
@@ -239,6 +267,8 @@ function CreateQuiz(props) {
 				return (tempNote.Sel6Open = false);
 			case "AnswerKey":
 				return (tempNote.addOpen = false);
+            default:
+                return;
 		}
 	}
 
@@ -268,6 +298,7 @@ function CreateQuiz(props) {
 	function changeData(actualData) {
 		console.log(tempNote);
 		actualData.Question = tempNote.Question;
+        actualData.points = tempNote.points;
 		actualData.Type = tempNote.Type;
 		actualData.Choice1 = tempNote.Choice1;
 		actualData.Choice2 = tempNote.Choice2;
@@ -285,6 +316,7 @@ function CreateQuiz(props) {
 		setTemp({
 			id: 0,
 			Question: "",
+            points: 0,
 			Type: "NA",
 			Choice1: "",
 			Choice2: "",
@@ -332,6 +364,7 @@ function CreateQuiz(props) {
 		setTemp({
 			id: 0,
 			Question: "",
+            points: "",
 			Type: "NA",
 			Choice1: "",
 			Choice2: "",
@@ -367,7 +400,7 @@ function CreateQuiz(props) {
 				}
 			}
 			questionObj["answer"] = notes[i]["AnswerKey"].split(",");
-			questionObj["points"] = 3;
+			questionObj["points"] = notes[i]["points"];
 
 			questionArray.push(questionObj);
 		}
@@ -375,26 +408,62 @@ function CreateQuiz(props) {
 		return questionArray
 	}
 
+    function getTotalPoints(questions) {
+        let totalPoints = 0
+        for(var i = 0; i < questions.length; i++) {
+            totalPoints += parseInt(questions[i].points, 10);
+        }
+        return totalPoints;
+    }
+
 	function onSubmit(event) {
-		const questions = formatQuestions(notes);
-		console.log(questions);
 		event.preventDefault();
-		axios
-			.post("http://localhost:7000/api/quiz/", {
-				"title": "test title",
-				"timeLimit": 30,
-				"questions": questions,
-				
-			})
-			.then((res) => console.log("success, dictionary sent,", res))
-			.catch((err) => {
-				console.log(err.response);
-			});
+
+        if(!error) {
+            const questions = formatQuestions(notes);
+            const totalScore = getTotalPoints(questions);
+
+            createQuiz(quizDispatch, {
+                title,
+                questions,
+                timeLimit,
+                totalScore
+            });
+
+            setTitle('');
+            setTimeLimit(0);
+            setShowAlert(true);
+            setTimeout(() => {
+                clearErrors(quizDispatch);
+                navigate('/');
+            }, 4000);
+        }
 	}
 
 	return (
 		<div>
-			<DynamicForm onAdd={addNote} />
+            <CreateQuizAlert error={error} alert={alert} setShowAlert={setShowAlert} />
+            <Form onSubmit={onSubmit}>
+                <Form.Group className="mb-3">
+                    <Form.Label>Quiz Title:</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="title"
+                        onChange={e => {setTitle(e.target.value); clearErrors(quizDispatch); }}
+                        value={title}
+                    />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>Time Limit:</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="timeLimit"
+                        onChange={e => {setTimeLimit(e.target.value); clearErrors(quizDispatch); }}
+                        value={timeLimit}
+                    />
+                </Form.Group>
+            </Form>
+            <DynamicForm onAdd={addNote} />
 
 			<br />
 
@@ -405,6 +474,7 @@ function CreateQuiz(props) {
 							key={index}
 							id={index}
 							Question={noteItem.Question}
+                            points={noteItem.points}
 							Type={noteItem.Type}
 							Choice1={noteItem.Choice1}
 							Choice2={noteItem.Choice2}
@@ -423,7 +493,7 @@ function CreateQuiz(props) {
 			{notes.length >= 1 && getUpdateData(notes)}
 			{notes.length >= 1 && (
 				<div style={{ textAlign: "right" }}>
-					<Button variant="warning" onClick={onSubmit}>
+					<Button variant="warning" type="submit" onClick={onSubmit}>
 						Complete
 					</Button>
 				</div>

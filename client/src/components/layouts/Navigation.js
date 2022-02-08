@@ -1,6 +1,6 @@
 import React, { Fragment, useContext, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { useAuth, logout, clearErrors } from "../../context/auth/AuthState";
+import { useAuth, logout } from "../../context/auth/AuthState";
 
 import { Nav, Navbar, Container } from "react-bootstrap";
 import GreetContext from "../../context/NavText/GreetContext";

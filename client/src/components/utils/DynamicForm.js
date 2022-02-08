@@ -26,6 +26,7 @@ function DynamicForm(props) {
 	//question data need to be saved
 	const [note, setNote] = useState({
 		Question: "",
+        points: 0,
 		Type: "NA",
 		Choice1: "",
 		Choice2: "",
@@ -100,6 +101,8 @@ function DynamicForm(props) {
 				return (note.Sel6Open = false);
 			case "AnswerKey":
 				return (note.addOpen = false);
+            default:
+                return;
 		}
 	}
 
@@ -112,7 +115,6 @@ function DynamicForm(props) {
 				[name]: value,
 			};
 		});
-		//console.log(note.Question, note.Type)
 	}
 
 	function submitNote(event) {
@@ -120,6 +122,7 @@ function DynamicForm(props) {
 
 		setNote({
 			Question: "",
+            points: 0,
 			Type: "NA",
 			Choice1: "",
 			Choice2: "",
@@ -151,7 +154,7 @@ function DynamicForm(props) {
 			>
 				<div style={{ float: "left", width: "25%" }}>
 					<Container style={{ marginBottom: 15 }}>
-						<span class="mb-0 h3">Create your quiz</span>
+						<span className="mb-0 h3">Create your quiz</span>
 					</Container>
 					<Container>
 						Please read this carefully and follow the instruction to create your
@@ -180,6 +183,15 @@ function DynamicForm(props) {
 								name="Question"
 								onChange={handleChange}
 								value={note.Question}
+							/>
+						</Form.Group>
+                        <Form.Group className="mb-3">
+							<Form.Label>Points:</Form.Label>
+							<Form.Control
+								type="text"
+								name="points"
+								onChange={handleChange}
+								value={note.points}
 							/>
 						</Form.Group>
 						<Form.Group className="mb-3">

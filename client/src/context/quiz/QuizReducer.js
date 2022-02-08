@@ -5,7 +5,8 @@ import {
 	SET_QUIZ,
     DELETE_QUIZ,
     QUIZ_ERROR,
-    CLEAR_ERRORS
+    CLEAR_ERRORS,
+	CREATE_QUIZ
 } from '../types';
 
 const QuizReducer = (state, action) => {
@@ -40,7 +41,11 @@ const QuizReducer = (state, action) => {
 					...state,
 					error: action.payload,
 				};
-
+			case CREATE_QUIZ:
+				return {
+					...state,
+					quizzes: action.payload
+				}
 			default:
 				throw new Error(`Unsupported type of: ${action.type}`);
 		}

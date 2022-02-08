@@ -17,3 +17,4 @@ export const GET_QUIZ = 'GET_QUIZ';
 export const SET_QUIZ = 'SET_QUIZ';
 export const DELETE_QUIZ = 'DELETE_QUIZ';
 export const QUIZ_ERROR = "QUIZ_ERROR";
+export const CREATE_QUIZ = 'CREATE_QUIZ';

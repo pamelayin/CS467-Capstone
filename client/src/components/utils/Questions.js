@@ -1,21 +1,21 @@
-import React, { useState } from "react";
-import {Form, Button, Container, Row, Col} from 'react-bootstrap'
+import React from "react";
+import {Button, Container, Row, Col} from 'react-bootstrap'
 
 const instyle = {
-  marginBottom: '5px'
+    marginBottom: '5px'
 }
 
 function Questions(props) {
 
-  function handleClick() {
-    props.onDelete(props.id);
-  }
+    function handleClick() {
+        props.onDelete(props.id);
+    }
 
-  function handleEdit() {
-    props.onEdit(props.id)
-  }
+    function handleEdit() {
+        props.onEdit(props.id)
+    }
 
-  return (
+    return (
 		<div>
 			<Container>
 				<Row>
@@ -42,6 +42,7 @@ function Questions(props) {
 					(props.Type === "MC" && <span>Multiple Choice</span>) ||
 					(props.Type === "FR" && <span>Free Response</span>)}
 	
+                {props.points && <p style={instyle}>Points: {props.points}</p>}
 				{props.Choice1 !== "" && <p style={instyle}>1. {props.Choice1}</p>}
 				{props.Choice2 !== "" && <p style={instyle}>2. {props.Choice2}</p>}
 				{props.Choice3 !== "" && <p style={instyle}>3. {props.Choice3}</p>}

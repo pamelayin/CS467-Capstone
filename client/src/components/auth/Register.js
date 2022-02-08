@@ -14,7 +14,6 @@ const Register = props => {
     useEffect(() => {
         if(error) {
             setShowAlert(true);
-            // clearErrors(authDispatch);
         }
         if(error === 'No token, authorization denied') {
             setShowAlert(false);
@@ -44,13 +43,18 @@ const Register = props => {
         // if(error) setShowAlert(true);
         // if(error === 'Password of at least 8 characters is required for registering') setShowAlert(true);
 
-        registerUser(authDispatch, {
-            firstName,
-            lastName,
-            organization,
-            email,
-            password
-        });
+        if(password.toString() !== confirmPassword.toString()) {
+            setShowAlert(true);
+        } else {
+            registerUser(authDispatch, {
+                firstName,
+                lastName,
+                organization,
+                email,
+                password
+            });
+            clearErrors(authDispatch);
+        }
     }
 
     if(isAuthenticated) return <Navigate to='/' />;

@@ -9,9 +9,7 @@ const Quiz = require("../models/quiz.models");
 
 router.get("/", auth, async (req, res) => {
 	try {
-		const quizzes = await Quiz.find({ employer_id: req.user.id }).sort({
-			createdAt: -1,
-		});
+		const quizzes = await Quiz.find({ employer_id: req.user.id }).sort({ createdAt: -1 });
 		res.json(quizzes);
 		console.log(quizzes);
 	} catch (err) {
@@ -48,12 +46,11 @@ router.post(
 	auth,
 	[
 		check("title", "Title of quiz is required").not().isEmpty(),
-		check("questions.*.question").not().isEmpty(),
-		check("questions.*.answerOptions").isArray().not().isEmpty(),
-		check("questions.*.points").not().isEmpty(),
-		check("questions.*.answer").isArray().not().isEmpty(),
-		check("timeLimit").not().isEmpty(),
-		// check('totalScore').not().isEmpty()
+		check("questions.*.question").not().isEmpty().withMessage('Must enter a question'),
+		check("questions.*.answerOptions").isLength({ min: 2 }).withMessage('Two answer options are needed to complete the question'),
+		check("questions.*.points").not().isEmpty().isInt({ min: 1 }).withMessage('Minimum point value is 1 for the newly created question(s)'),
+		check("questions.*.answer").isArray().isLength({ min: 1 }).withMessage('At least one answer must be provided'),
+		check("timeLimit").not().isEmpty().isInt({ min: 1 }).withMessage('A value greater than zero must be given for the time limit'),
 	],
 	async (req, res) => {
 		console.log(req.body);
@@ -65,26 +62,12 @@ router.post(
 		const { title, questions, timeLimit, totalScore } = req.body;
 
 		try {
-			// let quesArr = [];
-
-			// for (q of questions) {
-			//     console.log(q)
-			// 	const questionsObj = {
-			// 		question: q.Question,
-			// 		answerOptions: q.answerOptions,
-			// 		// points: q.points,
-			// 		answer: q.AnswerKey,
-			// 	};
-			// 	console.log(questionsObj);
-			// 	quesArr.push(questionsObj);
-			// }
-
 			const newQuiz = new Quiz({
 				title,
 				questions,
 				timeLimit,
-				// totalScore,
-				employee_id: req.user.id,
+				totalScore,
+				employer_id: req.user.id,
 			});
 
 			const quiz = await newQuiz.save();
