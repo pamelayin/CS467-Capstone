@@ -31,7 +31,8 @@ function CreateQuiz(props) {
     const [title, setTitle] = useState('');
     const [timeLimit, setTimeLimit] = useState(0);
     const [alert, setShowAlert] = useState(false);
-    
+    const [completed, setCompleted] = useState(false);
+
     const navigate = useNavigate();
     const { error } = quizState;
 
@@ -422,28 +423,29 @@ function CreateQuiz(props) {
         if(!error) {
             const questions = formatQuestions(notes);
             const totalScore = getTotalPoints(questions);
-
+    
             createQuiz(quizDispatch, {
                 title,
                 questions,
                 timeLimit,
                 totalScore
             });
-
+    
             setTitle('');
             setTimeLimit(0);
             setShowAlert(true);
-            setTimeout(() => {
-                clearErrors(quizDispatch);
-                navigate('/');
-            }, 4000);
+            setCompleted(true);
         }
-	}
+        
+        if(completed) {
+            setTimeout(() => navigate('/'), 4000);
+        }
+    }
 
 	return (
 		<div>
             <CreateQuizAlert error={error} alert={alert} setShowAlert={setShowAlert} />
-            <Form onSubmit={onSubmit}>
+            <Form>
                 <Form.Group className="mb-3">
                     <Form.Label>Quiz Title:</Form.Label>
                     <Form.Control

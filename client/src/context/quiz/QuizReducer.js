@@ -44,7 +44,7 @@ const QuizReducer = (state, action) => {
 			case CREATE_QUIZ:
 				return {
 					...state,
-					quizzes: action.payload
+					quizzes: action.payload,
 				}
 			default:
 				throw new Error(`Unsupported type of: ${action.type}`);

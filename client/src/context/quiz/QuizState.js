@@ -121,7 +121,7 @@ const QuizState = props => {
     const initialState = {
         quiz: null,
         quizzes: null,
-        error: null
+        error: null,
     };
 
     const [state, dispatch] = useReducer(QuizReducer, initialState);
