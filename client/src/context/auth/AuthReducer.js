@@ -85,6 +85,7 @@ const authReducer = (state, action) => {
                     user: state.user._id === action.payload._id ? action.payload : state.user,
 					isAuthenticated: true,
 					loading: false,
+					updated: true
 				};
             case UPDATE_USER_FAIL:
 				return {

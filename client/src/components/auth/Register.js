@@ -43,14 +43,18 @@ const Register = props => {
         // if(error) setShowAlert(true);
         // if(error === 'Password of at least 8 characters is required for registering') setShowAlert(true);
 
-        registerUser(authDispatch, {
-            firstName,
-            lastName,
-            organization,
-            email,
-            password
-        });
-        clearErrors(authDispatch);
+        if(password.toString() !== confirmPassword.toString()) {
+            setShowAlert(true);
+        } else {
+            registerUser(authDispatch, {
+                firstName,
+                lastName,
+                organization,
+                email,
+                password
+            });
+            clearErrors(authDispatch);
+        }
     }
 
     if(isAuthenticated) return <Navigate to='/' />;

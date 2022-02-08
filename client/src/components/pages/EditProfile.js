@@ -1,27 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { Container, Form, Button, Row, Col } from "react-bootstrap";
-import { deleteUser, updateUser, useAuth, clearErrors, logout } from "../../context/auth/AuthState";
-import AlertEditProfile from '../Alerts/AlertEditProfile';
+import {
+	deleteUser,
+	updateUser,
+	useAuth,
+	clearErrors,
+} from "../../context/auth/AuthState";
+import AlertEditProfile from "../Alerts/AlertEditProfile";
 import AlertModal from "../Alerts/AlertModal";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function EditProfile() {
 	const [authState, authDispatch] = useAuth();
-	const { isAuthenticated, user, error } = authState;
+	const { isAuthenticated, user, error, updated } = authState;
 	const [alert, setShowAlert] = useState(false);
 
+	const navigate = useNavigate();
 	const [userData, setUserData] = useState({
-		firstName: '',
-		lastName: '',
-		organization: '',
-		email: ''
+		firstName: "",
+		lastName: "",
+		organization: "",
+		email: "",
 	});
 
 	useEffect(() => {
 		if (error) {
 			setShowAlert(true);
 		}
-		if(user) {
+		if (user) {
 			setUserData({
 				firstName: isAuthenticated && user && user.firstName,
 				lastName: isAuthenticated && user && user.lastName,
@@ -31,58 +37,64 @@ function EditProfile() {
 		}
 	}, [isAuthenticated, user, authDispatch, error]);
 
-	const {
-		firstName,
-		lastName,
-		organization,
-		email,
-	} = userData;
-
+	const { firstName, lastName, organization, email } = userData;
 
 	const onChange = (event) => {
 		setUserData({ ...userData, [event.target.name]: event.target.value });
 		setShowAlert(false);
 		clearErrors(authDispatch);
 	};
-	
+
 	const onSubmit = (event) => {
 		event.preventDefault();
 		updateUser(authDispatch, userData);
 		setShowAlert(true);
+
+		if (updated) {
+			setTimeout(() => navigate("/"), 5000);
+		}
 	};
 
 	// delete modal
-	const [type, setType] = useState('');
 	const [id, setId] = useState();
-	const [displayModal, setDisplayModal] = useState(false);
-	const [deleteMessage, setDeleteMessage] = useState('');
-
+	const [displayFirstModal, setDisplayFirstModal] = useState(false);
+	const [displaySecondModal, setDisplaySecondModal] = useState(false);
+	const [deleteMessage, setDeleteMessage] = useState("");
 
 	// source: https://codemoto.io/coding/react/react-delete-confirmation-modal
-	const showModal = (type, id) => {
-		setType(type);
+	const showFirstModal = (id) => {
 		setId(id);
-		if (type === "account") {
-			setDeleteMessage("Deleting your account will also delete all saved quizzes and analysis. " +
-				"Are you sure you want to delete your account?");
-		}
-
-		setDisplayModal(true);
-	}
-
-	const hideModal = () => {
-		setDisplayModal(false);
+		setDeleteMessage(
+			"Deleting your account will also delete all saved quizzes and stats. " +
+				"Are you sure you want to delete your account?"
+		);
+		setDisplayFirstModal(true);
 	};
 
+	const showSecondModal = (id) => {
+		setId(id);
+		setDeleteMessage(
+			"Your account is successfully deleted. You will be redirected to main page."
+		);
+		setDisplaySecondModal(true);
+	};
+	const hideFirstModal = () => {
+		setDisplayFirstModal(false);
+	};
+	const hideSecondModal = () => {
+		setDisplayFirstModal(false);
+	};
+
+	const deleteAccountConfirm = () => {
+		hideFirstModal();
+		showSecondModal();
+	};
 	const deleteAccount = () => {
+		hideSecondModal();
 		deleteUser(authDispatch, id);
 		clearErrors(authDispatch);
-		// alert("Your account has been successfully deleted.");
-		// this would go to sign up page w/ errors and greeting as edit profile on top
-		// if (LOGOUT) return <Navigate to="/register" />;
 	};
 
-	
 	return (
 		<Container className="w-75">
 			<h1 className="my-5">Edit Profile</h1>
@@ -90,9 +102,9 @@ function EditProfile() {
 				<AlertEditProfile alert={alert} setShowAlert={setShowAlert} />
 				<Form onSubmit={onSubmit}>
 					<Row className="mb-3">
-						<Form.Group as={Col} >
+						<Form.Group as={Col}>
 							<Form.Label htmlFor="firstName">First Name</Form.Label>
-							<Form.Control 
+							<Form.Control
 								value={firstName}
 								type="text"
 								placeholder="Enter First Name"
@@ -101,10 +113,9 @@ function EditProfile() {
 							/>
 						</Form.Group>
 
-						<Form.Group as={Col} >
+						<Form.Group as={Col}>
 							<Form.Label htmlFor="lastName">Last Name</Form.Label>
 							<Form.Control
-								
 								type="text"
 								value={lastName}
 								placeholder="Enter Last Name"
@@ -113,31 +124,27 @@ function EditProfile() {
 							/>
 						</Form.Group>
 					</Row>
-					<Form.Group className="mb-3" >
+					<Form.Group className="mb-3">
 						<Form.Label>Email</Form.Label>
 						<Form.Control
-						
 							type="email"
 							value={email}
 							placeholder="Enter Email"
 							name="email"
 							onChange={onChange}
 						/>
-			
 					</Form.Group>
-					<Form.Group className="mb-3" >
+					<Form.Group className="mb-3">
 						<Form.Label>Organization</Form.Label>
 						<Form.Control
-					
 							type="text"
 							value={organization}
 							placeholder="Enter Organization"
 							name="organization"
 							onChange={onChange}
 						/>
-			
 					</Form.Group>
-					<Form.Group as={Col} >
+					<Form.Group as={Col}>
 						<div className="text-center">
 							<Button className="mx-5 my-3" variant="primary" type="submit">
 								Submit
@@ -155,15 +162,21 @@ function EditProfile() {
 				<a
 					href="#"
 					style={{ color: "red" }}
-					onClick={() => showModal("account", user._id)}
+					onClick={() => showFirstModal(user._id)}
 				>
 					Delete My Account
 				</a>
 				<AlertModal
-					showModal={displayModal}
+					showModal={displayFirstModal}
+					confirmModal={deleteAccountConfirm}
+					hideModal={hideFirstModal}
+					id={id}
+					message={deleteMessage}
+				/>
+				<AlertModal
+					showModal={displaySecondModal}
 					confirmModal={deleteAccount}
-					hideModal={hideModal}
-					type={type}
+					type="reconfirm"
 					id={id}
 					message={deleteMessage}
 				/>

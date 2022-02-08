@@ -1,6 +1,8 @@
 /* eslint-disable import/no-anonymous-default-export */
 import {
-    GET_QUIZZES,
+	GET_QUIZZES,
+	GET_QUIZ,
+	SET_QUIZ,
     DELETE_QUIZ,
     QUIZ_ERROR,
     CLEAR_ERRORS,
@@ -19,12 +21,20 @@ const QuizReducer = (state, action) => {
 					...state,
 					quizzes: action.payload,
 				};
+			case GET_QUIZ:
+				return {
+					...state,
+					quiz: action.payload,
+				};
+			case SET_QUIZ:
+				return {
+					...state,
+					quiz: action.payload,
+				};
 			case DELETE_QUIZ:
 				return {
 					...state,
-					quizzes: state.quizzes.filter(
-						(quiz) => quiz._id !== action.payload
-					),
+					quizzes: state.quizzes.filter((quiz) => quiz._id !== action.payload),
 				};
 			case QUIZ_ERROR:
 				return {
