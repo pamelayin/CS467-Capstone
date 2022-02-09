@@ -6,6 +6,8 @@ import {
 	FormControl,
 	InputGroup,
 	Container,
+  Row,
+  Col,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
@@ -50,7 +52,7 @@ function CreateQuiz(props) {
 	const [tempNote, setTemp] = useState({
 		id: 0,
 		Question: "",
-        points: 0,
+    points: 0,
 		Type: "NA",
 		Choice1: "",
 		Choice2: "",
@@ -299,7 +301,7 @@ function CreateQuiz(props) {
 	function changeData(actualData) {
 		console.log(tempNote);
 		actualData.Question = tempNote.Question;
-        actualData.points = tempNote.points;
+    actualData.points = tempNote.points;
 		actualData.Type = tempNote.Type;
 		actualData.Choice1 = tempNote.Choice1;
 		actualData.Choice2 = tempNote.Choice2;
@@ -365,7 +367,7 @@ function CreateQuiz(props) {
 		setTemp({
 			id: 0,
 			Question: "",
-            points: "",
+      points: "",
 			Type: "NA",
 			Choice1: "",
 			Choice2: "",
@@ -438,36 +440,41 @@ function CreateQuiz(props) {
         }
         
         if(completed) {
-            setTimeout(() => navigate('/'), 4000);
+            setTimeout(() => navigate('/quizsend'), 4000);
         }
     }
 
 	return (
 		<div>
             <CreateQuizAlert error={error} alert={alert} setShowAlert={setShowAlert} />
-            <Form>
-                <Form.Group className="mb-3">
-                    <Form.Label>Quiz Title:</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="title"
-                        onChange={e => {setTitle(e.target.value); clearErrors(quizDispatch); }}
-                        value={title}
-                    />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Time Limit:</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="timeLimit"
-                        onChange={e => {setTimeLimit(e.target.value); clearErrors(quizDispatch); }}
-                        value={timeLimit}
-                    />
-                </Form.Group>
-            </Form>
             <DynamicForm onAdd={addNote} />
-
-			<br />
+            <br />
+              <Form>
+              <Row className="align-items-center">
+                <Col xs={9}>
+                  <Form.Control
+                    className="mb-2"
+                    name="title"
+                    onChange={e => {setTitle(e.target.value); clearErrors(quizDispatch); }}
+                    value={title}
+                    placeholder="Quiz Title"
+                  />
+                </Col>
+                <Col xs="auto">
+                  <InputGroup className="mb-2">
+                    <FormControl 
+                      name="timeLimit" 
+                      type="number" 
+                      inputmode="numeric" 
+                      value={timeLimit} 
+                      onChange={e => {setTimeLimit(e.target.value); clearErrors(quizDispatch); }} 
+                      placeholder="Quiz Duration" />
+                    <InputGroup.Text>Minutes</InputGroup.Text>
+                  </InputGroup>
+                </Col>
+              </Row>
+              </Form>
+              <ColoredLine color="grey" />
 
 			{notes.map((noteItem, index) => {
 				return (
