@@ -37,14 +37,14 @@ function CreateQuiz(props) {
     const { error } = quizState;
 
     useEffect(() => {
-        if(error) {
+        if(error && !completed) {
             setShowAlert(true);
             setTimeout(() => {
                 clearErrors(quizDispatch);
                 setShowAlert(false);
             }, 5000);
         }
-    }, [error, quizDispatch]);
+    }, [error, quizDispatch, completed]);
 
 	//Temp data to hold edit data
 	const [tempNote, setTemp] = useState({
@@ -391,7 +391,7 @@ function CreateQuiz(props) {
 			var questionObj = {};
 			// questionObj["question_id"] = toString(i);
 			questionObj["question"] = notes[i]["Question"];
-			questionObj["type"] = notes[i]["Type"];
+			questionObj["questionType"] = notes[i]["Type"];
 			// add answer options
 			questionObj["answerOptions"] = [];
 			for (var j = 1; j <= 6; j++) {
@@ -417,6 +417,26 @@ function CreateQuiz(props) {
         return totalPoints;
     }
 
+    const onTitleChange = e => {
+        setTitle(e.target.value);
+        if(title !== '' && timeLimit > 0) {
+            setCompleted(true);
+        } else {
+            setCompleted(false);
+        }
+        clearErrors(quizDispatch);
+    }
+
+    const onTimeLimitChange = e => {
+        setTimeLimit(e.target.value);
+        if(timeLimit > 0 && title !== '') {
+            setCompleted(true);
+        } else {
+            setCompleted(false);
+        }
+        clearErrors(quizDispatch);
+    }
+
 	function onSubmit(event) {
 		event.preventDefault();
 
@@ -434,8 +454,9 @@ function CreateQuiz(props) {
             setTitle('');
             setTimeLimit(0);
             setShowAlert(true);
-            setCompleted(true);
         }
+
+        console.log(completed)
         
         if(completed) {
             setTimeout(() => navigate('/'), 4000);
@@ -445,13 +466,13 @@ function CreateQuiz(props) {
 	return (
 		<div>
             <CreateQuizAlert error={error} alert={alert} setShowAlert={setShowAlert} />
-            <Form>
+            <Form onSubmit={onSubmit}>
                 <Form.Group className="mb-3">
                     <Form.Label>Quiz Title:</Form.Label>
                     <Form.Control
                         type="text"
                         name="title"
-                        onChange={e => {setTitle(e.target.value); clearErrors(quizDispatch); }}
+                        onChange={onTitleChange}
                         value={title}
                     />
                 </Form.Group>
@@ -460,7 +481,7 @@ function CreateQuiz(props) {
                     <Form.Control
                         type="text"
                         name="timeLimit"
-                        onChange={e => {setTimeLimit(e.target.value); clearErrors(quizDispatch); }}
+                        onChange={onTimeLimitChange}
                         value={timeLimit}
                     />
                 </Form.Group>
@@ -487,6 +508,7 @@ function CreateQuiz(props) {
 							AnswerKey={noteItem.AnswerKey}
 							onDelete={deleteNote}
 							onEdit={editNote}
+                            setCompleted={setCompleted}
 						/>
 						<ColoredLine color="grey" />
 					</div>

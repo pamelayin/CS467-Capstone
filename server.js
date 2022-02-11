@@ -16,6 +16,7 @@ connectDB();
 app.use('/api/auth', require('./server/routes/auth.routes'));
 app.use('/api/employer', require('./server/routes/employer.routes'));
 app.use('/api/quiz', require('./server/routes/quiz.routes'));
+app.use('/api/respondent', require('./server/routes/respondent.routes'));
 
 if(process.env.NODE_ENV === 'production') {
     app.use(express.static('client/build'));
