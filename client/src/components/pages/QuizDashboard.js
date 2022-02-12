@@ -16,7 +16,7 @@ function QuizDashboard() {
 
 	useEffect(() => {
 		getQuiz(quizDispatch, quiz);
-	}, []);
+	}, [quiz, quizDispatch]);
 
 	const completionData = {
 		labels: ["Not Completed", "Completed"],

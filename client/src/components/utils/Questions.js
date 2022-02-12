@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {Button, Container, Row, Col} from 'react-bootstrap'
 
 const instyle = {
@@ -6,6 +6,12 @@ const instyle = {
 }
 
 function Questions(props) {
+
+    useEffect(() => {
+        if(props.points <= 0) {
+            props.setCompleted(false);
+        }
+    }, [props]);
 
     function handleClick() {
         props.onDelete(props.id);

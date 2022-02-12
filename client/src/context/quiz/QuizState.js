@@ -12,7 +12,7 @@ import {
     CREATE_QUIZ,
 } from "../types";
 
-// Creat custom hook to use auth context
+// Creat custom hook to use quiz context
 export const useQuizzes = () => {
     const { state, dispatch } = useContext(QuizContext);
     return [state, dispatch];
@@ -49,7 +49,7 @@ export const getQuizzes = async(dispatch) => {
 //get quiz
 export const getQuiz = async (dispatch, quiz) => {
     try {
-		const res = await axios.get(route + `/${quiz._id}`);
+		const res = await axios.get(route + `/${quiz}`);
 
 		dispatch({
 			type: GET_QUIZ,
