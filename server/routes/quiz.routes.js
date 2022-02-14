@@ -33,6 +33,11 @@ router.delete("/:id", auth, async (req, res) => {
 	try {
 		await Quiz.findByIdAndDelete(req.params.id);
 
+        await Employer.findByIdAndUpdate(
+            req.user.id, 
+            { $pull: { 'quizzes': req.params.id } }, { new: true }
+        );
+
 		res.json({ msg: "Quiz has been deleted." });
 	} catch (err) {
 		console.error(err.message);
