@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Radium,{StyleRoot} from 'radium';
 
 import Register from "./components/auth/Register";
 import PrivateRoute from "./components/routes/PrivateRoute";
@@ -11,6 +12,7 @@ import QuizList from "./components/pages/QuizList";
 import Dashboard from "./components/layouts/Dashboard";
 import Navigation from "./components/layouts/Navigation";
 import CreateQuiz from "./components/pages/CreateQuiz";
+import QuizSend from "./components/pages/QuizSend";
 import QuizDashboard from "./components/pages/QuizDashboard";
 import RespondentInfo from "./components/pages/RespondentInfo";
 import RespondentQuiz from "./components/pages/RespondentQuiz";
@@ -19,6 +21,8 @@ import AuthState from "./context/auth/AuthState";
 import QuizState from "./context/quiz/QuizState";
 import GreetContext from "./context/NavText/GreetContext";
 import RespondentState from "./context/respondent/RespondentState";
+
+
 
 
 function App() {
@@ -31,6 +35,7 @@ function App() {
                     <RespondentState>
                         <BrowserRouter>
                             <Fragment>
+								<StyleRoot>
                                 <div className="container">
                                     <Routes>
                                         <Route path="/register" element={<Register />} />
@@ -72,6 +77,7 @@ function App() {
                                         </Route>
                                     </Routes>
                                 </div>
+							</StyleRoot>
                             </Fragment>
                         </BrowserRouter>
                     </RespondentState>

@@ -1,6 +1,26 @@
 import React from 'react'
 import {Container, Table} from 'react-bootstrap';
 import{NavLink as RouterNavLink, Link } from 'react-router-dom';
+import Radium,{styleRoot} from "radium";
+
+const reSizeDash = {
+	float: "left",
+    width: "30%",
+	height: "130px",
+	margin: "1.5%",
+	padding: "4% 0 0 0",
+	border: "1px solid rgb(182, 182, 182)",
+	borderRadius: "7px",
+    '@media (max-width: 1410px)': {
+        width: "47%",
+		padding: "5% 0 0 0",
+      },
+
+	'@media (max-width: 900px)': {
+    	width: "100%",
+		padding: "7% 0 0 0",
+      },
+}
 
 const Dashboard = () => {
     const currentYear = new Date().getFullYear();
@@ -11,25 +31,25 @@ const Dashboard = () => {
 					<span className="mb-0 h3">Dashboard / Access your services</span>
 				</Container>
 				<div className="dash-card-row">
-					<div className="dash-card-cell">
-						<a href="/createquiz">Create Quiz</a>
+					<div className="dash-card-cell-a">
+						<a href="/createquiz" style={reSizeDash}>Create Quiz</a>
 					</div>
-					<div className="dash-card-cell">
-						<a href="/quizlist">Past Quizzes</a>
+					<div className="dash-card-cell-b" >
+						<a href="/quizlist" style={reSizeDash}>Past Quizzes</a>
 					</div>
-					<div className="dash-card-cell">
-						<a href="#"> Mailing List (TBD)</a>
+					<div className="dash-card-cell-a" >
+						<a href="#" style={reSizeDash}> Mailing List (TBD)</a>
 					</div>
 				</div>
 				<div className="dash-card-row">
-					<div className="dash-card-cell">
-						<a href="/account"> Manage Account</a>
+					<div className="dash-card-cell-b" >
+						<a href="/account" style={reSizeDash}> Manage Account</a>
 					</div>
-					<div className="dash-card-cell">
-						<a href="/contact"> Customer Service</a>
+					<div className="dash-card-cell-a">
+						<a href="/contact" style={reSizeDash}> Customer Service</a>
 					</div>
-					<div className="dash-card-cell">
-						<a href="#">
+					<div className="dash-card-cell-b">
+						<a href="#" style={reSizeDash}>
 							{" "}
 							<img
 								src={require("../../assets/logo_small_two.png")}
@@ -45,4 +65,4 @@ const Dashboard = () => {
 		);
 }
 
-export default Dashboard
+export default Radium(Dashboard)

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Radium from "radium";
 import {
 	Form,
 	Button,
@@ -6,6 +7,22 @@ import {
 	InputGroup,
 	FormControl,
 } from "react-bootstrap";
+
+const resizeLeft = {
+    float: "left",
+    width: "25%",
+    '@media (max-width: 1410px)': {
+        width: "100%",
+      },
+}
+
+const resizeRight = {
+    float: "right",
+    width: "75%",
+    '@media (max-width: 1410px)': {
+        width: "100%",
+      },
+}
 
 const ColoredLine = ({ color }) => (
 	<hr
@@ -58,7 +75,7 @@ function DynamicForm(props) {
 					note.Choice5 = "";
 					note.Choice6 = "";
 					note.AnswerKey = "";
-					note.AnsKeyOpen = true;
+					note.AnsKeyOpen = false;
 					note.Sel1Open = true;
 					note.Sel2Open = true;
 					note.Sel3Open = true;
@@ -144,15 +161,8 @@ function DynamicForm(props) {
 
 	return (
 		<div>
-			<div
-				style={{
-					marginBottom: "auto",
-					width: "100%",
-					height: "auto",
-					display: "block",
-				}}
-			>
-				<div style={{ float: "left", width: "25%" }}>
+			<div>
+				<div style={resizeLeft}>
 					<Container style={{ marginBottom: 15 }}>
 						<span className="mb-0 h3">Create your quiz</span>
 					</Container>
@@ -174,7 +184,7 @@ function DynamicForm(props) {
 						finalized your review, please click "Complete"
 					</Container>
 				</div>
-				<div style={{ float: "left", width: '75%' }}>
+				<div style={resizeRight}>
 					<Form>
 						<Form.Group className="mb-3">
 							<Form.Label>Question:</Form.Label>
@@ -185,30 +195,30 @@ function DynamicForm(props) {
 								value={note.Question}
 							/>
 						</Form.Group>
-                        <Form.Group className="mb-3">
-							<Form.Label>Points:</Form.Label>
-							<Form.Control
-								type="text"
-								name="points"
-								onChange={handleChange}
-								value={note.points}
-							/>
-						</Form.Group>
-						<Form.Group className="mb-3">
-							<Form.Select
-								name="Type"
-								onChange={handleChange}
-								value={note.Type}
-							>
-								<option value="NA" selected hidden>
-									Question type
-								</option>
-								<option value="TF">True or False</option>
-								<option value="SC">Single Choice</option>
-								<option value="MC">Multiple Choice</option>
-								<option value="FA">Free Response</option>
-							</Form.Select>
-						</Form.Group>
+                        <InputGroup className="mb-3">
+                                <InputGroup.Text>Points</InputGroup.Text>
+                                <Form.Control
+                                    type="number" 
+                                    inputmode="numeric" 
+                                    name="points"
+                                    onChange={handleChange}
+                                    value={note.points}
+                                />
+                                <InputGroup.Text>Type</InputGroup.Text>
+                                <Form.Select
+                                    name="Type"
+                                    onChange={handleChange}
+                                    value={note.Type}
+                                >
+                                    <option value="NA" selected hidden>
+                                        Select here
+                                    </option>
+                                    <option value="TF">True or False</option>
+                                    <option value="SC">Single Choice</option>
+                                    <option value="MC">Multiple Choice</option>
+                                    <option value="FA">Free Response</option>
+                                </Form.Select>
+                        </InputGroup>
 						<Form.Group>
 							<Form.Control
 								type="text"
@@ -301,4 +311,4 @@ function DynamicForm(props) {
 	);
 }
 
-export default DynamicForm;
+export default Radium(DynamicForm);

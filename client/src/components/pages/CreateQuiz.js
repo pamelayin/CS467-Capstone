@@ -6,6 +6,8 @@ import {
 	FormControl,
 	InputGroup,
 	Container,
+  Row,
+  Col,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
@@ -50,7 +52,7 @@ function CreateQuiz(props) {
 	const [tempNote, setTemp] = useState({
 		id: 0,
 		Question: "",
-        points: 0,
+    points: 0,
 		Type: "NA",
 		Choice1: "",
 		Choice2: "",
@@ -126,7 +128,7 @@ function CreateQuiz(props) {
 									<option value="TF">True or False</option>
 									<option value="SC">Single Choice</option>
 									<option value="MC">Multiple Choice</option>
-									<option value="FR">Free Response</option>
+									<option value="FA">Free Response</option>
 								</Form.Select>
 							</Form.Group>
 							<Form.Group>
@@ -215,7 +217,7 @@ function CreateQuiz(props) {
 	function handleInput(name, value) {
 		switch (name) {
 			case "Type":
-				if (value === "FR") {
+				if (value === "FA") {
 					tempNote.addOpen = false;
 					tempNote.Choice1 = "";
 					tempNote.Choice2 = "";
@@ -224,7 +226,7 @@ function CreateQuiz(props) {
 					tempNote.Choice5 = "";
 					tempNote.Choice6 = "";
 					tempNote.AnswerKey = "";
-					tempNote.AnsKeyOpen = true;
+					tempNote.AnsKeyOpen = false;
 					tempNote.Sel1Open = true;
 					tempNote.Sel2Open = true;
 					tempNote.Sel3Open = true;
@@ -299,7 +301,7 @@ function CreateQuiz(props) {
 	function changeData(actualData) {
 		console.log(tempNote);
 		actualData.Question = tempNote.Question;
-        actualData.points = tempNote.points;
+    actualData.points = tempNote.points;
 		actualData.Type = tempNote.Type;
 		actualData.Choice1 = tempNote.Choice1;
 		actualData.Choice2 = tempNote.Choice2;
@@ -365,7 +367,7 @@ function CreateQuiz(props) {
 		setTemp({
 			id: 0,
 			Question: "",
-            points: "",
+      points: "",
 			Type: "NA",
 			Choice1: "",
 			Choice2: "",
@@ -459,36 +461,41 @@ function CreateQuiz(props) {
         console.log(completed)
         
         if(completed) {
-            setTimeout(() => navigate('/'), 4000);
+            setTimeout(() => navigate('/quizsend'), 4000);
         }
     }
 
 	return (
 		<div>
             <CreateQuizAlert error={error} alert={alert} setShowAlert={setShowAlert} />
-            <Form onSubmit={onSubmit}>
-                <Form.Group className="mb-3">
-                    <Form.Label>Quiz Title:</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="title"
-                        onChange={onTitleChange}
-                        value={title}
-                    />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Time Limit:</Form.Label>
-                    <Form.Control
-                        type="text"
-                        name="timeLimit"
-                        onChange={onTimeLimitChange}
-                        value={timeLimit}
-                    />
-                </Form.Group>
-            </Form>
             <DynamicForm onAdd={addNote} />
-
-			<br />
+            <br />
+            <Form onSubmit={onSubmit}>
+              <Row className="align-items-center">
+                <Col xs={9}>
+                  <Form.Control
+                    className="mb-2"
+					type="text"
+					name="title"
+                    onChange={onTitleChange}
+                    value={title}
+                    placeholder="Quiz Title"
+                  />
+                </Col>
+                <Col xs="auto">
+                  <InputGroup className="mb-2">
+                    <FormControl 
+                    type="text"
+					name="timeLimit" 
+                      value={timeLimit} 
+                      onChange={onTimeLimitChange} 
+                      placeholder="Quiz Duration" />
+                    <InputGroup.Text>Minutes</InputGroup.Text>
+                  </InputGroup>
+                </Col>
+              </Row>
+              </Form>
+              <ColoredLine color="grey" />
 
 			{notes.map((noteItem, index) => {
 				return (

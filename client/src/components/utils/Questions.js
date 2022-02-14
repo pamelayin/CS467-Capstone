@@ -29,7 +29,8 @@ function Questions(props) {
 						{" "}
 						<span style={{ fontWeight: 500, fontSize: 25 }}>
 							{props.id + 1}.{props.Question}
-						</span>
+              {props.points >= 0 && <span style={{fontSize: 18 }}> [ {props.points}pts ]</span>}
+            </span>
 					</Col>
 					<Col sm={3} style={{ textAlign: "right" }}>
 						<Button variant="danger" size="sm" onClick={handleClick}>
@@ -46,9 +47,7 @@ function Questions(props) {
 				{(props.Type === "TF" && <span>True or False</span>) ||
 					(props.Type === "SC" && <span>Single Choice</span>) ||
 					(props.Type === "MC" && <span>Multiple Choice</span>) ||
-					(props.Type === "FR" && <span>Free Response</span>)}
-	
-                {props.points >= 0 && <p style={instyle}>Points: {props.points}</p>}
+					(props.Type === "FR" && <span>Free Response</span>)}	
 				{props.Choice1 !== "" && <p style={instyle}>1. {props.Choice1}</p>}
 				{props.Choice2 !== "" && <p style={instyle}>2. {props.Choice2}</p>}
 				{props.Choice3 !== "" && <p style={instyle}>3. {props.Choice3}</p>}
