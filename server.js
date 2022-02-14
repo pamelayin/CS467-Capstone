@@ -4,8 +4,6 @@ const connectDB = require('./config/db');
 const path = require('path');
 const res = require('express/lib/response');
 
-const nodemailer = require('nodemailer');
-
 const { getMaxListeners } = require('process');
 
 //init middleware
@@ -31,36 +29,7 @@ if(process.env.NODE_ENV === 'production') {
     );
 }
 
-app.post('/send', (req, res)=>{
-    console.log(req.body)
 
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth:{
-            user: "quizbanana467@gmail.com",
-            pass: "Capston467"
-        }
-    })
-
-    const mailOptions = {
-        from: "quizbanana467@gmail.com",
-        to: req.body.email,
-        subject: `${req.body.name}`,
-        text: req.body.message
-
-    }
-
-    transporter.sendMail(mailOptions, (error, info) =>{
-        if(error){
-            console.log(error);
-            res.json({msg: 'fail'});
-        }else{
-            console.log("good")
-            res.json({msg: 'success'});
-
-        }
-    })
-})
 
 //init server connection
 const PORT = process.env.PORT || 7000;

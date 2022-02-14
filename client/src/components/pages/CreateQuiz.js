@@ -128,7 +128,7 @@ function CreateQuiz(props) {
 									<option value="TF">True or False</option>
 									<option value="SC">Single Choice</option>
 									<option value="MC">Multiple Choice</option>
-									<option value="FR">Free Response</option>
+									<option value="FA">Free Response</option>
 								</Form.Select>
 							</Form.Group>
 							<Form.Group>
@@ -217,7 +217,7 @@ function CreateQuiz(props) {
 	function handleInput(name, value) {
 		switch (name) {
 			case "Type":
-				if (value === "FR") {
+				if (value === "FA") {
 					tempNote.addOpen = false;
 					tempNote.Choice1 = "";
 					tempNote.Choice2 = "";
@@ -226,7 +226,7 @@ function CreateQuiz(props) {
 					tempNote.Choice5 = "";
 					tempNote.Choice6 = "";
 					tempNote.AnswerKey = "";
-					tempNote.AnsKeyOpen = true;
+					tempNote.AnsKeyOpen = false;
 					tempNote.Sel1Open = true;
 					tempNote.Sel2Open = true;
 					tempNote.Sel3Open = true;

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {Nav, Tab, Row, Col, Container, Form, Button} from 'react-bootstrap';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import validator from 'validator'
 
 
 function QuizSend(){
@@ -33,22 +34,27 @@ function QuizSend(){
             alert("Please enter at least one email address");
         } else{
             for(let i = 0; i < emailList.length; i++){              //axios to send data to backend to send out emails
-                axios({
-                    method: "POST",
-                    url:"http://localhost:7000/send",               //we might need to change url for actual url for backend
-                    data: {
-                        name: emailSubject,                         //set data
-                        email: emailList[i],
-                        messageHtml: emailContext
-                    }
-                }).then((response)=>{                               // sending result
-                    if (response.data.msg === 'success'){           
-                        //alert("Email sent, awesome!");            //since looping, it is annoying 
-                        
-                    }else if(response.data.msg === 'fail'){
-                        alert(`Oops, something went wrong with ${emailList[i]}.`)
-                    }
-                })
+                if(validator.isEmail(emailList[i])){                //if the email is true, send out email
+                    axios({
+                        method: "POST",
+                        url:"http://localhost:7000/send",               //we might need to change url for actual url for backend
+                        data: {
+                            name: emailSubject,                         //set data
+                            email: emailList[i],
+                            messageHtml: emailContext
+                        }
+                    }).then((response)=>{                               // sending result
+                        if (response.data.msg === 'success'){           
+                            //alert("Email sent, awesome!");            //since looping, it is annoying 
+                            
+                        }else if(response.data.msg === 'fail'){
+                            alert(`Oops, something went wrong with ${emailList[i]}.`)
+                        }
+                    })
+                }
+                else{
+                    //do nothing
+                }
             }
         }
     }

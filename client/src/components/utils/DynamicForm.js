@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Radium,{styleRoot} from "radium";
+import Radium from "radium";
 import {
 	Form,
 	Button,
@@ -75,7 +75,7 @@ function DynamicForm(props) {
 					note.Choice5 = "";
 					note.Choice6 = "";
 					note.AnswerKey = "";
-					note.AnsKeyOpen = true;
+					note.AnsKeyOpen = false;
 					note.Sel1Open = true;
 					note.Sel2Open = true;
 					note.Sel3Open = true;
