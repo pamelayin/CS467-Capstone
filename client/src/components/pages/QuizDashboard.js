@@ -1,22 +1,34 @@
 import React, { useState, useEffect } from "react";
-import { Container, Table, Row, Col } from "react-bootstrap";
+import { Container, Table, Row, Col, Button } from "react-bootstrap";
 import { useAuth } from "../../context/auth/AuthState";
 import { useQuizzes, getQuiz } from "../../context/quiz/QuizState";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import { useParams } from "react-router-dom";
+import QuizModal from "../layouts/QuizModal";
+import {
+	useRespondent,
+	getRespondentQuiz,
+	getRespondents,
+} from "../../context/respondent/RespondentState";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 function QuizDashboard() {
 	const [authState] = useAuth();
 	const { isAuthenticated, user } = authState;
-
+	const { quiz_id } = useParams();
 	const [quizState, quizDispatch] = useQuizzes();
 	const { quiz } = quizState;
+	const [respondentState, respondentDispatch] = useRespondent();
+	const { error, respondent, quiz_resp, respondents } = respondentState;
 
 	useEffect(() => {
-		getQuiz(quizDispatch, quiz);
-	}, [quiz, quizDispatch]);
+		getQuiz(quizDispatch, quiz_id);
+	}, [quizDispatch, quiz_id]);
+	useEffect(() => {
+		getRespondents(respondentDispatch, quiz_id);
+	}, [respondentDispatch, quiz_id]);
 
 	const completionData = {
 		labels: ["Not Completed", "Completed"],
@@ -32,9 +44,27 @@ function QuizDashboard() {
 		],
 	};
 
+	const options = {
+		layout: {
+			padding: 30,
+			margin: 30,
+		},
+	};
+
+	const [showModal, setShowModal] = useState(false);
+
+	const hideModal = () => {
+		setShowModal(false);
+	};
+
+	const showQuizModal = (respondent_id) => {
+		getRespondentQuiz(respondentDispatch, respondent_id, quiz_id);
+		setShowModal(true);
+	};
+
 	return (
 		<Container className="w-75">
-			<h1 className="my-5">Quiz Dashboard - {quiz.title} </h1>
+			<h1 className="my-5">Quiz Dashboard - {quiz && quiz.title} </h1>
 			<Row>
 				<Col>
 					<h4>Info</h4>
@@ -42,15 +72,15 @@ function QuizDashboard() {
 						<tbody>
 							<tr>
 								<td>Total Points</td>
-								<td>{quiz.totalScore}</td>
+								<td>{quiz && quiz.totalScore}</td>
 							</tr>
 							<tr>
 								<td>Time Limit</td>
-								<td>{quiz.timeLimit}</td>
+								<td>{quiz && quiz.timeLimit}</td>
 							</tr>
 							<tr>
 								<td>Number of Questions</td>
-								<td>{quiz.questions.length}</td>
+								<td>{quiz && quiz.questions.length}</td>
 							</tr>
 							<tr>
 								<td>Quizzes Sent Out</td>
@@ -92,7 +122,7 @@ function QuizDashboard() {
 			<Row>
 				<Col>
 					<h4 style={{ textAlign: "center" }}>Quiz Completion Status</h4>
-					<Doughnut data={completionData} />
+					<Doughnut data={completionData} options={options} />
 					<br />
 					<br />
 				</Col>
@@ -103,44 +133,54 @@ function QuizDashboard() {
 				</Col>
 			</Row>
 			<Row>
-				<h4>Individual Student Stats</h4>
+				<h4>Individual Respondent Stats</h4>
 				<Table striped bordered hover responsive>
 					<thead>
 						<tr>
 							<th>#</th>
-							<th>Student ID</th>
-							<th>Student Email</th>
+							<th>ID</th>
+							<th>Email</th>
+							<th>Name</th>
 							<th>Total Points</th>
 							<th>Time Used</th>
 							<th>Actions</th>
 						</tr>
 					</thead>
 					<tbody>
-						{/* {quiz &&
-							quiz.map((student, index) => (
-								<tr key={student._id}>
+						{respondents &&
+							respondents.map((respondent, index) => (
+								<tr key={respondent._id} id={respondent._id}>
 									<td>{index + 1}</td>
-									<td>{student._id}</td>
-									<td>{student.email}</td>
-									<td>{student.totalScore} points</td>
-									<td>{student.timeUsed} minutes</td>
-									<td> */}
-						<tr>
-							<td>1</td>
-							<td>id_1</td>
-							<td>1@1.com</td>
-							<td>1 pts</td>
-							<td>15 minutes</td>
-							<td>
-								<a className="mx-3" href="#">
-									view/grade quiz
-								</a>
-							</td>
-						</tr>
-						{/* ))} */}
+									<td>{respondent._id}</td>
+									<td>{respondent.email}</td>
+									<td>
+										{respondent.firstName} {respondent.lastName}
+									</td>
+									<td>{respondent.totalScore} points</td>
+									<td>{respondent.timeUsed} minutes</td>
+									<td>
+										<a
+											className="mx-3"
+											href="#"
+											onClick={() => showQuizModal(respondent._id)}
+										>
+											view/grade quiz
+										</a>
+									</td>
+								</tr>
+							))}
 					</tbody>
 				</Table>
 			</Row>
+			{respondents && quiz && (
+				<QuizModal
+					showModal={showModal}
+					// confirmModal={deleteAccountConfirm}
+					hideModal={hideModal}
+					quiz={quiz_resp}
+					respondent={respondent}
+				/>
+			)}
 		</Container>
 	);
 }

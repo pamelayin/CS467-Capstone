@@ -17,7 +17,7 @@ const AlertModal = ({ showModal, hideModal, message, confirmModal, type, id }) =
 			keyboard={false}
 		>
 			<Modal.Header closeButton>
-				<Modal.Title>Delete Confirmation</Modal.Title>
+				<Modal.Title>Confirmation</Modal.Title>
 			</Modal.Header>
 			<Modal.Body>
 				{message}

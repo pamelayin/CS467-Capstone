@@ -32,55 +32,65 @@ function App() {
 		<AuthState>
 			<GreetContext.Provider value={value}>
 				<QuizState>
-                    <RespondentState>
-                        <BrowserRouter>
-                            <Fragment>
+					<RespondentState>
+						<BrowserRouter>
+							<Fragment>
 								<StyleRoot>
-                                <div className="container">
-                                    <Routes>
-                                        <Route path="/register" element={<Register />} />
-                                        <Route path="/login" element={<Login />} />
-                                        <Route path='/userInfo/:userId/quiz/:quizId' element={<RespondentInfo />} />
-                                        <Route path="/user/:userId/quiz/:quizId" element={<RespondentQuiz />} />
-                                        <Route
-                                            path="/"
-                                            element={<PrivateRoute component={Navigation} />}
-                                        >
-                                            <Route
-                                                index
-                                                element={<PrivateRoute component={Dashboard} />}
-                                            />
-                                            <Route
-                                                path="/account"
-                                                element={<PrivateRoute component={ManageAccount} />}
-                                            />
-                                            <Route
-                                                path="/editprofile"
-                                                element={<PrivateRoute component={EditProfile} />}
-                                            />
-                                            <Route
-                                                path="/quizlist"
-                                                element={<PrivateRoute component={QuizList} />}
-                                            />
-                                            <Route
-                                                path="/contact"
-                                                element={<PrivateRoute component={ContactUs} />}
-                                            />
-                                            <Route
-                                                path="/createquiz"
-                                                element={<PrivateRoute component={CreateQuiz} />}
-                                            />
-                                            <Route
-                                                path="/quiz/:id"
-                                                element={<PrivateRoute component={QuizDashboard} />}
-                                            />
-                                        </Route>
-                                    </Routes>
-                                </div>
-							</StyleRoot>
-                            </Fragment>
-                        </BrowserRouter>
-                    </RespondentState>
+									<div className="container">
+										<Routes>
+											<Route path="/register" element={<Register />} />
+											<Route path="/login" element={<Login />} />
+											<Route
+												path="/userInfo/:userId/quiz/:quizId"
+												element={<RespondentInfo />}
+											/>
+											<Route
+												path="/user/:userId/quiz/:quizId"
+												element={<RespondentQuiz />}
+											/>
+											<Route
+												path="/"
+												element={<PrivateRoute component={Navigation} />}
+											>
+												<Route
+													index
+													element={<PrivateRoute component={Dashboard} />}
+												/>
+												<Route
+													path="/account"
+													element={<PrivateRoute component={ManageAccount} />}
+												/>
+												<Route
+													path="/editprofile"
+													element={<PrivateRoute component={EditProfile} />}
+												/>
+												<Route
+													path="/quizlist"
+													element={<PrivateRoute component={QuizList} />}
+												/>
+												<Route
+													path="/contact"
+													element={<PrivateRoute component={ContactUs} />}
+												/>
+												<Route
+													path="/createquiz"
+													element={<PrivateRoute component={CreateQuiz} />}
+												/>
+												<Route
+													path="/quiz/:quiz_id"
+													element={<PrivateRoute component={QuizDashboard} />}
+												/>
+												<Route
+													path="/sendquiz/:quiz_id"
+													element={<PrivateRoute component={QuizSend} />}
+												/>
+											</Route>
+										</Routes>
+									</div>
+								</StyleRoot>
+							</Fragment>
+						</BrowserRouter>
+					</RespondentState>
 				</QuizState>
 			</GreetContext.Provider>
 		</AuthState>

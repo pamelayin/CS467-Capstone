@@ -10,7 +10,7 @@ const Quiz = require("../models/quiz.models");
 router.get("/", auth, async (req, res) => {
 	try {
 		const quizzes = await Quiz.find({ employer_id: req.user.id }).sort({ createdAt: -1 });
-		res.json(quizzes);
+		res.status(200).json(quizzes);
 		console.log(quizzes);
 	} catch (err) {
 		console.error(err.message);
@@ -21,7 +21,7 @@ router.get("/", auth, async (req, res) => {
 router.get("/:id", auth, async (req, res) => {
 	try {
 		const quiz = await Quiz.findById(req.params.id);
-		res.json(quiz);
+		res.status(200).json(quiz);
 		console.log(quiz);
 	} catch (err) {
 		console.error(err.message);
@@ -38,7 +38,7 @@ router.delete("/:id", auth, async (req, res) => {
             { $pull: { 'quizzes': req.params.id } }, { new: true }
         );
 
-		res.json({ msg: "Quiz has been deleted." });
+		res.status(200).json({ msg: "Quiz has been deleted." });
 	} catch (err) {
 		console.error(err.message);
 		res.status(500).json({ msg: "Server Error" });

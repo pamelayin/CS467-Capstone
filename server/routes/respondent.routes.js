@@ -75,7 +75,7 @@ router.get('/user/:userId/quiz/:quizId', async(req, res) => {
         let quiz = await Quiz.findById(req.params.quizId);
         let respondent = await Respondent.findById(req.params.userId);
 
-        res.status(200).json({ respondent: respondent, quiz: quiz });
+        res.status(200).json({ respondent: respondent, quiz_resp: quiz });
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: 'Server Error' });
@@ -99,6 +99,22 @@ router.patch('/user/:userId/quiz/:quizId', async(req, res) => {
         console.error(err.message);
         res.status(500).json({ msg: err.message });
     }
+});
+
+//get all respondents
+router.get("/quiz/:quizId", async (req, res) => {
+	try {
+		let quiz = await Quiz.findById(req.params.quizId);
+
+        let respondents = await Respondent.find({
+            'quizzes._id': req.params.quizId
+        })
+        res.status(200).json(respondents);
+		// res.status(200).json({ respondents: respondents, quiz_resp: quiz });
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).json({ msg: "Server Error" });
+	}
 });
 
 module.exports = router;
