@@ -11,8 +11,8 @@ import {
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-import Questions from "../utils/Questions";
-import DynamicForm from "../utils/DynamicForm";
+import Questions from "../layouts/Questions";
+import DynamicForm from "../layouts/DynamicForm";
 import CreateQuizAlert from '../Alerts/CreateQuizAlert';
 
 import { clearErrors, createQuiz, useQuizzes } from '../../context/quiz/QuizState';
@@ -128,7 +128,7 @@ function CreateQuiz(props) {
 									<option value="TF">True or False</option>
 									<option value="SC">Single Choice</option>
 									<option value="MC">Multiple Choice</option>
-									<option value="FA">Free Response</option>
+									<option value="FR">Free Response</option>
 								</Form.Select>
 							</Form.Group>
 							<Form.Group>
@@ -217,7 +217,7 @@ function CreateQuiz(props) {
 	function handleInput(name, value) {
 		switch (name) {
 			case "Type":
-				if (value === "FA") {
+				if (value === "FR") {
 					tempNote.addOpen = false;
 					tempNote.Choice1 = "";
 					tempNote.Choice2 = "";

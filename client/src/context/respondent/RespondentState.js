@@ -7,6 +7,7 @@ import {
     CLEAR_ERRORS, 
     CREATE_RESPONDENT, 
     RESPONDENT_ERROR,
+    GET_RESPONDENTS,
     GET_RESPONDENT_QUIZ,
     RESPONDENT_LOADED,
     TAKE_QUIZ,
@@ -58,9 +59,8 @@ export const getRespondentQuiz = async(dispatch, userId, quizId) => {
 
         dispatch({
             type: GET_RESPONDENT_QUIZ,
-            payload: res.data.quiz
+            payload: res.data.quiz_resp
         });
-
         loadRespondent(dispatch, userId, quizId);
 
     } catch (err) {
@@ -79,6 +79,24 @@ export const loadRespondent = async(dispatch, userId, quizId) => {
         dispatch({
             type: RESPONDENT_LOADED,
             payload: res.data.respondent
+        });
+
+    } catch (err) {
+        dispatch({
+            type: RESPONDENT_ERROR,
+            payload: err.response.data.msg || err.response.data.errors[0].msg
+        });
+    }
+};
+
+//Load User
+export const getRespondents = async(dispatch, quizId) => {
+    try {
+        const res = await axios.get(`${RESPONDENT_ROUTE}/quiz/${quizId}`);
+
+        dispatch({
+            type: GET_RESPONDENTS,
+            payload: res.data,
         });
 
     } catch (err) {
@@ -117,8 +135,9 @@ export const clearErrors = dispatch => dispatch({ type: CLEAR_ERRORS });
 
 const RespondentState = props => {
     const initialState = {
+        respondents: null,
         respondent: null,
-        quiz: null,
+        quiz_resp: null,
         error: null,
         loading: true
     };

@@ -66,7 +66,7 @@ function DynamicForm(props) {
 	function handleInput(name, value) {
 		switch (name) {
 			case "Type":
-				if (value === "FA") {
+				if (value === "FR") {
 					note.addOpen = false;
 					note.Choice1 = "";
 					note.Choice2 = "";
@@ -216,7 +216,7 @@ function DynamicForm(props) {
                                     <option value="TF">True or False</option>
                                     <option value="SC">Single Choice</option>
                                     <option value="MC">Multiple Choice</option>
-                                    <option value="FA">Free Response</option>
+                                    <option value="FR">Free Response</option>
                                 </Form.Select>
                         </InputGroup>
 						<Form.Group>
