@@ -1,6 +1,8 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
 
+const app = express();
+
 app.use(express.static('client/build'));
 
 app.get('*', (req, res) => 

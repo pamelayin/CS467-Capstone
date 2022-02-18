@@ -10,7 +10,7 @@ import {
     GET_RESPONDENTS,
     GET_RESPONDENT_QUIZ,
     RESPONDENT_LOADED,
-    TAKE_QUIZ,
+    TAKE_QUIZ
 } from '../types';
 
 //create custom hook for respondent context
@@ -27,21 +27,21 @@ if(process.env.NODE_ENV === 'production') {
 }
 
 //create respondent info taken before quiz
-export const respondentInfo = async(dispatch, formData, userId, quizId) => {
+export const respondentInfo = async(dispatch, formData, hashKey, quizId) => {
     const config = {
         headers: {
             'Content-Type': 'application/json'
         }
     };
     try {
-        const res = await axios.patch(`${RESPONDENT_ROUTE}/userInfo/${userId}/quiz/${quizId}`, formData, config);
+        const res = await axios.post(`${RESPONDENT_ROUTE}/userInfo/${hashKey}/quiz/${quizId}`, formData, config);
 
         dispatch({
             type: CREATE_RESPONDENT,
             payload: res.data
         });
 
-        // loadRespondent(respondentInfo, userId);
+        // loadRespondent(respondentInfo, userId, quizId);
 
     } catch (err) {
         dispatch({
@@ -53,15 +53,15 @@ export const respondentInfo = async(dispatch, formData, userId, quizId) => {
     }
 };
 
-export const getRespondentQuiz = async(dispatch, userId, quizId) => {
+export const getRespondentQuiz = async(dispatch, hashKey, quizId) => {
     try {
-        const res = await axios.get(`${RESPONDENT_ROUTE}/user/${userId}/quiz/${quizId}`);
+        const res = await axios.get(`${RESPONDENT_ROUTE}/takeQuiz/${hashKey}/quiz/${quizId}`);
 
         dispatch({
             type: GET_RESPONDENT_QUIZ,
             payload: res.data.quiz_resp
         });
-        loadRespondent(dispatch, userId, quizId);
+        loadRespondent(dispatch, hashKey, quizId);
 
     } catch (err) {
         dispatch({
@@ -72,9 +72,9 @@ export const getRespondentQuiz = async(dispatch, userId, quizId) => {
 };
 
 //Load User
-export const loadRespondent = async(dispatch, userId, quizId) => {
+export const loadRespondent = async(dispatch, hashKey, quizId) => {
     try {
-        const res = await axios.get(`${RESPONDENT_ROUTE}/user/${userId}/quiz/${quizId}`);
+        const res = await axios.get(`${RESPONDENT_ROUTE}/takeQuiz/${hashKey}/quiz/${quizId}`);
 
         dispatch({
             type: RESPONDENT_LOADED,
@@ -107,7 +107,7 @@ export const getRespondents = async(dispatch, quizId) => {
     }
 };
 
-export const takeQuiz = async(dispatch, formData, userId, quizId) => {
+export const takeQuiz = async(dispatch, formData, hashKey, quizId) => {
     const config = {
         headers: {
             'Content-Type': 'application/json'
@@ -115,13 +115,13 @@ export const takeQuiz = async(dispatch, formData, userId, quizId) => {
     };
 
     try {
-        const res = await axios.patch(`${RESPONDENT_ROUTE}/user/${userId}/quiz/${quizId}`, formData, config);
+        const res = await axios.patch(`${RESPONDENT_ROUTE}/takeQuiz/${hashKey}/quiz/${quizId}`, formData, config);
 
         dispatch({
             type: TAKE_QUIZ,
             payload: res.data
         });
-        console.log(res.data);
+
     } catch (err) {
         dispatch({
             type: RESPONDENT_ERROR,
@@ -148,8 +148,8 @@ const RespondentState = props => {
     //     loadRespondent(dispatch, state.respondent.id)
     // }
 
-    useEffect(() => {
-    }, [state.respondent]);
+    // useEffect(() => {
+    // }, [state.respondent]);
 
     return(
         <RespondentContext.Provider

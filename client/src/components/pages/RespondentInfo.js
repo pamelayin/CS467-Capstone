@@ -4,15 +4,28 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useRespondent, respondentInfo, clearErrors } from '../../context/respondent/RespondentState';
 
+import RespondentProfileAlert from '../Alerts/RespondentProfileAlert';
+
 const RespondentInfo = props => {
     const [respondentState, respondentDispatch] = useRespondent();
-    const { error, respondent } = respondentState;
-    const { userId, quizId } = useParams();
-    const navigate = useNavigate();
+    const { error } = respondentState;
+    const { hashKey, quizId } = useParams();
+    // const navigate = useNavigate();
+
+    // const [completed, setCompleted] = useState(false);
+    const [isDisabled, setIsDisabled] = useState(false);
+    const [alert, setShowAlert] = useState(false);
 
     useEffect(() => {
         if(error) {
-            console.log(error);
+            setShowAlert(true);
+            setTimeout(() => {
+                clearErrors(respondentDispatch);
+                setShowAlert(false);
+            }, 5000)
+        }
+        if(error === 'You have already submitted this quiz') {
+            setIsDisabled(true);
         }
     }, [error, respondentDispatch]);
 
@@ -24,25 +37,40 @@ const RespondentInfo = props => {
         email: ''
     });
 
-    const { firstName, lastName, school, dateOfBirth } = responInfo;
+    const { firstName, lastName, school, dateOfBirth, email } = responInfo;
 
-    const onChange = e => setResponInfo({ ...responInfo, [e.target.name]: e.target.value });
+    const onChange = e => {
+        setResponInfo({ ...responInfo, [e.target.name]: e.target.value });
+
+        setShowAlert(false);
+        clearErrors(respondentDispatch);
+    }
 
     const onSubmit = e => {
         e.preventDefault();
 
-        respondentInfo(respondentDispatch, {
-            firstName,
-            lastName,
-            school,
-            dateOfBirth,
-        }, userId, quizId);
+        if(!error) {
+            respondentInfo(respondentDispatch, {
+                firstName,
+                lastName,
+                school,
+                dateOfBirth,
+                email,
+                hashKey
+            }, hashKey, quizId);
 
-        setTimeout(() => navigate(`/user/${userId}/quiz/${quizId}`), 3000);
+            clearErrors(respondentDispatch);
+            setShowAlert(true);
+        }
+
+        // if(completed) {
+        //     setTimeout(() => navigate(`/takeQuiz/${hashKey}/quiz/${quizId}`), 3000);
+        // }
     }
 
     return (
         <Fragment>
+            <RespondentProfileAlert error={error} alert={alert} setShowAlert={setShowAlert} />
             <Container>
                 <Row className='mt-5'>
                     <Col lg={5} md={6} sm={12} className='p-5 m-auto shadow-sm rounded-lg'>
@@ -81,14 +109,25 @@ const RespondentInfo = props => {
                             <Form.Group>
                                 <Form.Label htmlFor='dateOfBirth'>Date Of Birth</Form.Label>
                                 <Form.Control 
-                                    type='text' 
+                                    type='date' 
                                     name='dateOfBirth' 
                                     placeholder='Date of Birth' 
                                     value={dateOfBirth} 
                                     onChange={onChange}
                                     />
                             </Form.Group>
-                            <Button variant='warning btn-block' type='submit' style={{ 'marginTop': '2rem'}}>Sign Up</Button>
+                            <Form.Group>
+                                <Form.Label htmlFor='email'>Email</Form.Label>
+                                <Form.Control
+                                    disabled={isDisabled}
+                                    type='email' 
+                                    name='email' 
+                                    placeholder='Email'
+                                    value={email} 
+                                    onChange={onChange}
+                                    />
+                            </Form.Group>
+                            <Button variant='warning btn-block' type='submit' style={{ 'marginTop': '2rem'}}>Begin</Button>
                             <div style={{ 'marginTop': '0.5rem'}}>
                             </div>
                         </Form>

@@ -23,8 +23,6 @@ import GreetContext from "./context/NavText/GreetContext";
 import RespondentState from "./context/respondent/RespondentState";
 
 
-
-
 function App() {
 	const [greeting, setGreeting] = useState("Welcome");
 	const value = { greeting, setGreeting };
@@ -41,11 +39,11 @@ function App() {
 											<Route path="/register" element={<Register />} />
 											<Route path="/login" element={<Login />} />
 											<Route
-												path="/userInfo/:userId/quiz/:quizId"
+												path="/userInfo/:hashKey/quiz/:quizId"
 												element={<RespondentInfo />}
 											/>
 											<Route
-												path="/user/:userId/quiz/:quizId"
+												path="/takeQuiz/:hashKey/quiz/:quizId"
 												element={<RespondentQuiz />}
 											/>
 											<Route

@@ -5,6 +5,7 @@ import {
 	RESPONDENT_ERROR,
 	RESPONDENT_LOADED,
 	TAKE_QUIZ,
+    CLEAR_ERRORS,
 } from "../types";
 
 const RespondentReducer = (state, action) => {
@@ -45,6 +46,11 @@ const RespondentReducer = (state, action) => {
 				respondent: action.payload,
 				loading: false,
 			};
+        case CLEAR_ERRORS:
+            return {
+                ...state,
+                error: null
+            }
 		default:
 			throw new Error(`Unsupported type of: ${action.type}`);
 	}
