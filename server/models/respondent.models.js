@@ -23,12 +23,16 @@ const RespondentSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    hashKey: String,
     quizzes: [{
+        _id: false,
         quiz_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Quiz', 
         },
+        timeTaken: Number,
         questionsAnswered: [{
+            _id: false,
             question_id: mongoose.Types.ObjectId,
             answerGiven: String
         }]

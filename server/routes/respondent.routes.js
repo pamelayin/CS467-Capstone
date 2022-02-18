@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
+const nodemailer = require('nodemailer');
 const { check, validationResult } = require('express-validator');
 
 const Respondent = require('../models/respondent.models');
 const Quiz = require('../models/quiz.models');
+const Employer = require('../models/employer.models');
 
-router.patch('/userInfo/:userId/quiz/:quizId', [
+// Route to create the candidate taking the quiz
+router.post('/userInfo/:hashKey/quiz/:quizId', [
     check('firstName', 'Appropriately enter your first name with a min of 2 characters and a max of 30')
         .not()
         .isEmpty()
@@ -27,6 +30,9 @@ router.patch('/userInfo/:userId/quiz/:quizId', [
         .isEmpty(),
     check('dateOfBirth', 'Please enter your date of birth')
         .not()
+        .isEmpty(),
+    check('email', 'Please confirm your email the quiz was sent to')
+        .not()
         .isEmpty()
 ], async(req, res) => {
     const errors = validationResult(req);
@@ -34,35 +40,29 @@ router.patch('/userInfo/:userId/quiz/:quizId', [
         return res.status(400).json({ errors: errors.array() });
     }
 
+    const { firstName, lastName, school, dateOfBirth, email } = req.body;
+
     try {
         let quiz = await Quiz.findById(req.params.quizId);
-        // // let respondent = await Respondent.findById(req.params.userId);
-        // let respondentQuiz = await Respondent.findOne(
-        //     { _id: req.params.userId },
-        //     { quizzes: { $elemMatch: { quiz_id: quiz._id } } }
-        // );
-
-        // if(respondentQuiz) {
-        //     return res.status(400).json({ msg: 'You have already submitted this quiz' });
-        // }
-
-        const respondentEdits = {};
-		respondentEdits.firstName = req.body.firstName;
-		respondentEdits.lastName = req.body.lastName;
-		respondentEdits.school = req.body.school;
-        respondentEdits.dateOfBirth = req.body.dateOfBirth;
-
-        await Respondent.findByIdAndUpdate(
-            req.params.userId,
-            { $set: respondentEdits },
-            { new: true }
+        let respondentQuiz = await Respondent.findOne(
+            { email: email },
+            { quizzes: { $elemMatch: { quiz_id: quiz._id } } }
         );
 
-        await Respondent.findByIdAndUpdate(
-            req.params.userId,
-            { $push: { quizzes: quiz._id } },
-            { new: true }
-        );
+        if(respondentQuiz) {
+            return res.status(400).json({ msg: 'You have already submitted this quiz' });
+        }
+
+        let respondent = new Respondent({
+            firstName,
+            lastName,
+            school,
+            dateOfBirth,
+            email,
+            hashKey: req.params.hashKey
+        })
+
+        await respondent.save();
 
     } catch (err) {
         console.error(err.message);
@@ -70,35 +70,96 @@ router.patch('/userInfo/:userId/quiz/:quizId', [
     }
 });
 
-router.get('/user/:userId/quiz/:quizId', async(req, res) => {
+// Route to load the candidate info during taking the quiz
+router.get('/takeQuiz/:hashKey/quiz/:quizId', async(req, res) => {
+    const hashKey = req.params.hashKey;
+
     try {
         let quiz = await Quiz.findById(req.params.quizId);
-        let respondent = await Respondent.findById(req.params.userId);
+        let respondent = await Respondent.findOne({ hashKey: hashKey });
 
-        res.status(200).json({ respondent: respondent, quiz: quiz });
+        if(!respondent) {
+            return res.status(400).json({ msg: 'Candidate info not found' });
+        }
+
+        res.status(200).json({ respondent: respondent, quiz_resp: quiz });
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: 'Server Error' });
     }
 });
 
-router.patch('/user/:userId/quiz/:quizId', async(req, res) => {
-    const { quizzes } = req.body;
+// Route to update the quiz data with the candidate's answers
+router.patch('/takeQuiz/:hashKey/quiz/:quizId', async(req, res) => {
+    const { timeTaken, questionsAnswered } = req.body;
+    const hashKey = req.params.hashKey;
 
     try {
-        let user = await Respondent.findById(req.params.userId)
+        let user = await Respondent.findOne({ hashKey });
+        // let employer = await Quiz.findById(req.params.quizId);
+        // let employerEmail = await Employer.findById(employer.employer_id);
 
         await Respondent.findByIdAndUpdate(
             user,
-            { $push: { "quizzes": quizzes } },
+            { $push: 
+                { 
+                    "quizzes": { 
+                        quiz_id: req.params.quizId,
+                        timeTaken: timeTaken, 
+                        questionsAnswered: questionsAnswered 
+                    } 
+                } 
+            },
             { new: true }
         );
+
+        // const transporter = nodemailer.createTransport({
+        //     service: 'gmail',
+        //     auth:{
+        //         user: "quizbanana467@gmail.com",
+        //         pass: "OSUcapston1111"
+        //     }
+        // })
+    
+        // const mailOptions = {
+        //     from: "quizbanana467@gmail.com",
+        //     to: employerEmail,
+        //     subject: `Quiz ${req.params.quizId} completed!`,
+        //     text: `Quiz ${req.params.quizId} has been completed by ${user.firstName} ${user.lastName}`
+        // }
+    
+        // transporter.sendMail(mailOptions, (error, info) =>{
+        //     if(error){
+        //         console.log(error);
+        //         res.json({msg: 'fail'});
+        //     }else{
+        //         console.log("good")
+        //         res.json({msg: 'success'});
+    
+        //     }
+        // })
 
         res.status(202).end();
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: err.message });
     }
+});
+
+//get all respondents
+router.get("/quiz/:quizId", async (req, res) => {
+	try {
+		let quiz = await Quiz.findById(req.params.quizId);
+
+        let respondents = await Respondent.find({
+            'quizzes._id': req.params.quizId
+        })
+        res.status(200).json(respondents);
+		// res.status(200).json({ respondents: respondents, quiz_resp: quiz });
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).json({ msg: "Server Error" });
+	}
 });
 
 module.exports = router;

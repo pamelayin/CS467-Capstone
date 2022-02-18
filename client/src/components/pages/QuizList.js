@@ -5,7 +5,6 @@ import { useAuth } from "../../context/auth/AuthState";
 import {
 	useQuizzes,
 	getQuizzes,
-	setQuiz,
 	deleteQuiz,
 } from "../../context/quiz/QuizState";
 import AlertModal from "../Alerts/AlertModal";
@@ -46,53 +45,56 @@ function QuizList() {
 	return (
 		<Container>
 			<h1 className="my-5">Past Quizzes</h1>
-			<Table striped bordered hover responsive>
-				<thead>
-					<tr>
-						<th>#</th>
-						<th>Quiz ID</th>
-						<th>Quiz Title</th>
-						<th>Questions</th>
-						<th>Total Points</th>
-						<th>Time Limit</th>
-						<th>Created At</th>
-						<th>Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					{quizzes &&
-						quizzes.map((quiz, index) => (
-							<tr key={quiz._id}>
-								<td>{index + 1}</td>
-								<td>{quiz._id}</td>
-								<td>{quiz.title}</td>
-								<td>{quiz.questions.length}</td>
-								<td>{quiz.totalScore} points</td>
-								<td>{quiz.timeLimit} minutes</td>
-								<td>{moment(quiz.createdAt).format("YYYY-MM-DD HH:mm")}</td>
-								<td>
-									<Link
-										to={`/quiz/${quiz._id}`}
-										className="mx-3"
-										onClick={() => setQuiz(quizDispatch, quiz)}
-									>
-										view/edit
-									</Link>
-									<a href="#" onClick={() => showModal(quiz._id)}>
-										delete
-									</a>
-								</td>
-							</tr>
-						))}
-					<AlertModal
-						showModal={displayModal}
-						confirmModal={onDelete}
-						hideModal={hideModal}
-						id={id}
-						message={deleteMessage}
-					/>
-				</tbody>
-			</Table>
+			{quizzes ? (
+				<Table striped bordered hover responsive>
+					<thead>
+						<tr>
+							<th>#</th>
+							<th>Quiz ID</th>
+							<th>Quiz Title</th>
+							<th>Questions</th>
+							<th>Total Points</th>
+							<th>Time Limit</th>
+							<th>Created At</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						{quizzes &&
+							quizzes.map((quiz, index) => (
+								<tr key={quiz._id}>
+									<td>{index + 1}</td>
+									<td>{quiz._id}</td>
+									<td>{quiz.title}</td>
+									<td>{quiz.questions.length}</td>
+									<td>{quiz.totalScore} points</td>
+									<td>{quiz.timeLimit} minutes</td>
+									<td>{moment(quiz.createdAt).format("YYYY-MM-DD HH:mm")}</td>
+									<td>
+										<Link to={`/quiz/${quiz._id}`} className="mx-3">
+											view
+										</Link>
+										<Link to={`/sendquiz/${quiz._id}`} className="mx-3">
+											send quiz
+										</Link>
+										<a href="#" onClick={() => showModal(quiz._id)}>
+											delete
+										</a>
+									</td>
+								</tr>
+							))}
+						<AlertModal
+							showModal={displayModal}
+							confirmModal={onDelete}
+							hideModal={hideModal}
+							id={id}
+							message={deleteMessage}
+						/>
+					</tbody>
+				</Table>
+			) : (
+				<h1>There are no quizzes to display.</h1>
+			)}
 		</Container>
 	);
 }

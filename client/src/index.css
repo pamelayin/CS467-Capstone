@@ -26,21 +26,26 @@ code {
   font-weight: 600;
 }
 
-.dash-card-cell a {
-  border: 1px solid rgb(182, 182, 182);
-  border-radius: 7px;
-  float: left;
-  height: 130px;
-  width: 30%;
-  margin: 1.5%;
-  padding: 3% 0;
+.dash-card-cell-a a {
   text-decoration: none;
   color:black;
+  background-color: rgba(255, 236, 89, 0.5);
 }
 
-
-.dash-card-cell a:hover{
+.dash-card-cell-b a {
+  text-decoration: none;
+  color:black;
   background-color: rgba(243, 243, 243, 0.349);
+}
+
+.dash-card-cell-a a:hover{
+  background-color: rgba(243, 243, 243, 0.349);
+  text-decoration: none;
+  color:rgb(0, 0, 0);
+}
+
+.dash-card-cell-b a:hover{
+  background-color: rgba(255, 236, 89, 0.5);
   text-decoration: none;
   color:black;
 }

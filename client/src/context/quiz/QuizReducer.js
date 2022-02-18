@@ -2,7 +2,6 @@
 import {
 	GET_QUIZZES,
 	GET_QUIZ,
-	SET_QUIZ,
     DELETE_QUIZ,
     QUIZ_ERROR,
     CLEAR_ERRORS,
@@ -22,11 +21,6 @@ const QuizReducer = (state, action) => {
 					quizzes: action.payload,
 				};
 			case GET_QUIZ:
-				return {
-					...state,
-					quiz: action.payload,
-				};
-			case SET_QUIZ:
 				return {
 					...state,
 					quiz: action.payload,

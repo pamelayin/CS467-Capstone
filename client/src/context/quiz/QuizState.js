@@ -5,7 +5,6 @@ import QuizReducer from './QuizReducer';
 import {
     GET_QUIZZES,
     GET_QUIZ,
-    SET_QUIZ,
 	DELETE_QUIZ,
 	QUIZ_ERROR,
 	CLEAR_ERRORS,
@@ -47,35 +46,21 @@ export const getQuizzes = async(dispatch) => {
 };
 
 //get quiz
-export const getQuiz = async (dispatch, quiz) => {
+export const getQuiz = async (dispatch, _id) => {
     try {
-		const res = await axios.get(route + `/${quiz}`);
+		const res = await axios.get(route + `/${_id}`);
 
 		dispatch({
-			type: GET_QUIZ,
+            type: GET_QUIZ,
 			payload: res.data,
         });
-
+        // console.log(res.data)
 	} catch (err) {
 		dispatch({
 			type: QUIZ_ERROR,
 			payload: err.response.data.msg || err.response.data.errors[0].msg,
 		});
 	}
-};
-
-export const setQuiz = async (dispatch, quiz) => {
-    try {
-        dispatch({
-            type: SET_QUIZ,
-            payload: quiz
-        });
-    } catch (err) {
-        dispatch({
-            type: QUIZ_ERROR,
-            payload: err.response.data.msg || err.response.data.errors[0].msg,
-        });
-    }
 };
 
 //delete quiz

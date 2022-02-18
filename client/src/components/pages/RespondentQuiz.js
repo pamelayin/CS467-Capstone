@@ -6,21 +6,21 @@ import { useRespondent, getRespondentQuiz, takeQuiz } from '../../context/respon
 
 const RespondentQuiz = () => {
     const [respondentState, respondentDispatch] = useRespondent();
-    const { error, respondent, quiz } = respondentState;
-    const { userId, quizId } = useParams();
+    const { error, respondent, quiz_resp } = respondentState;
+    const { hashKey, quizId } = useParams();
 
     const [questionsAnswered, setQuestionsAnswered] = useState([]);
 
-    let time = quiz && quiz.timeLimit;
+    let time = quiz_resp && quiz_resp.timeLimit;
     const [stateTimeLimit, setStateTimeLimit] = useState(0);
 
     const onTimeLimitChange = useCallback(() => {
-        setInterval(() => setStateTimeLimit(stateTimeLimit - 1), 60000);
-    },[stateTimeLimit]);
+        setInterval(() => setStateTimeLimit(stateTimeLimit => stateTimeLimit - 1), 60000);
+    }, []);
 
-    // const clearTimer = () => {
-    //     clearInterval(stateTimeLimit);
-    // }
+    const clearTimer = () => {
+        clearInterval(setStateTimeLimit(0));
+    }
 
     useEffect(() => {
         setStateTimeLimit(time);
@@ -31,8 +31,8 @@ const RespondentQuiz = () => {
             console.log(error);
         }
         onTimeLimitChange();
-        getRespondentQuiz(respondentDispatch, userId, quizId);
-    }, [respondentDispatch, error, userId, quizId, onTimeLimitChange]);
+        getRespondentQuiz(respondentDispatch, hashKey, quizId);
+    }, [respondentDispatch, error, hashKey, quizId, onTimeLimitChange]);
 
     const onChange = e => {
         let answerGiven = questionsAnswered;
@@ -63,65 +63,104 @@ const RespondentQuiz = () => {
         return data;
     }
 
+    const timeTaken = () => {
+        let totalTime;
+
+        totalTime = time - stateTimeLimit;
+
+        return totalTime;
+    }
+
     const onSubmit = e => {
         e.preventDefault();
         const data = mergeQuestionIds(e);
         console.log(questionsAnswered);
         console.log(data);
+        const totalTime = timeTaken();
 
         takeQuiz(respondentDispatch, 
-            { quizzes: data },
-            userId,
+            {
+                timeTaken: totalTime,
+                questionsAnswered: data
+            },
+            hashKey,
             quizId
         );
+
+        clearTimer();
+        alert('You have now finished')
     }
 
     return (
         <Container>
             <Container>
-                <h1 className='shadow-sm p-3 text-center rounded' style={{ color: 'black' }}>{quiz && quiz.title}</h1><span style={{ display: 'inline'}}>
-                    Time Limit: {stateTimeLimit}
+                <h1
+                    className="shadow-sm p-3 text-center rounded"
+                    style={{ color: "black" }}
+                >
+                    {quiz_resp && quiz_resp.title}
+                </h1>
+                <span style={{ display: "inline" }}>
+                    Time Limit: {stateTimeLimit}{' '}
+                </span><span>
+                    Hash    ID: {respondent && respondent.hashKey}
                 </span>
             </Container>
-            {quiz && quiz.questions.map((q, i) => (
-                <Row className='mt-5' key={q._id}>
-                <Col lg={5} md={6} sm={12} className='p-5 m-auto shadow-sm rounded-lg'>
-                    <Form onSubmit={onSubmit}>
-                        <Form.Group>
-                            <Form.Label htmlFor='question'>{q.question}</Form.Label>
-                        </Form.Group>
-                        <Form.Group>
-                            {q.answerOptions.map((a, index) => (
-                                q.questionType === 'FA' ? (
-                                    <Form.Control
-                                        key={index}
-                                        type='text'
-                                        name='questionsAnswered'
-                                        value={a}
-                                        onChange={e => onChange(e)}
-                                    />
-                                ) : (
-                                <Form.Check
-                                    type={q.questionType === 'TF' || q.questionType === 'SC' ? 'radio' : 'checkbox'}
-                                    key={index}
-                                    label={a}
-                                    id={q._id}
-                                    value={a}
-                                    name='questionsAnswered'
-                                    onChange={e => onChange(e)}
-                                />
-                                )
-                            ))}
-                        </Form.Group>
-                        <div style={{ 'marginTop': '0.5rem'}}>
-                        </div>
-                    </Form>
-                </Col>
-            </Row>
-            ))}
-            <Button variant='warning btn-block' type='submit' style={{ 'marginTop': '2rem'}} onClick={onSubmit}>Complete</Button>
+            {quiz_resp &&
+                quiz_resp.questions.map((q, i) => (
+                    <Row className="mt-5" key={q._id}>
+                        <Col
+                            lg={5}
+                            md={6}
+                            sm={12}
+                            className="p-5 m-auto shadow-sm rounded-lg"
+                        >
+                            <Form onSubmit={onSubmit}>
+                                <Form.Group>
+                                    <Form.Label htmlFor="question">{q.question}</Form.Label>
+                                </Form.Group>
+                                <Form.Group>
+                                    {q.answerOptions.map((a, index) =>
+                                        q.questionType === "FR" ? (
+                                            <Form.Control
+                                                key={index}
+                                                type="text"
+                                                name="questionsAnswered"
+                                                value={a}
+                                                onChange={(e) => onChange(e)}
+                                            />
+                                        ) : (
+                                            <Form.Check
+                                                type={
+                                                    q.questionType === "TF" || q.questionType === "SC"
+                                                        ? "radio"
+                                                        : "checkbox"
+                                                }
+                                                key={index}
+                                                label={a}
+                                                value={a}
+                                                id={q._id}
+                                                name="questionsAnswered"
+                                                onChange={(e) => onChange(e)}
+                                            />
+                                        )
+                                    )}
+                                </Form.Group>
+                                <div style={{ marginTop: "0.5rem" }}></div>
+                            </Form>
+                        </Col>
+                    </Row>
+                ))}
+            <Button
+                variant="warning btn-block"
+                type="submit"
+                style={{ marginTop: "2rem" }}
+                onClick={onSubmit}
+            >
+                Complete
+            </Button>
         </Container>
-    )
+	);
 }
 
 export default RespondentQuiz
