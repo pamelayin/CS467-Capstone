@@ -23,9 +23,9 @@ const RespondentSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    hashKey: String,
     quizzes: [{
         _id: false,
+        hashKey: String,
         quiz_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Quiz', 

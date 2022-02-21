@@ -1,15 +1,19 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 
 import { useRespondent, getRespondentQuiz, takeQuiz } from '../../context/respondent/RespondentState';
 
-const RespondentQuiz = () => {
+const RespondentQuiz = props => {
     const [respondentState, respondentDispatch] = useRespondent();
     const { error, respondent, quiz_resp } = respondentState;
     const { hashKey, quizId } = useParams();
+    const navigate = useNavigate();
+
+    const { history } = props;
 
     const [questionsAnswered, setQuestionsAnswered] = useState([]);
+    const [freeResponse, setFreeResponse] = useState([]);
 
     let time = quiz_resp && quiz_resp.timeLimit;
     const [stateTimeLimit, setStateTimeLimit] = useState(0);
@@ -34,6 +38,13 @@ const RespondentQuiz = () => {
         getRespondentQuiz(respondentDispatch, hashKey, quizId);
     }, [respondentDispatch, error, hashKey, quizId, onTimeLimitChange]);
 
+    const onFreeResponseChange = e => {
+        setFreeResponse([...freeResponse, ({
+            question_id: e.target.id,
+            answerGiven: e.target.value
+        })]);
+    }
+
     const onChange = e => {
         let answerGiven = questionsAnswered;
 
@@ -50,6 +61,18 @@ const RespondentQuiz = () => {
         }
     }
 
+    const mergeFreeResponse = e => {
+        e.preventDefault();
+
+        const data = Object.values(freeResponse.reduce((a, {question_id, answerGiven}) => {
+            a[question_id] = a[question_id] || { question_id, answerGiven: new Set() };
+            a[question_id].answerGiven.add(answerGiven);
+            return a;
+        }, {})).map(({question_id, answerGiven}) => ({ question_id, answerGiven: [...answerGiven].slice(-1)[0]}));
+
+        return data;
+    }
+
     //https://stackoverflow.com/questions/57703415/how-to-merge-array-of-objects-if-duplicate-values-are-there-if-key-is-common-th
     const mergeQuestionIds = e => {
         e.preventDefault();
@@ -63,6 +86,10 @@ const RespondentQuiz = () => {
         return data;
     }
 
+    const mergeArrays = (radioCheckArr, freeResponseArr) => {
+        return radioCheckArr.concat(freeResponseArr);
+    }
+
     const timeTaken = () => {
         let totalTime;
 
@@ -74,21 +101,24 @@ const RespondentQuiz = () => {
     const onSubmit = e => {
         e.preventDefault();
         const data = mergeQuestionIds(e);
-        console.log(questionsAnswered);
-        console.log(data);
+        const freeAnswer = mergeFreeResponse(e);
+
+        const quizData = mergeArrays(data, freeAnswer);
+
+        console.log(quizData);
         const totalTime = timeTaken();
 
         takeQuiz(respondentDispatch, 
             {
                 timeTaken: totalTime,
-                questionsAnswered: data
+                questionsAnswered: quizData
             },
             hashKey,
             quizId
         );
 
         clearTimer();
-        alert('You have now finished')
+        navigate('/quizComplete')
     }
 
     return (
@@ -103,7 +133,7 @@ const RespondentQuiz = () => {
                 <span style={{ display: "inline" }}>
                     Time Limit: {stateTimeLimit}{' '}
                 </span><span>
-                    Hash    ID: {respondent && respondent.hashKey}
+                    Candidate ID: {respondent && respondent._id}
                 </span>
             </Container>
             {quiz_resp &&
@@ -119,17 +149,19 @@ const RespondentQuiz = () => {
                                 <Form.Group>
                                     <Form.Label htmlFor="question">{q.question}</Form.Label>
                                 </Form.Group>
-                                <Form.Group>
-                                    {q.answerOptions.map((a, index) =>
-                                        q.questionType === "FR" ? (
-                                            <Form.Control
-                                                key={index}
-                                                type="text"
-                                                name="questionsAnswered"
-                                                value={a}
-                                                onChange={(e) => onChange(e)}
-                                            />
-                                        ) : (
+                                    <Form.Group>
+                                        {q.answerOptions.map((a, index) => (
+                                            q.questionType === 'FR' ? (
+                                                    <Form.Control
+                                                        key={index}
+                                                        id={q._id}
+                                                        type="text"
+                                                        name='answerGiven'
+                                                        placeholder='Enter Answer'
+                                                        value={freeResponse.answerGiven}
+                                                        onChange={(e) => onFreeResponseChange(e)}
+                                                    />
+                                            ) : (
                                             <Form.Check
                                                 type={
                                                     q.questionType === "TF" || q.questionType === "SC"
@@ -143,22 +175,23 @@ const RespondentQuiz = () => {
                                                 name="questionsAnswered"
                                                 onChange={(e) => onChange(e)}
                                             />
-                                        )
-                                    )}
-                                </Form.Group>
+                                        )))}
+                                    </Form.Group>
                                 <div style={{ marginTop: "0.5rem" }}></div>
                             </Form>
                         </Col>
                     </Row>
                 ))}
-            <Button
-                variant="warning btn-block"
-                type="submit"
-                style={{ marginTop: "2rem" }}
-                onClick={onSubmit}
-            >
-                Complete
-            </Button>
+                <Container 
+                    style={{ marginTop: "2rem", alignItems: 'center' }}>
+                    <Button
+                        variant="warning btn-block"
+                        type="submit"
+                        onClick={onSubmit}
+                    >
+                        Complete
+                    </Button>
+                </Container>
         </Container>
 	);
 }

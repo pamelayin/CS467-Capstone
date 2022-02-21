@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import { Toast, Row, Col } from 'react-bootstrap';
 
-const RespondentProfileAlert = ({ error, alert, setShowAlert }) => {
+const RespondentProfileAlert = ({ error, alert, setShowAlert, hashKey, quizId }) => {
     const toggleSetAlert = () => {
         setShowAlert(!alert);
     }
@@ -19,7 +20,14 @@ const RespondentProfileAlert = ({ error, alert, setShowAlert }) => {
                     />
                     <strong className="me-auto">{error ? 'Error' : 'Success'}</strong>
                     </Toast.Header>
-                    <Toast.Body>{error ? error : 'You will now be redirected to the quiz'}</Toast.Body>
+                    {error ? (
+                        <Toast.Body>{error}</Toast.Body>
+                    ) : (
+                        <Toast.Body>
+                            Thank you for providing your information. Please click the link below to begin your quiz <br/>
+                            <Link style={{ color: 'black', fontSize: 18 }} to={`/takeQuiz/${hashKey}/quiz/${quizId}`}>Begin</Link>
+                        </Toast.Body>
+                    )}
                 </Toast>
             </Col>
         </Row>

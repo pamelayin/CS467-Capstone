@@ -56,21 +56,19 @@ const RespondentInfo = props => {
                 school,
                 dateOfBirth,
                 email,
-                hashKey
+                quizzes: [{
+                    hashKey
+                }]
             }, hashKey, quizId);
 
             clearErrors(respondentDispatch);
             setShowAlert(true);
         }
-
-        // if(completed) {
-        //     setTimeout(() => navigate(`/takeQuiz/${hashKey}/quiz/${quizId}`), 3000);
-        // }
     }
 
     return (
         <Fragment>
-            <RespondentProfileAlert error={error} alert={alert} setShowAlert={setShowAlert} />
+            <RespondentProfileAlert error={error} alert={alert} setShowAlert={setShowAlert} hashKey={hashKey} quizId={quizId} />
             <Container>
                 <Row className='mt-5'>
                     <Col lg={5} md={6} sm={12} className='p-5 m-auto shadow-sm rounded-lg'>
@@ -127,7 +125,7 @@ const RespondentInfo = props => {
                                     onChange={onChange}
                                     />
                             </Form.Group>
-                            <Button variant='warning btn-block' type='submit' style={{ 'marginTop': '2rem'}}>Begin</Button>
+                            <Button variant='warning btn-block' type='submit' style={{ 'marginTop': '2rem'}}>Submit</Button>
                             <div style={{ 'marginTop': '0.5rem'}}>
                             </div>
                         </Form>

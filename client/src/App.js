@@ -16,6 +16,7 @@ import QuizSend from "./components/pages/QuizSend";
 import QuizDashboard from "./components/pages/QuizDashboard";
 import RespondentInfo from "./components/pages/RespondentInfo";
 import RespondentQuiz from "./components/pages/RespondentQuiz";
+import QuizComplete from "./components/pages/QuizComplete";
 
 import AuthState from "./context/auth/AuthState";
 import QuizState from "./context/quiz/QuizState";
@@ -46,6 +47,10 @@ function App() {
 												path="/takeQuiz/:hashKey/quiz/:quizId"
 												element={<RespondentQuiz />}
 											/>
+                                            <Route 
+                                                path='/quizComplete'
+                                                element={<QuizComplete />}
+                                            />
 											<Route
 												path="/"
 												element={<PrivateRoute component={Navigation} />}

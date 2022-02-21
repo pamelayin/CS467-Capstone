@@ -45,25 +45,43 @@ router.post('/userInfo/:hashKey/quiz/:quizId', [
     try {
         let quiz = await Quiz.findById(req.params.quizId);
         let respondentQuiz = await Respondent.findOne(
-            { email: email },
+            { quizzes: { $elemMatch: { hashKey: req.params.hashKey } } },
             { quizzes: { $elemMatch: { quiz_id: quiz._id } } }
         );
+
+        console.log(respondentQuiz);
 
         if(respondentQuiz) {
             return res.status(400).json({ msg: 'You have already submitted this quiz' });
         }
 
-        let respondent = new Respondent({
-            firstName,
-            lastName,
-            school,
-            dateOfBirth,
-            email,
-            hashKey: req.params.hashKey
-        })
+        const respondent = await Respondent.findOne({ email: email });
 
-        await respondent.save();
+        if(respondent) {
+            await Respondent.findByIdAndUpdate(
+                respondent._id,
+                { $push: {
+                    quizzes: {
+                        hashKey: req.params.hashKey
+                    }
+                }}
+            );
+            res.status(200).end();
+        } else {
+            let respondent = new Respondent({
+                firstName,
+                lastName,
+                school,
+                dateOfBirth,
+                email,
+                quizzes: [{
+                    hashKey: req.params.hashKey
+                }]
+            })
 
+            await respondent.save();
+            res.status(200).end();
+        }
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ msg: err.message });
@@ -76,7 +94,7 @@ router.get('/takeQuiz/:hashKey/quiz/:quizId', async(req, res) => {
 
     try {
         let quiz = await Quiz.findById(req.params.quizId);
-        let respondent = await Respondent.findOne({ hashKey: hashKey });
+        let respondent = await Respondent.findOne({ quizzes: { hashKey: hashKey } });
 
         if(!respondent) {
             return res.status(400).json({ msg: 'Candidate info not found' });
@@ -95,20 +113,31 @@ router.patch('/takeQuiz/:hashKey/quiz/:quizId', async(req, res) => {
     const hashKey = req.params.hashKey;
 
     try {
-        let user = await Respondent.findOne({ hashKey });
+        let user = await Respondent.findOne({ quizzes: { hashKey } });
         // let employer = await Quiz.findById(req.params.quizId);
         // let employerEmail = await Employer.findById(employer.employer_id);
 
         await Respondent.findByIdAndUpdate(
             user,
+            { $pull: {
+                quizzes: {
+                    hashKey: hashKey,
+                    questionsAnswered: { $exists: true, $size: 0 }
+                }
+            }}, { new: true }
+        );
+
+        await Respondent.findByIdAndUpdate(
+            user,
             { $push: 
                 { 
-                    "quizzes": { 
+                    quizzes: {
+                        hashKey: hashKey,
                         quiz_id: req.params.quizId,
                         timeTaken: timeTaken, 
-                        questionsAnswered: questionsAnswered 
-                    } 
-                } 
+                        questionsAnswered: questionsAnswered,
+                    },
+                }
             },
             { new: true }
         );
