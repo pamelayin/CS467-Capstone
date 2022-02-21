@@ -2,15 +2,17 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 
-import { useRespondent, getRespondentQuiz, takeQuiz } from '../../context/respondent/RespondentState';
+import {
+	useRespondent,
+	getRespondentQuiz,
+	takeQuiz,
+} from "../../context/respondent/RespondentState";
 
-const RespondentQuiz = props => {
+const RespondentQuiz = () => {
     const [respondentState, respondentDispatch] = useRespondent();
     const { error, respondent, quiz_resp } = respondentState;
     const { hashKey, quizId } = useParams();
     const navigate = useNavigate();
-
-    const { history } = props;
 
     const [questionsAnswered, setQuestionsAnswered] = useState([]);
     const [freeResponse, setFreeResponse] = useState([]);
@@ -18,9 +20,12 @@ const RespondentQuiz = props => {
     let time = quiz_resp && quiz_resp.timeLimit;
     const [stateTimeLimit, setStateTimeLimit] = useState(0);
 
-    const onTimeLimitChange = useCallback(() => {
-        setInterval(() => setStateTimeLimit(stateTimeLimit => stateTimeLimit - 1), 60000);
-    }, []);
+	const onTimeLimitChange = useCallback(() => {
+		setInterval(
+			() => setStateTimeLimit((stateTimeLimit) => stateTimeLimit - 1),
+			60000
+		);
+	}, []);
 
     const clearTimer = () => {
         clearInterval(setStateTimeLimit(0));
@@ -45,43 +50,77 @@ const RespondentQuiz = props => {
         })]);
     }
 
-    const onChange = e => {
-        let answerGiven = questionsAnswered;
+	const onChange = (e, type = null) => {
+		const answer = { question_id: e.target.id, answerGiven: e.target.value };
+		let answers;
+		if (type === "radio") {
+			if (questionsAnswered.find((ans) => ans.question_id === e.target.id)) {
+				answers = [
+					...questionsAnswered.filter((ans) => ans.question_id !== e.target.id),
+					answer,
+				];
+			} else {
+				answers = [...questionsAnswered, answer];
+			}
+		} else if (type === "checkbox") {
+			if (
+				questionsAnswered.find(
+					(ans) =>
+						ans.question_id === e.target.id &&
+						ans.answerGiven === e.target.value
+				)
+			) {
+				answers = [
+					...questionsAnswered.filter(
+						(ans) =>
+							ans.question_id === e.target.id &&
+							ans.answerGiven !== e.target.value
+					),
+				];
+			} else {
+				answers = [...questionsAnswered, answer];
+			}
+		}
+		setQuestionsAnswered(answers);
+	};
 
-        if(e.target.checked) {
-            if(!questionsAnswered.includes(e.target.value)) {
-                setQuestionsAnswered([...questionsAnswered, ({
-                    question_id: e.target.id,
-                    answerGiven: e.target.value
-                })]);
-            }
-        } else {
-            answerGiven = answerGiven.filter(el => el.answerGiven !== e.target.value)
-            setQuestionsAnswered(answerGiven);
-        }
-    }
+	//https://stackoverflow.com/questions/57703415/how-to-merge-array-of-objects-if-duplicate-values-are-there-if-key-is-common-th
+	const mergeQuestionIds = (e) => {
+		e.preventDefault();
+
+		const data = Object.values(
+			questionsAnswered.reduce((a, { question_id, answerGiven }) => {
+				a[question_id] = a[question_id] || {
+					question_id,
+					answerGiven: new Set(),
+				};
+				a[question_id].answerGiven.add(answerGiven);
+				return a;
+			}, {})
+		).map(({ question_id, answerGiven }) => ({
+			question_id,
+			answerGiven: [...answerGiven].join(","),
+		}));
+
+		return data;
+	};
 
     const mergeFreeResponse = e => {
         e.preventDefault();
 
-        const data = Object.values(freeResponse.reduce((a, {question_id, answerGiven}) => {
-            a[question_id] = a[question_id] || { question_id, answerGiven: new Set() };
-            a[question_id].answerGiven.add(answerGiven);
-            return a;
-        }, {})).map(({question_id, answerGiven}) => ({ question_id, answerGiven: [...answerGiven].slice(-1)[0]}));
-
-        return data;
-    }
-
-    //https://stackoverflow.com/questions/57703415/how-to-merge-array-of-objects-if-duplicate-values-are-there-if-key-is-common-th
-    const mergeQuestionIds = e => {
-        e.preventDefault();
-
-        const data = Object.values(questionsAnswered.reduce((a, {question_id, answerGiven}) => {
-            a[question_id] = a[question_id] || { question_id, answerGiven: new Set() };
-            a[question_id].answerGiven.add(answerGiven);
-            return a;
-        }, {})).map(({question_id, answerGiven}) => ({ question_id, answerGiven: [...answerGiven].join(",")}));
+        const data = Object.values(
+            freeResponse.reduce((a, {question_id, answerGiven}) => {
+                a[question_id] = a[question_id] || { 
+                    question_id, 
+                    answerGiven: new Set() 
+                };
+                a[question_id].answerGiven.add(answerGiven);
+                return a;
+            }, {})
+        ).map(({question_id, answerGiven}) => ({ 
+            question_id, 
+            answerGiven: [...answerGiven].slice(-1)[0]
+        }));
 
         return data;
     }
@@ -152,30 +191,37 @@ const RespondentQuiz = props => {
                                     <Form.Group>
                                         {q.answerOptions.map((a, index) => (
                                             q.questionType === 'FR' ? (
-                                                    <Form.Control
-                                                        key={index}
-                                                        id={q._id}
-                                                        type="text"
-                                                        name='answerGiven'
-                                                        placeholder='Enter Answer'
-                                                        value={freeResponse.answerGiven}
-                                                        onChange={(e) => onFreeResponseChange(e)}
-                                                    />
+                                                <Form.Control
+                                                    key={index}
+                                                    id={q._id}
+                                                    type="text"
+                                                    name='answerGiven'
+                                                    placeholder='Enter Answer'
+                                                    value={freeResponse.answerGiven}
+                                                    onChange={(e) => onFreeResponseChange(e)}
+                                                />
+                                            ) : q.questionType === "TF" || q.questionType === "SC" ? (
+                                                <Form.Check
+                                                    type={"radio"}
+                                                    key={index}
+                                                    label={a}
+                                                    value={a}
+                                                    id={q._id}
+                                                    name="questionsAnswered"
+                                                    onChange={(e) => onChange(e, "radio")}
+                                                />
                                             ) : (
-                                            <Form.Check
-                                                type={
-                                                    q.questionType === "TF" || q.questionType === "SC"
-                                                        ? "radio"
-                                                        : "checkbox"
-                                                }
-                                                key={index}
-                                                label={a}
-                                                value={a}
-                                                id={q._id}
-                                                name="questionsAnswered"
-                                                onChange={(e) => onChange(e)}
-                                            />
-                                        )))}
+                                                <Form.Check
+                                                    type={"checkbox"}
+                                                    key={index}
+                                                    label={a}
+                                                    value={a}
+                                                    id={q._id}
+                                                    name="questionsAnswered"
+                                                    onChange={(e) => onChange(e, "checkbox")}
+                                                />
+                                            )
+                                        ))}
                                     </Form.Group>
                                 <div style={{ marginTop: "0.5rem" }}></div>
                             </Form>
@@ -194,6 +240,6 @@ const RespondentQuiz = props => {
                 </Container>
         </Container>
 	);
-}
+};
 
-export default RespondentQuiz
+export default RespondentQuiz;
