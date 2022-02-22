@@ -15,7 +15,6 @@ const RespondentQuiz = () => {
     const navigate = useNavigate();
 
     const [questionsAnswered, setQuestionsAnswered] = useState([]);
-    const [freeResponse, setFreeResponse] = useState([]);
 
     let time = quiz_resp && quiz_resp.timeLimit;
     const [stateTimeLimit, setStateTimeLimit] = useState(0);
@@ -43,17 +42,10 @@ const RespondentQuiz = () => {
         getRespondentQuiz(respondentDispatch, hashKey, quizId);
     }, [respondentDispatch, error, hashKey, quizId, onTimeLimitChange]);
 
-    const onFreeResponseChange = e => {
-        setFreeResponse([...freeResponse, ({
-            question_id: e.target.id,
-            answerGiven: e.target.value
-        })]);
-    }
-
 	const onChange = (e, type = null) => {
 		const answer = { question_id: e.target.id, answerGiven: e.target.value };
 		let answers;
-		if (type === "radio") {
+		if (type === "radio" || type === "text") {
 			if (questionsAnswered.find((ans) => ans.question_id === e.target.id)) {
 				answers = [
 					...questionsAnswered.filter((ans) => ans.question_id !== e.target.id),
@@ -63,25 +55,21 @@ const RespondentQuiz = () => {
 				answers = [...questionsAnswered, answer];
 			}
 		} else if (type === "checkbox") {
-			if (
-				questionsAnswered.find(
+			const uncheck_answer = questionsAnswered.find(
 					(ans) =>
 						ans.question_id === e.target.id &&
 						ans.answerGiven === e.target.value
 				)
-			) {
-				answers = [
-					...questionsAnswered.filter(
-						(ans) =>
-							ans.question_id === e.target.id &&
-							ans.answerGiven !== e.target.value
-					),
-				];
+            if(uncheck_answer) {
+				answers = [...questionsAnswered.filter(
+                    (ans) =>
+                        ans !== uncheck_answer
+				)]
 			} else {
 				answers = [...questionsAnswered, answer];
 			}
 		}
-		setQuestionsAnswered(answers);
+        setQuestionsAnswered(answers);
 	};
 
 	//https://stackoverflow.com/questions/57703415/how-to-merge-array-of-objects-if-duplicate-values-are-there-if-key-is-common-th
@@ -99,35 +87,11 @@ const RespondentQuiz = () => {
 			}, {})
 		).map(({ question_id, answerGiven }) => ({
 			question_id,
-			answerGiven: [...answerGiven].join(","),
+			answerGiven: [...answerGiven]
 		}));
 
 		return data;
 	};
-
-    const mergeFreeResponse = e => {
-        e.preventDefault();
-
-        const data = Object.values(
-            freeResponse.reduce((a, {question_id, answerGiven}) => {
-                a[question_id] = a[question_id] || { 
-                    question_id, 
-                    answerGiven: new Set() 
-                };
-                a[question_id].answerGiven.add(answerGiven);
-                return a;
-            }, {})
-        ).map(({question_id, answerGiven}) => ({ 
-            question_id, 
-            answerGiven: [...answerGiven].slice(-1)[0]
-        }));
-
-        return data;
-    }
-
-    const mergeArrays = (radioCheckArr, freeResponseArr) => {
-        return radioCheckArr.concat(freeResponseArr);
-    }
 
     const timeTaken = () => {
         let totalTime;
@@ -139,12 +103,8 @@ const RespondentQuiz = () => {
 
     const onSubmit = e => {
         e.preventDefault();
-        const data = mergeQuestionIds(e);
-        const freeAnswer = mergeFreeResponse(e);
+        const quizData = mergeQuestionIds(e);
 
-        const quizData = mergeArrays(data, freeAnswer);
-
-        console.log(quizData);
         const totalTime = timeTaken();
 
         takeQuiz(respondentDispatch, 
@@ -195,10 +155,9 @@ const RespondentQuiz = () => {
                                                     key={index}
                                                     id={q._id}
                                                     type="text"
-                                                    name='answerGiven'
+                                                    name='questionsAnswered'
                                                     placeholder='Enter Answer'
-                                                    value={freeResponse.answerGiven}
-                                                    onChange={(e) => onFreeResponseChange(e)}
+                                                    onChange={(e) => onChange(e, "text")}
                                                 />
                                             ) : q.questionType === "TF" || q.questionType === "SC" ? (
                                                 <Form.Check

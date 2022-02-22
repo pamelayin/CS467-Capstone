@@ -23,9 +23,9 @@ const RespondentSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    hashKey: String,
     quizzes: [{
         _id: false,
-        hashKey: String,
         quiz_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Quiz', 
@@ -34,7 +34,7 @@ const RespondentSchema = new mongoose.Schema({
         questionsAnswered: [{
             _id: false,
             question_id: mongoose.Types.ObjectId,
-            answerGiven: String
+            answerGiven: [String]
         }]
     }]
 }, { timestamps: true });
