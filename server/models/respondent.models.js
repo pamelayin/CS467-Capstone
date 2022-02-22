@@ -34,7 +34,7 @@ const RespondentSchema = new mongoose.Schema({
         questionsAnswered: [{
             _id: false,
             question_id: mongoose.Types.ObjectId,
-            answerGiven: String
+            answerGiven: [String]
         }]
     }]
 }, { timestamps: true });

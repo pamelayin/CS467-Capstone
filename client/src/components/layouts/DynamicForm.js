@@ -68,7 +68,7 @@ function DynamicForm(props) {
 			case "Type":
 				if (value === "FR") {
 					note.addOpen = false;
-					note.Choice1 = "";
+					note.Choice1 = " ";
 					note.Choice2 = "";
 					note.Choice3 = "";
 					note.Choice4 = "";

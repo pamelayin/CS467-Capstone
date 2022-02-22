@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { useParams } from "react-router-dom";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import React, { useEffect, useState, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 
 import {
 	useRespondent,
@@ -9,12 +9,15 @@ import {
 } from "../../context/respondent/RespondentState";
 
 const RespondentQuiz = () => {
-	const [respondentState, respondentDispatch] = useRespondent();
-	const { error, respondent, quiz_resp } = respondentState;
-	const { hashKey, quizId } = useParams();
+    const [respondentState, respondentDispatch] = useRespondent();
+    const { error, respondent, quiz_resp } = respondentState;
+    const { hashKey, quizId } = useParams();
+    const navigate = useNavigate();
 
-	let time = quiz_resp && quiz_resp.timeLimit;
-	const [stateTimeLimit, setStateTimeLimit] = useState(0);
+    const [questionsAnswered, setQuestionsAnswered] = useState([]);
+
+    let time = quiz_resp && quiz_resp.timeLimit;
+    const [stateTimeLimit, setStateTimeLimit] = useState(0);
 
 	const onTimeLimitChange = useCallback(() => {
 		setInterval(
@@ -23,23 +26,21 @@ const RespondentQuiz = () => {
 		);
 	}, []);
 
-	const clearTimer = () => {
-		clearInterval(setStateTimeLimit(0));
-	};
+    const clearTimer = () => {
+        clearInterval(setStateTimeLimit(0));
+    }
 
-	useEffect(() => {
-		setStateTimeLimit(time);
-	}, [time]);
+    useEffect(() => {
+        setStateTimeLimit(time);
+    }, [time])
 
-	useEffect(() => {
-		if (error) {
-			console.log(error);
-		}
-		onTimeLimitChange();
-		getRespondentQuiz(respondentDispatch, hashKey, quizId);
-	}, [respondentDispatch, error, hashKey, quizId, onTimeLimitChange]);
-
-	const [questionsAnswered, setQuestionsAnswered] = useState([]);
+    useEffect(() => {
+        if(error) {
+            console.log(error);
+        }
+        onTimeLimitChange();
+        getRespondentQuiz(respondentDispatch, hashKey, quizId);
+    }, [respondentDispatch, error, hashKey, quizId, onTimeLimitChange]);
 
 	const onChange = (e, type) => {
 		const answer = { question_id: e.target.id, answerGiven: e.target.value };
@@ -68,7 +69,7 @@ const RespondentQuiz = () => {
 				answers = [...questionsAnswered, answer];
 			}
 		}
-		setQuestionsAnswered(answers);
+        setQuestionsAnswered(answers);
 	};
 
 	//https://stackoverflow.com/questions/57703415/how-to-merge-array-of-objects-if-duplicate-values-are-there-if-key-is-common-th
@@ -86,115 +87,117 @@ const RespondentQuiz = () => {
 			}, {})
 		).map(({ question_id, answerGiven }) => ({
 			question_id,
-			answerGiven: [...answerGiven].join(","),
+			answerGiven: [...answerGiven]
 		}));
 
 		return data;
 	};
 
-	const timeTaken = () => {
-		let totalTime;
+    const timeTaken = () => {
+        let totalTime;
 
-		totalTime = time - stateTimeLimit;
+        totalTime = time - stateTimeLimit;
 
-		return totalTime;
-	};
+        return totalTime;
+    }
 
-	const onSubmit = (e) => {
-		e.preventDefault();
-		const data = mergeQuestionIds(e);
-		console.log(questionsAnswered);
-		console.log(data);
-		const totalTime = timeTaken();
+    const onSubmit = e => {
+        e.preventDefault();
+        const quizData = mergeQuestionIds(e);
 
-		takeQuiz(
-			respondentDispatch,
-			{
-				timeTaken: totalTime,
-				questionsAnswered: data,
-			},
-			hashKey,
-			quizId
-		);
+        const totalTime = timeTaken();
 
-		clearTimer();
-		alert("You have now finished");
-	};
+        takeQuiz(respondentDispatch, 
+            {
+                timeTaken: totalTime,
+                questionsAnswered: quizData
+            },
+            hashKey,
+            quizId
+        );
 
-	return (
-		<Container>
-			<Container>
-				<h1
-					className="shadow-sm p-3 text-center rounded"
-					style={{ color: "black" }}
-				>
-					{quiz_resp && quiz_resp.title}
-				</h1>
-				<span style={{ display: "inline" }}>
-					Time Limit: {stateTimeLimit} minutes{" "}
-				</span>
-				<span>Hash ID: {respondent && respondent.hashKey}</span>
-			</Container>
-			{quiz_resp &&
-				quiz_resp.questions.map((q, i) => (
-					<Row className="mt-5" key={q._id}>
-						<Col
-							lg={5}
-							md={6}
-							sm={12}
-							className="p-5 m-auto shadow-sm rounded-lg"
-						>
-							<Form onSubmit={onSubmit}>
-								<Form.Group>
-									<Form.Label htmlFor="question">{q.question}</Form.Label>
-								</Form.Group>
-								<Form.Group>
-									{q.answerOptions.map((a, index) =>
-										q.questionType === "FR" ? (
-											<Form.Control
-												key={index}
-												type="text"
-												name="questionsAnswered"
-												id={q._id}
-												onChange={(e) => onChange(e, "text")}
-											/>
-										) : q.questionType === "TF" || q.questionType === "SC" ? (
-											<Form.Check
-												type={"radio"}
-												key={index}
-												label={a}
-												value={a}
-												id={q._id}
-												name="questionsAnswered"
-												onChange={(e) => onChange(e, "radio")}
-											/>
-										) : (
-											<Form.Check
-												type={"checkbox"}
-												key={index}
-												label={a}
-												value={a}
-												id={q._id}
-												name="questionsAnswered"
-												onChange={(e) => onChange(e, "checkbox")}
-											/>
-										)
-									)}
-								</Form.Group>
-								<div style={{ marginTop: "0.5rem" }}></div>
-							</Form>
-						</Col>
-					</Row>
-				))}
-			<Button
-				variant="warning btn-block"
-				type="submit"
-				style={{ marginTop: "2rem" }}
-				onClick={onSubmit}
-			>
-				Complete
-			</Button>
-		</Container>
+        clearTimer();
+        navigate('/quizComplete')
+    }
+
+    return (
+        <Container>
+            <Container>
+                <h1
+                    className="shadow-sm p-3 text-center rounded"
+                    style={{ color: "black" }}
+                >
+                    {quiz_resp && quiz_resp.title}
+                </h1>
+                <span style={{ display: "inline" }}>
+                    Time Limit: {stateTimeLimit}{' '}
+                </span><span>
+                    Candidate ID: {respondent && respondent._id}
+                </span>
+            </Container>
+            {quiz_resp &&
+                quiz_resp.questions.map((q, i) => (
+                    <Row className="mt-5" key={q._id}>
+                        <Col
+                            lg={5}
+                            md={6}
+                            sm={12}
+                            className="p-5 m-auto shadow-sm rounded-lg"
+                        >
+                            <Form onSubmit={onSubmit}>
+                                <Form.Group>
+                                    <Form.Label htmlFor="question">{q.question}</Form.Label>
+                                </Form.Group>
+                                    <Form.Group>
+                                        {q.answerOptions.map((a, index) => (
+                                            q.questionType === 'FR' ? (
+                                                <Form.Control
+                                                    key={index}
+                                                    id={q._id}
+                                                    type="text"
+                                                    name='questionsAnswered'
+                                                    placeholder='Enter Answer'
+                                                    onChange={(e) => onChange(e, "text")}
+                                                />
+                                            ) : q.questionType === "TF" || q.questionType === "SC" ? (
+                                                <Form.Check
+                                                    type={"radio"}
+                                                    key={index}
+                                                    label={a}
+                                                    value={a}
+                                                    id={q._id}
+                                                    name="questionsAnswered"
+                                                    onChange={(e) => onChange(e, "radio")}
+                                                />
+                                            ) : (
+                                                <Form.Check
+                                                    type={"checkbox"}
+                                                    key={index}
+                                                    label={a}
+                                                    value={a}
+                                                    id={q._id}
+                                                    name="questionsAnswered"
+                                                    onChange={(e) => onChange(e, "checkbox")}
+                                                />
+                                            )
+                                        ))}
+                                    </Form.Group>
+                                <div style={{ marginTop: "0.5rem" }}></div>
+                            </Form>
+                        </Col>
+                    </Row>
+                ))}
+                <Container 
+                    style={{ marginTop: "2rem", alignItems: 'center' }}>
+                    <Button
+                        variant="warning btn-block"
+                        type="submit"
+                        onClick={onSubmit}
+                    >
+                        Complete
+                    </Button>
+                </Container>
+        </Container>
 	);
 };
 

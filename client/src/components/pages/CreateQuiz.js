@@ -52,7 +52,7 @@ function CreateQuiz(props) {
 	const [tempNote, setTemp] = useState({
 		id: 0,
 		Question: "",
-    points: 0,
+        points: 0,
 		Type: "NA",
 		Choice1: "",
 		Choice2: "",
@@ -367,7 +367,7 @@ function CreateQuiz(props) {
 		setTemp({
 			id: 0,
 			Question: "",
-      points: "",
+            points: "",
 			Type: "NA",
 			Choice1: "",
 			Choice2: "",
