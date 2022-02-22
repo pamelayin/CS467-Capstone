@@ -42,7 +42,7 @@ const RespondentQuiz = () => {
         getRespondentQuiz(respondentDispatch, hashKey, quizId);
     }, [respondentDispatch, error, hashKey, quizId, onTimeLimitChange]);
 
-	const onChange = (e, type = null) => {
+	const onChange = (e, type) => {
 		const answer = { question_id: e.target.id, answerGiven: e.target.value };
 		let answers;
 		if (type === "radio" || type === "text") {
@@ -56,14 +56,14 @@ const RespondentQuiz = () => {
 			}
 		} else if (type === "checkbox") {
 			const uncheck_answer = questionsAnswered.find(
-					(ans) =>
-						ans.question_id === e.target.id &&
-						ans.answerGiven === e.target.value
-				)
-            if(uncheck_answer) {
+				(ans) =>
+					ans.question_id === e.target.id &&
+					ans.answerGiven === e.target.value
+			);
+			if (uncheck_answer){
 				answers = [...questionsAnswered.filter(
-                    (ans) =>
-                        ans !== uncheck_answer
+					(ans) =>
+						ans !== uncheck_answer
 				)]
 			} else {
 				answers = [...questionsAnswered, answer];
