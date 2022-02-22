@@ -41,10 +41,10 @@ const RespondentQuiz = () => {
 
 	const [questionsAnswered, setQuestionsAnswered] = useState([]);
 
-	const onChange = (e, type = null) => {
+	const onChange = (e, type) => {
 		const answer = { question_id: e.target.id, answerGiven: e.target.value };
 		let answers;
-		if (type === "radio") {
+		if (type === "radio" || type === "text") {
 			if (questionsAnswered.find((ans) => ans.question_id === e.target.id)) {
 				answers = [
 					...questionsAnswered.filter((ans) => ans.question_id !== e.target.id),
@@ -54,20 +54,16 @@ const RespondentQuiz = () => {
 				answers = [...questionsAnswered, answer];
 			}
 		} else if (type === "checkbox") {
-			if (
-				questionsAnswered.find(
+			const uncheck_answer = questionsAnswered.find(
+				(ans) =>
+					ans.question_id === e.target.id &&
+					ans.answerGiven === e.target.value
+			);
+			if (uncheck_answer){
+				answers = [...questionsAnswered.filter(
 					(ans) =>
-						ans.question_id === e.target.id &&
-						ans.answerGiven === e.target.value
-				)
-			) {
-				answers = [
-					...questionsAnswered.filter(
-						(ans) =>
-							ans.question_id === e.target.id &&
-							ans.answerGiven !== e.target.value
-					),
-				];
+						ans !== uncheck_answer
+				)]
 			} else {
 				answers = [...questionsAnswered, answer];
 			}
@@ -160,8 +156,7 @@ const RespondentQuiz = () => {
 												type="text"
 												name="questionsAnswered"
 												id={q._id}
-												// value={a}
-												onChange={(e) => onChange(e)}
+												onChange={(e) => onChange(e, "text")}
 											/>
 										) : q.questionType === "TF" || q.questionType === "SC" ? (
 											<Form.Check
