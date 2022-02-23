@@ -6,16 +6,20 @@ import {
 	FormControl,
 	InputGroup,
 	Container,
-  Row,
-  Col,
+	Row,
+	Col,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 import Questions from "../layouts/Questions";
 import DynamicForm from "../layouts/DynamicForm";
-import CreateQuizAlert from '../Alerts/CreateQuizAlert';
+import CreateQuizAlert from "../Alerts/CreateQuizAlert";
 
-import { clearErrors, createQuiz, useQuizzes } from '../../context/quiz/QuizState';
+import {
+	clearErrors,
+	createQuiz,
+	useQuizzes,
+} from "../../context/quiz/QuizState";
 
 const ColoredLine = ({ color }) => (
 	<hr
@@ -29,24 +33,24 @@ const ColoredLine = ({ color }) => (
 
 function CreateQuiz(props) {
 	const [notes, setNotes] = useState([]);
-    const [quizState, quizDispatch] = useQuizzes();
-    const [title, setTitle] = useState('');
-    const [timeLimit, setTimeLimit] = useState(0);
-    const [alert, setShowAlert] = useState(false);
-    const [completed, setCompleted] = useState(false);
+	const [quizState, quizDispatch] = useQuizzes();
+	const [title, setTitle] = useState("");
+	const [timeLimit, setTimeLimit] = useState(0);
+	const [alert, setShowAlert] = useState(false);
+	const [completed, setCompleted] = useState(false);
 
-    const navigate = useNavigate();
-    const { error } = quizState;
+	const navigate = useNavigate();
+	const { error } = quizState;
 
-    useEffect(() => {
-        if(error && !completed) {
-            setShowAlert(true);
-            setTimeout(() => {
-                clearErrors(quizDispatch);
-                setShowAlert(false);
-            }, 5000);
-        }
-    }, [error, quizDispatch, completed]);
+	useEffect(() => {
+		if (error && !completed) {
+			setShowAlert(true);
+			setTimeout(() => {
+				clearErrors(quizDispatch);
+				setShowAlert(false);
+			}, 5000);
+		}
+	}, [error, quizDispatch, completed]);
 
 	//Temp data to hold edit data
 	const [tempNote, setTemp] = useState({
@@ -73,7 +77,7 @@ function CreateQuiz(props) {
 	// function to sync the temp with actual data
 	function tempSync(passedNotes) {
 		tempNote.Question = passedNotes[tempNote.id].Question;
-        tempNote.points = passedNotes[tempNote.id].points;
+		tempNote.points = passedNotes[tempNote.id].points;
 		tempNote.Type = passedNotes[tempNote.id].Type;
 		tempNote.Choice1 = passedNotes[tempNote.id].Choice1;
 		tempNote.Choice2 = passedNotes[tempNote.id].Choice2;
@@ -107,7 +111,7 @@ function CreateQuiz(props) {
 									value={tempNote.Question}
 								/>
 							</Form.Group>
-                            <Form.Group className="mb-3">
+							<Form.Group className="mb-3">
 								<Form.Label>Points:</Form.Label>
 								<Form.Control
 									type="text"
@@ -270,8 +274,8 @@ function CreateQuiz(props) {
 				return (tempNote.Sel6Open = false);
 			case "AnswerKey":
 				return (tempNote.addOpen = false);
-            default:
-                return;
+			default:
+				return;
 		}
 	}
 
@@ -301,7 +305,7 @@ function CreateQuiz(props) {
 	function changeData(actualData) {
 		console.log(tempNote);
 		actualData.Question = tempNote.Question;
-    actualData.points = tempNote.points;
+		actualData.points = tempNote.points;
 		actualData.Type = tempNote.Type;
 		actualData.Choice1 = tempNote.Choice1;
 		actualData.Choice2 = tempNote.Choice2;
@@ -319,7 +323,7 @@ function CreateQuiz(props) {
 		setTemp({
 			id: 0,
 			Question: "",
-            points: 0,
+			points: 0,
 			Type: "NA",
 			Choice1: "",
 			Choice2: "",
@@ -388,7 +392,7 @@ function CreateQuiz(props) {
 	}
 
 	function formatQuestions(notes) {
-		var questionArray = []
+		var questionArray = [];
 		for (var i = 0; i < notes.length; i++) {
 			var questionObj = {};
 			// questionObj["question_id"] = toString(i);
@@ -402,100 +406,107 @@ function CreateQuiz(props) {
 					questionObj["answerOptions"].push(notes[i][answer]);
 				}
 			}
-			questionObj["answer"] = notes[i]["AnswerKey"].split(",");
+			questionObj["answer"] = notes[i]["AnswerKey"]
+				.split(",")
+				.map((email) => email.trim());;
 			questionObj["points"] = notes[i]["points"];
 
 			questionArray.push(questionObj);
 		}
 
-		return questionArray
+		return questionArray;
 	}
 
-    function getTotalPoints(questions) {
-        let totalPoints = 0
-        for(var i = 0; i < questions.length; i++) {
-            totalPoints += parseInt(questions[i].points, 10);
-        }
-        return totalPoints;
-    }
+	function getTotalPoints(questions) {
+		let totalPoints = 0;
+		for (var i = 0; i < questions.length; i++) {
+			totalPoints += parseInt(questions[i].points, 10);
+		}
+		return totalPoints;
+	}
 
-    const onTitleChange = e => {
-        setTitle(e.target.value);
-        if(title !== '' && timeLimit > 0) {
-            setCompleted(true);
-        } else {
-            setCompleted(false);
-        }
-        clearErrors(quizDispatch);
-    }
+	const onTitleChange = (e) => {
+		setTitle(e.target.value);
+		if (title !== "" && timeLimit > 0) {
+			setCompleted(true);
+		} else {
+			setCompleted(false);
+		}
+		clearErrors(quizDispatch);
+	};
 
-    const onTimeLimitChange = e => {
-        setTimeLimit(e.target.value);
-        if(timeLimit > 0 && title !== '') {
-            setCompleted(true);
-        } else {
-            setCompleted(false);
-        }
-        clearErrors(quizDispatch);
-    }
+	const onTimeLimitChange = (e) => {
+		setTimeLimit(e.target.value);
+		if (timeLimit > 0 && title !== "") {
+			setCompleted(true);
+		} else {
+			setCompleted(false);
+		}
+		clearErrors(quizDispatch);
+	};
 
 	function onSubmit(event) {
 		event.preventDefault();
 
-        if(!error) {
-            const questions = formatQuestions(notes);
-            const totalScore = getTotalPoints(questions);
-    
-            createQuiz(quizDispatch, {
-                title,
-                questions,
-                timeLimit,
-                totalScore
-            });
-    
-            setTitle('');
-            setTimeLimit(0);
-            setShowAlert(true);
-        }
+		if (!error) {
+			const questions = formatQuestions(notes);
+			const totalScore = getTotalPoints(questions);
 
-        console.log(completed)
-        
-        if(completed) {
-            setTimeout(() => navigate('/quizsend'), 4000);
-        }
-    }
+			createQuiz(quizDispatch, {
+				title,
+				questions,
+				timeLimit,
+				totalScore,
+			});
+
+			setTitle("");
+			setTimeLimit(0);
+			setShowAlert(true);
+		}
+
+		console.log(completed);
+
+		if (completed) {
+			setTimeout(() => navigate("/"), 5000);
+		}
+	}
 
 	return (
 		<div>
-            <CreateQuizAlert error={error} alert={alert} setShowAlert={setShowAlert} />
-            <DynamicForm onAdd={addNote} />
-            <br />
-            <Form onSubmit={onSubmit}>
-              <Row className="align-items-center">
-                <Col xs={9}>
-                  <Form.Control
-                    className="mb-2"
-					type="text"
-					name="title"
-                    onChange={onTitleChange}
-                    value={title}
-                    placeholder="Quiz Title"
-                  />
-                </Col>
-                <Col xs="auto">
-                  <InputGroup className="mb-2">
-                    <FormControl 
-                    type="text"
-					name="timeLimit" 
-                      value={timeLimit} 
-                      onChange={onTimeLimitChange} 
-                      placeholder="Quiz Duration" />
-                    <InputGroup.Text>Minutes</InputGroup.Text>
-                  </InputGroup>
-                </Col>
-              </Row>
-              </Form>
-              <ColoredLine color="grey" />
+			<CreateQuizAlert
+				error={error}
+				alert={alert}
+				setShowAlert={setShowAlert}
+			/>
+			<DynamicForm onAdd={addNote} />
+			<br />
+			<Form onSubmit={onSubmit}>
+				<Row className="align-items-center">
+					<Col xs={9}>
+						<Form.Control
+							className="mb-2"
+							type="text"
+							name="title"
+							onChange={onTitleChange}
+							value={title}
+							placeholder="Quiz Title"
+						/>
+					</Col>
+					<Col xs="auto">
+						<InputGroup className="mb-2">
+							<FormControl
+								type="text"
+								name="timeLimit"
+								value={timeLimit}
+								onChange={onTimeLimitChange}
+								placeholder="Quiz Duration"
+							/>
+							<InputGroup.Text>Minutes</InputGroup.Text>
+						</InputGroup>
+					</Col>
+				</Row>
+			</Form>
+			<ColoredLine color="grey" />
 
 			{notes.map((noteItem, index) => {
 				return (
@@ -504,7 +515,7 @@ function CreateQuiz(props) {
 							key={index}
 							id={index}
 							Question={noteItem.Question}
-                            points={noteItem.points}
+							points={noteItem.points}
 							Type={noteItem.Type}
 							Choice1={noteItem.Choice1}
 							Choice2={noteItem.Choice2}
@@ -515,7 +526,7 @@ function CreateQuiz(props) {
 							AnswerKey={noteItem.AnswerKey}
 							onDelete={deleteNote}
 							onEdit={editNote}
-                            setCompleted={setCompleted}
+							setCompleted={setCompleted}
 						/>
 						<ColoredLine color="grey" />
 					</div>

@@ -8,7 +8,7 @@ const AlertEditProfile = ({ alert, setShowAlert }) => {
 
     const toggleSetAlert = () => {
         setShowAlert(!alert);
-        clearErrors(authDispatch);
+        // clearErrors(authDispatch);
     }
 
     return (
@@ -26,7 +26,7 @@ const AlertEditProfile = ({ alert, setShowAlert }) => {
                     {error ? (
                         <Toast.Body>{error}</Toast.Body>
                     ) : (
-                        <Toast.Body>Your profile has successfully been updated!</Toast.Body>
+                        <Toast.Body>Your profile has successfully been updated! You will be redirected to dashboard.</Toast.Body>
                     )}
                 </Toast>
             </Col>

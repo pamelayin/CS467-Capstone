@@ -24,7 +24,8 @@ const QuizSchema = new mongoose.Schema({
         questionType: String
     }],
     timeLimit: Number,
-    totalScore: Number
+    totalScore: Number,
+    totalEmailsSent: Number,
 }, { timestamps: true });
 
 module.exports = mongoose.model('Quiz', QuizSchema);

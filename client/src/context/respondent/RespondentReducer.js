@@ -1,9 +1,11 @@
 import {
 	CREATE_RESPONDENT,
 	GET_RESPONDENT_QUIZ,
-	GET_RESPONDENTS,
+	GET_RESPONDENT_QUIZ_ANSWERED,
+	LOAD_RESPONDENTS,
 	RESPONDENT_ERROR,
 	RESPONDENT_LOADED,
+	UPDATE_RESPONDENT_QUIZ,
 	TAKE_QUIZ,
     CLEAR_ERRORS,
 } from "../types";
@@ -22,10 +24,24 @@ const RespondentReducer = (state, action) => {
 				quiz_resp: action.payload,
 				loading: false,
 			};
-		case GET_RESPONDENTS:
+		case GET_RESPONDENT_QUIZ_ANSWERED:
+			return {
+				...state,
+				quiz_resp_ans: action.payload,
+				loading: false,
+			};
+		case UPDATE_RESPONDENT_QUIZ:
+			return {
+				...state,
+				respondent: action.payload,
+				loading: false,
+			};
+		case LOAD_RESPONDENTS:
 			return {
 				...state,
 				respondents: action.payload,
+				// respondents: action.payload.respondents,
+				// quiz_resp_all: action.payload.quiz_resp_all,
 				loading: false,
 			};
 		case RESPONDENT_ERROR:
@@ -46,11 +62,11 @@ const RespondentReducer = (state, action) => {
 				respondent: action.payload,
 				loading: false,
 			};
-        case CLEAR_ERRORS:
-            return {
-                ...state,
-                error: null
-            }
+		case CLEAR_ERRORS:
+			return {
+				...state,
+				error: null,
+			};
 		default:
 			throw new Error(`Unsupported type of: ${action.type}`);
 	}

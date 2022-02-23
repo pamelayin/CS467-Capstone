@@ -167,17 +167,64 @@ router.patch('/takeQuiz/:hashKey/quiz/:quizId', async(req, res) => {
 //get all respondents
 router.get("/quiz/:quizId", async (req, res) => {
 	try {
-		let quiz = await Quiz.findById(req.params.quizId);
+		// let quiz = await Quiz.findById(req.params.quizId);
 
         let respondents = await Respondent.find({
             'quizzes._id': req.params.quizId
         })
         res.status(200).json(respondents);
-		// res.status(200).json({ respondents: respondents, quiz_resp: quiz });
+		// res.status(200).json({ respondents: respondents, quiz_resp_all: quiz });
 	} catch (err) {
 		console.error(err.message);
 		res.status(500).json({ msg: "Server Error" });
 	}
 });
 
+// Route to load the candidate info by respondent id 
+router.get("/:respondentId/quiz/:quizId", async (req, res) => {
+	
+	try {
+		// let quiz = await Quiz.findById(req.params.quizId);
+        let respondent = await Respondent.findById(req.params.respondentId);
+        
+        let quiz_resp_ans = respondent.quizzes.find(
+					(quiz) => quiz.quiz_id == req.params.quizId
+				);
+
+		if (!respondent) {
+			return res.status(400).json({ msg: "Candidate info not found" });
+        }
+        if (!quiz_resp_ans) {
+					return res.status(400).json({ msg: "Quiz info not found" });
+				}
+		res.status(200).json({ respondent: respondent, quiz_resp_ans: quiz_resp_ans });
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).json({ msg: "Server Error" });
+	}
+});
+
+router.put("/:respondentId/quiz/:quizId", async (req, res) => {
+
+	try {
+		respondent = await Respondent.findByIdAndUpdate(
+			req.params.respondentId,
+			{
+				$set: {
+					quizzes: {
+						quiz_id: req.params.quizId,
+						questionsAnswered: req.body.questionsAnswered,
+						totalPointsGiven: req.body.totalPointsGiven,
+					},
+				},
+			},
+			{ new: true }
+		);
+
+		res.status(200).json(respondent);
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).json({ msg: err.message });
+	}
+});
 module.exports = router;

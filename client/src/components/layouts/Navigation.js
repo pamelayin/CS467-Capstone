@@ -36,6 +36,8 @@ const Navigation = () => {
 			setGreeting("Quiz Stats");
 		} else if (location.pathname === "/createquiz") {
 			setGreeting("Create Quiz");
+		} else if (location.pathname.substring(0, location.pathname.lastIndexOf("/")) === "/sendquiz") {
+			setGreeting("Send Quiz");
 		}
 	}, [location, location.pathname, setGreeting, authDispatch]);
 

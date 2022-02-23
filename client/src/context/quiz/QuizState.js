@@ -5,6 +5,7 @@ import QuizReducer from './QuizReducer';
 import {
     GET_QUIZZES,
     GET_QUIZ,
+    UPDATE_QUIZ,
 	DELETE_QUIZ,
 	QUIZ_ERROR,
 	CLEAR_ERRORS,
@@ -35,7 +36,7 @@ export const getQuizzes = async(dispatch) => {
             payload: res.data
         });
 
-        console.log(res.data);
+        // console.log(res.data);
 
     } catch (err) {
         dispatch({
@@ -56,6 +57,30 @@ export const getQuiz = async (dispatch, _id) => {
         });
         // console.log(res.data)
 	} catch (err) {
+		dispatch({
+			type: QUIZ_ERROR,
+			payload: err.response.data.msg || err.response.data.errors[0].msg,
+		});
+	}
+};
+
+//update quiz
+export const updateQuiz = async (dispatch, _id, data) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    try {
+			const res = await axios.patch(route + `/${_id}`, data, config);
+
+			dispatch({
+				type: UPDATE_QUIZ,
+				payload: res.data,
+			});
+			// console.log(res.data)
+		} catch (err) {
 		dispatch({
 			type: QUIZ_ERROR,
 			payload: err.response.data.msg || err.response.data.errors[0].msg,
