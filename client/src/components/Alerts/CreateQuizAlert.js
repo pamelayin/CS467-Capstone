@@ -23,7 +23,7 @@ const CreateQuizAlert = ({ error, alert, setShowAlert }) => {
                     {error ? ( <Toast.Body>{error}</Toast.Body> ) 
                     : (
                         <Toast.Body>
-                            You have successfully created your quiz! You will now be redirected back to your dashboard.
+                            You have successfully created your quiz! You will now be redirected back to your dashboard. You can find your quiz in past quizzes.
                         </Toast.Body>
                     )}
                 </Toast>

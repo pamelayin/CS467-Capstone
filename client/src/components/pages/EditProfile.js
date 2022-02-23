@@ -48,13 +48,14 @@ function EditProfile() {
 	const onSubmit = (event) => {
 		event.preventDefault();
 		updateUser(authDispatch, userData);
+		
 		setShowAlert(true);
-
-		if (updated) {
-			setTimeout(() => navigate("/"), 5000);
-		}
+		clearErrors(authDispatch);	
+		
 	};
-
+	if (updated) {
+		setTimeout(() => navigate("/"), 5000);
+	}
 	// delete modal
 	const [id, setId] = useState();
 	const [displayFirstModal, setDisplayFirstModal] = useState(false);

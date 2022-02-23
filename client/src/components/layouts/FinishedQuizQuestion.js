@@ -2,8 +2,8 @@ import { syncIndexes } from "mongoose";
 import React from "react";
 import {Button, Container, Row, Col} from 'react-bootstrap'
 
-const FinishedQuizQuestion = ({ question, index }) => {
-	console.log(question, index)
+const FinishedQuizQuestion = ({ question, answer, index }) => {
+	// console.log(question, answer, index)
 	const ColoredLine = ({ color }) => (
 		<hr
 			style={{
@@ -25,10 +25,10 @@ const FinishedQuizQuestion = ({ question, index }) => {
 						<strong>Question {index}</strong>
 					</p>
 					<p>{question.question}</p>
+					<p style={instyle}>Respondent Answer(s)</p>
+					<p>{answer.answerGiven}</p>
 					<p style={instyle}>Correct Answer(s)</p>
 					{/* multiple answers - check */}
-					<p>{question.answer}</p>
-					<p style={instyle}>Respondent Answer(s)</p>
 					<p>{question.answer}</p>
 				</Container>
 			</div>

@@ -1,20 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Row, Container} from "react-bootstrap";
+import { Modal, Button, Row, Container } from "react-bootstrap";
 import {
 	useRespondent,
 	getRespondentQuiz,
 	takeQuiz,
 	getRespondents,
-	loadRespondent
+	loadRespondent,
 } from "../../context/respondent/RespondentState";
 import FinishedQuizQuestion from "./FinishedQuizQuestion";
+import calculateScore from "../utils/CalculateScore";
 
-// source: https://codemoto.io/coding/react/react-delete-confirmation-modal
-const QuizModal = ({ showModal, hideModal, confirmModal, quiz, respondent }) => {
-
+const QuizModal = ({
+	showModal,
+	hideModal,
+	confirmModal,
+	quiz,
+	respondent,
+	answered_quiz,
+	// calculateScore
+}) => {
+	// quiz && respondent && calculateScore(quiz, answered_quiz, respondent);
+	// console.log(answered_quiz);
 	return (
 		quiz &&
 		respondent && (
+			
 			<Modal
 				show={showModal}
 				onHide={hideModal}
@@ -32,17 +42,23 @@ const QuizModal = ({ showModal, hideModal, confirmModal, quiz, respondent }) => 
 					<div>
 						<Row>
 							<p>
-								<strong>Total Score: </strong>/ {quiz.totalScore} points
+								<strong>Total Score: </strong> {answered_quiz.totalPointsGiven}{" "}
+								/ {quiz.totalScore} points (
+								{(
+									(answered_quiz.totalPointsGiven / quiz.totalScore) *
+									100
+								).toFixed(1)}{" "}
+								%)
 							</p>
 							<p>
-								<strong>Time Used: </strong>/ {quiz.timeLimit} minutes
+								<strong>Time Used: </strong>
+								{answered_quiz.timeTaken} / {quiz.timeLimit} minutes
 							</p>
 						</Row>
-					
-							{quiz.questions.map((question, index) => (
-								<FinishedQuizQuestion question={question} index={index + 1}/>
-							))}
-					
+
+						{quiz.questions.map((question, index) => (
+							<FinishedQuizQuestion key={question._id} question={question} answer={answered_quiz.questionsAnswered} index={index + 1} />
+						))}
 					</div>
 				</Modal.Body>
 				<Modal.Footer>

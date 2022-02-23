@@ -117,7 +117,8 @@ const RespondentQuiz = () => {
         );
 
         clearTimer();
-        navigate('/quizComplete')
+        navigate('/quizComplete', { state: {quiz_id: quizId, resp_id: respondent._id}})
+        
     }
 
     return (

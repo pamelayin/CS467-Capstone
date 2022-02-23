@@ -8,9 +8,10 @@ import { useParams } from "react-router-dom";
 import QuizModal from "../layouts/QuizModal";
 import {
 	useRespondent,
-	getRespondentQuiz,
-	getRespondents,
+	getRespondentQuizById,
+	loadRespondents,
 } from "../../context/respondent/RespondentState";
+import CalculateScore from "../utils/CalculateScore";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -21,13 +22,13 @@ function QuizDashboard() {
 	const [quizState, quizDispatch] = useQuizzes();
 	const { quiz } = quizState;
 	const [respondentState, respondentDispatch] = useRespondent();
-	const { error, respondent, quiz_resp, respondents } = respondentState;
+	const { error, respondent, quiz_resp_ans, respondents } = respondentState;
 
 	useEffect(() => {
 		getQuiz(quizDispatch, quiz_id);
 	}, [quizDispatch, quiz_id]);
 	useEffect(() => {
-		getRespondents(respondentDispatch, quiz_id);
+		loadRespondents(respondentDispatch, quiz_id);
 	}, [respondentDispatch, quiz_id]);
 
 	const completionData = {
@@ -58,7 +59,7 @@ function QuizDashboard() {
 	};
 
 	const showQuizModal = (respondent_id) => {
-		getRespondentQuiz(respondentDispatch, respondent_id, quiz_id);
+		getRespondentQuizById(respondentDispatch, respondent_id, quiz_id);
 		setShowModal(true);
 	};
 
@@ -172,13 +173,16 @@ function QuizDashboard() {
 					</tbody>
 				</Table>
 			</Row>
-			{respondents && quiz && (
+
+			{respondents && quiz && quiz_resp_ans && (
 				<QuizModal
 					showModal={showModal}
 					// confirmModal={deleteAccountConfirm}
 					hideModal={hideModal}
-					quiz={quiz_resp}
+					quiz={quiz}
+					answered_quiz={quiz_resp_ans}
 					respondent={respondent}
+					// calculateScore={CalculateScore}
 				/>
 			)}
 		</Container>

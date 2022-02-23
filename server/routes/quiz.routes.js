@@ -29,6 +29,22 @@ router.get("/:id", auth, async (req, res) => {
 	}
 });
 
+router.patch("/:id", auth, async (req, res) => {
+
+	try {
+		const quiz = await Quiz.findByIdAndUpdate(
+			req.params.id,
+			{
+				"totalEmailsSent": req.body.totalEmailsSent
+			},
+			{ new: true }
+		);
+		res.status(200).json({ msg: "Email Sent Count Updated.", quiz });
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).json({ msg: err.message });
+	}
+});
 router.delete("/:id", auth, async (req, res) => {
 	try {
 		await Quiz.findByIdAndDelete(req.params.id);
