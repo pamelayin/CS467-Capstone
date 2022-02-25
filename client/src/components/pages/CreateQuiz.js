@@ -10,16 +10,28 @@ import {
 	Col,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import Radium from "radium";
 
 import Questions from "../layouts/Questions";
 import DynamicForm from "../layouts/DynamicForm";
 import CreateQuizAlert from "../Alerts/CreateQuizAlert";
-
 import {
 	clearErrors,
 	createQuiz,
 	useQuizzes,
 } from "../../context/quiz/QuizState";
+
+const answerKeyWidth = { 
+	padding:"5px", 
+	border:"1px solid rgba(0, 0, 0, .2)",
+	'@media (max-width: 800px)': {
+        width: "200",
+      },
+	'@media (max-width: 470px)': {
+        width: "50",
+      },
+}
+
 
 const ColoredLine = ({ color }) => (
 	<hr
@@ -72,6 +84,17 @@ function CreateQuiz(props) {
 		Sel6Open: true,
 		AnsKeyOpen: true,
 		show: false,
+		addOpen: true,
+	});
+
+	const [multi, setMulti] = useState({
+		multiAnswer: [],
+		Check1: false,
+		Check2: false,
+		Check3: false,
+		Check4: false,
+		Check5: false,
+		Check6: false,
 	});
 
 	// function to sync the temp with actual data
@@ -93,6 +116,184 @@ function CreateQuiz(props) {
 		tempNote.Sel5Open = passedNotes[tempNote.id].Sel5Open;
 		tempNote.Sel6Open = passedNotes[tempNote.id].Sel6Open;
 		tempNote.AnsKeyOpen = passedNotes[tempNote.id].AnsKeyOpen;
+		tempNote.addOpen = passedNotes[tempNote.id].addOpen;
+		multi.multiAnswer = passedNotes[tempNote.id].AnswerKey.split(",")
+		console.log(multi.multiAnswer)
+	}
+
+	function checkMulti(name){
+		switch (name) {
+			case "A":
+				if(multi.Check1 == false)
+				{
+
+					multi.Check1 = true;
+					tempNote.Sel1Open = true;
+				} else{
+					multi.Check1 = false;
+					tempNote.Sel1Open = false;
+				}
+				return;
+			case "B":
+				if(multi.Check2 == false)
+				{
+					multi.Check2 = true;
+					tempNote.Sel2Open = true;
+				} else{
+					multi.Check2 = false;
+					tempNote.Sel2Open = false;
+				}
+				return;
+			case "C":
+				if(multi.Check3 == false)
+				{
+					multi.Check3 = true;
+					tempNote.Sel3Open = true;
+				} else{
+					multi.Check3 = false;
+					tempNote.Sel3Open = false;
+				}
+				return;
+			case "D":
+				if(multi.Check4 == false)
+				{
+					multi.Check4 = true;
+					tempNote.Sel4Open = true;
+				} else{
+					multi.Check4 = false;
+					tempNote.Sel4Open = false;
+				}
+				return;
+			case "E":
+				if(multi.Check5 == false)
+				{
+					multi.Check5 = true;
+					tempNote.Sel5Open = true;
+				} else{
+					multi.Check5 = false;
+					tempNote.Sel5Open = false;
+				}
+				return;
+			case "F":
+				if(multi.Check6 == false)
+				{
+					multi.Check6 = true;
+					tempNote.Sel6Open = true;
+				} else{
+					multi.Check6 = false;
+					tempNote.Sel6Open = false;
+				}
+				return;
+            default:
+                return;
+		}
+	};
+
+	function handleMultiChange(event) {
+
+		checkMulti(event.target.getAttribute("id"));
+		let newArray = [...multi.multiAnswer, event.target.value];
+		if (multi.multiAnswer.includes(event.target.value)) {
+		  newArray = newArray.filter(ans => ans !== event.target.value);
+		} 
+		
+		setMulti((prevMulti)=>{
+			return {
+				...prevMulti,
+				multiAnswer:newArray,
+			}
+		})
+
+		if(newArray.length)
+		{
+			tempNote.AnswerKey = newArray.toString();
+		}
+		else
+		{
+			tempNote.AnswerKey = "";
+		}
+		createTemp("","AnswerKey",tempNote.AnswerKey);
+	}
+
+	function FormRenderCheck(type){
+		return(
+			<Form.Group>
+					<InputGroup >
+					<InputGroup.Text>Anwser Key</InputGroup.Text>
+						<div style={answerKeyWidth}>
+						<Form.Check
+							type = {type}
+							id = "A"
+							label="A"
+	                        name='AnswerKey'
+							Value = {tempNote.Choice1}
+							disabled= {tempNote.Choice1 == "" ? true : false}
+							checked= {multi.multiAnswer.includes(tempNote.Choice1) ? true : false}
+							inline = {true}
+							onChange={handleMultiChange}
+						 />
+						 <Form.Check
+						 	type = {type}
+							id = "B"
+							label="B"
+	                        name='AnswerKey'
+							Value = {tempNote.Choice2}
+							disabled= {tempNote.Choice2 == "" ? true : false}
+							checked= {multi.multiAnswer.includes(tempNote.Choice2) ? true : false}
+							inline = {true}
+							onChange={handleMultiChange}
+
+						 />
+						<Form.Check
+							type = {type}
+							id = "C"
+							label="C"
+	                        name='AnswerKey'
+							Value = {tempNote.Choice3}
+							disabled= {tempNote.Choice3 == "" ? true : false}
+							checked= {multi.multiAnswer.includes(tempNote.Choice3) ? true : false}
+
+							inline = {true}
+							onChange={handleMultiChange}
+						 />
+						 <Form.Check
+							type = {type}
+							id = "D"
+							label="D"
+	                        name='AnswerKey'
+							Value = {tempNote.Choice4}
+							disabled= {tempNote.Choice4 == "" ? true : false}
+							checked= {multi.multiAnswer.includes(tempNote.Choice4) ? true : false}
+							inline = {true}
+							onChange={handleMultiChange}
+						 />
+						 <Form.Check
+						 	type = {type}
+						 	id = "E"
+							label="E"
+	                        name='AnswerKey'
+							Value = {tempNote.Choice5}
+							disabled= {tempNote.Choice5 == "" ? true : false}
+							checked= {multi.multiAnswer.includes(tempNote.Choice5) ? true : false}
+							inline = {true}
+							onChange={handleMultiChange}
+						 />
+						 <Form.Check
+						 	type = {type}
+						 	id = "F"
+							label="F"
+	                        name='AnswerKey'
+							Value = {tempNote.Choice6}
+							disabled= {tempNote.Choice6 == "" ? true : false}
+							checked= {multi.multiAnswer.includes(tempNote.Choice6) ? true : false}
+							inline = {true}
+							onChange={handleMultiChange}
+						 />
+						 </div>
+					</InputGroup>
+				</Form.Group>
+
+		)
 	}
 
 	//function to modal to get a new data input from a user
@@ -111,37 +312,37 @@ function CreateQuiz(props) {
 									value={tempNote.Question}
 								/>
 							</Form.Group>
-							<Form.Group className="mb-3">
-								<Form.Label>Points:</Form.Label>
-								<Form.Control
-									type="text"
-									name="points"
+							<InputGroup className="mb-3">
+                                <InputGroup.Text>Points</InputGroup.Text>
+                                <Form.Control
+                                    type="number" 
+                                    inputmode="numeric" 
+                                    name="points"
 									onChange={createTemp}
 									value={tempNote.points}
-								/>
-							</Form.Group>
-							<Form.Group className="mb-3">
-								<Form.Select
-									name="Type"
+                                />
+                                <InputGroup.Text>Type</InputGroup.Text>
+                                <Form.Select
+                                    name="Type"
 									onChange={createTemp}
 									value={tempNote.Type}
-								>
-									<option value="NA" selected hidden>
-										Question type
-									</option>
-									<option value="TF">True or False</option>
-									<option value="SC">Single Choice</option>
-									<option value="MC">Multiple Choice</option>
-									<option value="FR">Free Response</option>
-								</Form.Select>
-							</Form.Group>
-							<Form.Group>
+                                >
+                                    <option value="NA" selected hidden>
+                                        Select here
+                                    </option>
+                                    <option value="TF">True or False</option>
+                                    <option value="SC">Single Choice</option>
+                                    <option value="MC">Multiple Choice</option>
+                                    <option value="FR">Free Response</option>
+                                </Form.Select>
+                        	</InputGroup>
+							<Form.Group  style={{paddingBottom:10}}>
 								<Form.Control
 									type="text"
 									name="Choice1"
 									onChange={createTemp}
 									value={tempNote.Choice1}
-									placeholder="Selection 1"
+									placeholder="Selection A"
 									disabled={tempNote.Sel1Open}
 								/>
 								<Form.Control
@@ -149,7 +350,7 @@ function CreateQuiz(props) {
 									name="Choice2"
 									onChange={createTemp}
 									value={tempNote.Choice2}
-									placeholder="Selection 2"
+									placeholder="Selection B"
 									disabled={tempNote.Sel2Open}
 								/>
 								<Form.Control
@@ -157,7 +358,7 @@ function CreateQuiz(props) {
 									name="Choice3"
 									onChange={createTemp}
 									value={tempNote.Choice3}
-									placeholder="Selection 3"
+									placeholder="Selection C"
 									disabled={tempNote.Sel3Open}
 								/>
 								<Form.Control
@@ -165,7 +366,7 @@ function CreateQuiz(props) {
 									name="Choice4"
 									onChange={createTemp}
 									value={tempNote.Choice4}
-									placeholder="Selection 4"
+									placeholder="Selection D"
 									disabled={tempNote.Sel4Open}
 								/>
 								<Form.Control
@@ -173,7 +374,7 @@ function CreateQuiz(props) {
 									name="Choice5"
 									onChange={createTemp}
 									value={tempNote.Choice5}
-									placeholder="Selection 5"
+									placeholder="Selection E"
 									disabled={tempNote.Sel5Open}
 								/>
 								<Form.Control
@@ -181,23 +382,29 @@ function CreateQuiz(props) {
 									name="Choice6"
 									onChange={createTemp}
 									value={tempNote.Choice6}
-									placeholder="Selection 6"
+									placeholder="Selection F"
 									disabled={tempNote.Sel6Open}
 								/>
 							</Form.Group>
 							<InputGroup className="mb-3">
+							{tempNote.Type == "TF" && FormRenderCheck("radio")}
+							{tempNote.Type == "SC" && FormRenderCheck("radio")}
+						 	{tempNote.Type == "MC" && FormRenderCheck("checkbox")}
+							{tempNote.Type == "FR" && (
 								<FormControl
-									type="text"
-									name="AnswerKey"
-									onChange={createTemp}
-									value={tempNote.AnswerKey}
-									placeholder="AnswerKey"
-									disabled={tempNote.AnsKeyOpen}
+								type="text"
+								name="AnswerKey"
+								onChange={createTemp}
+								value={tempNote.AnswerKey}
+								placeholder="AnswerKey"
+								disabled={tempNote.AnsKeyOpen}
 								/>
+							)}
 								<Button
 									variant="warning"
 									id="button-addon2"
 									onClick={() => changeData(questionArr[tempNote.id])}
+									disabled={tempNote.addOpen}
 								>
 									Save
 								</Button>
@@ -222,7 +429,7 @@ function CreateQuiz(props) {
 		switch (name) {
 			case "Type":
 				if (value === "FR") {
-					tempNote.addOpen = false;
+					tempNote.addOpen = true;
 					tempNote.Choice1 = "";
 					tempNote.Choice2 = "";
 					tempNote.Choice3 = "";
@@ -273,25 +480,49 @@ function CreateQuiz(props) {
 			case "Choice5":
 				return (tempNote.Sel6Open = false);
 			case "AnswerKey":
-				return (tempNote.addOpen = false);
+				if(tempNote.AnswerKey.length == 0)
+				{
+					return (tempNote.addOpen = true);
+				} else {
+					return (tempNote.addOpen = false);
+				}
 			default:
 				return;
 		}
 	}
 
 	// it creats tempQuestion data
-	function createTemp(event) {
-		const { name, value } = event.target;
+	function createTemp(event, type, val1) {
 
-		console.log(name, value);
+		if(type == "AnswerKey")
+		{
+			handleInput(type);
+			setTemp((preveTemp) => {
+				return {
+					...preveTemp,
+					AnswerKey: val1,
+				};
+			});
+		}
+		else{
+			const { name, value } = event.target;	
+			// prevent a user from adding a question without answer key
+			if(value.length == 0)
+			{
+				tempNote[name] = "";
+				console.log(tempNote[name])
 
-		handleInput(name, value);
-		setTemp((preveTemp) => {
-			return {
-				...preveTemp,
-				[name]: value,
-			};
-		});
+			}
+			handleInput(name, value);
+			setTemp((preveTemp) => {
+				return {
+					...preveTemp,
+					[name]: value,
+				};
+			});
+		}
+
+
 	}
 
 	//just return current notes to re-render data
@@ -408,7 +639,7 @@ function CreateQuiz(props) {
 			}
 			questionObj["answer"] = notes[i]["AnswerKey"]
 				.split(",")
-				.map((email) => email.trim());;
+				.map((input) => input.trim());;
 			questionObj["points"] = notes[i]["points"];
 
 			questionArray.push(questionObj);
@@ -544,4 +775,4 @@ function CreateQuiz(props) {
 	);
 }
 
-export default CreateQuiz;
+export default Radium(CreateQuiz);
