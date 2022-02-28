@@ -1,14 +1,41 @@
 const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+const { decrypt } = require('../middleware/EncryptDecrypt');
 const { check, validationResult } = require('express-validator');
 
 const Respondent = require('../models/respondent.models');
 const Quiz = require('../models/quiz.models');
 const Employer = require('../models/employer.models');
 
+// Route to get candidate info if it exists
+router.get('/:iv/userInfo/:hashKey/quiz/:quizId', async(req, res) => {
+    const hashKey = req.params.iv;
+    const hashContent = req.params.hashKey;
+    
+    if((hashKey.length < 32 || hashKey.length > 32) || (hashContent.length < 64 || hashContent.length > 64)) {
+        res.status(404).json({ msg: 'URL is incorrect' });
+        return;
+    }
+
+    const emailObject = {
+        iv: hashKey,
+        content: hashContent
+    };
+
+    const email = decrypt(emailObject);
+    const respondent = await Respondent.findOne({ email: email });
+
+    if(respondent) {
+        return res.status(200).json(respondent);
+    } else {
+        res.status(200).json(email);
+    }
+})
+
 // Route to create the candidate taking the quiz
-router.post('/userInfo/:hashKey/quiz/:quizId', [
+router.post('/:iv/userInfo/:hashKey/quiz/:quizId', [
     check('firstName', 'Appropriately enter your first name with a min of 2 characters and a max of 30')
         .not()
         .isEmpty()
@@ -30,53 +57,54 @@ router.post('/userInfo/:hashKey/quiz/:quizId', [
         .isEmpty(),
     check('dateOfBirth', 'Please enter your date of birth')
         .not()
-        .isEmpty(),
-    check('email', 'Please confirm your email the quiz was sent to')
-        .not()
         .isEmpty()
 ], async(req, res) => {
-    const errors = validationResult(req);
-    if(!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
     const { firstName, lastName, school, dateOfBirth, email } = req.body;
 
     try {
-        let quiz = await Quiz.findById(req.params.quizId);
-        let respondent = await Respondent.findOne({ email: email });
+        const hashKey = req.params.iv;
+        const hashContent = req.params.hashKey;
 
-        const respondentQuiz = await Respondent.findOne(
-            {
-                $and: [
-                    { hashKey: req.params.hashKey },
-                    { quizzes: { $elemMatch: { quiz_id: quiz._id } } }
-                ]
-            }
-        );
+        const emailObject = {
+            iv: hashKey,
+            content: hashContent
+        };
 
-        console.log(respondentQuiz);
+        const emailHash = decrypt(emailObject);
 
-        if(respondentQuiz) {
-            return res.status(400).json({ msg: 'You have already submitted this quiz' });
-        }
+        let respondent = await Respondent.findOne({ email: emailHash });
 
         if(respondent) {
-            await Respondent.findByIdAndUpdate(
-                respondent._id,
-                { $set: {
-                    hashKey: req.params.hashKey
-                }}
+            let quiz = await Quiz.findById(req.params.quizId);
+
+            const respondentQuiz = await Respondent.findOne(
+                {
+                    $and: [
+                        { email: emailHash },
+                        { quizzes: { $elemMatch: { quiz_id: quiz._id } } }
+                    ]
+                }
             );
-            res.status(200).end();
+    
+            console.log(respondentQuiz);
+    
+            if(respondentQuiz) {
+                return res.status(400).json({ msg: 'You have already submitted this quiz' });
+            }
+
+            res.status(200).end()
         } else {
+            const errors = validationResult(req);
+            if(!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
             let respondent = new Respondent({
                 firstName,
                 lastName,
                 school,
                 dateOfBirth,
                 email,
-                hashKey: req.params.hashKey
             })
 
             await respondent.save();
@@ -89,12 +117,22 @@ router.post('/userInfo/:hashKey/quiz/:quizId', [
 });
 
 // Route to load the candidate info during taking the quiz
-router.get('/takeQuiz/:hashKey/quiz/:quizId', async(req, res) => {
-    const hashKey = req.params.hashKey;
-
+router.get('/:iv/takeQuiz/:hashKey/quiz/:quizId', async(req, res) => {
     try {
+        const hashKey = req.params.iv;
+        const hashContent = req.params.hashKey;
+    
+        const emailObject = {
+            iv: hashKey,
+            content: hashContent
+        };
+
+        console.log(emailObject);
+    
+        const email = decrypt(emailObject);
+
         let quiz = await Quiz.findById(req.params.quizId);
-        let respondent = await Respondent.findOne({ hashKey: hashKey });
+        let respondent = await Respondent.findOne({ email: email });
 
         if(!respondent) {
             return res.status(400).json({ msg: 'Candidate info not found' });
@@ -108,17 +146,25 @@ router.get('/takeQuiz/:hashKey/quiz/:quizId', async(req, res) => {
 });
 
 // Route to update the quiz data with the candidate's answers
-router.patch('/takeQuiz/:hashKey/quiz/:quizId', async(req, res) => {
+router.patch('/:iv/takeQuiz/:hashKey/quiz/:quizId', async(req, res) => {
     const { timeTaken, questionsAnswered } = req.body;
-    const hashKey = req.params.hashKey;
+    const hashKey = req.params.iv;
+    const hashContent = req.params.hashKey;
+
+    const emailObject = {
+        iv: hashKey,
+        content: hashContent
+    };
+
+    const email = decrypt(emailObject);
 
     try {
-        let user = await Respondent.findOne({ hashKey: hashKey });
-        // let employer = await Quiz.findById(req.params.quizId);
-        // let employerEmail = await Employer.findById(employer.employer_id);
+        let user = await Respondent.findOne({ email: email });
+        let employer = await Quiz.findById(req.params.quizId);
+        let employerEmail = await Employer.findById(employer.employer_id);
 
-        await Respondent.findByIdAndUpdate(
-            user,
+        await Respondent.findOneAndUpdate(
+            { email: email },
             { $push: 
                 { 
                     quizzes: {
@@ -131,31 +177,31 @@ router.patch('/takeQuiz/:hashKey/quiz/:quizId', async(req, res) => {
             { new: true }
         );
 
-        // const transporter = nodemailer.createTransport({
-        //     service: 'gmail',
-        //     auth:{
-        //         user: "quizbanana467@gmail.com",
-        //         pass: "OSUcapston1111"
-        //     }
-        // })
+        const transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            auth:{
+                user: "quizbanana467@gmail.com",
+                pass: "OSUcapston1111"
+            }
+        })
     
-        // const mailOptions = {
-        //     from: "quizbanana467@gmail.com",
-        //     to: employerEmail,
-        //     subject: `Quiz ${req.params.quizId} completed!`,
-        //     text: `Quiz ${req.params.quizId} has been completed by ${user.firstName} ${user.lastName}`
-        // }
+        const mailOptions = {
+            from: "quizbanana467@gmail.com",
+            to: employerEmail.email,
+            subject: `Quiz ${req.params.quizId} completed!`,
+            text: `Quiz ${req.params.quizId} has been completed by ${user.firstName} ${user.lastName}`
+        }
     
-        // transporter.sendMail(mailOptions, (error, info) =>{
-        //     if(error){
-        //         console.log(error);
-        //         res.json({msg: 'fail'});
-        //     }else{
-        //         console.log("good")
-        //         res.json({msg: 'success'});
+        transporter.sendMail(mailOptions, (error, info) =>{
+            if(error){
+                console.log(error);
+                res.json({msg: 'fail'});
+            }else{
+                console.log("good")
+                res.json({msg: 'success'});
     
-        //     }
-        // })
+            }
+        })
 
         res.status(202).end();
     } catch (err) {

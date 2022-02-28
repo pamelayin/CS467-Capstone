@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { Toast, Row, Col } from 'react-bootstrap';
 
-const RespondentProfileAlert = ({ error, alert, setShowAlert, hashKey, quizId }) => {
+const RespondentProfileAlert = ({ error, alert, setShowAlert, iv, hashKey, quizId }) => {
     const toggleSetAlert = () => {
         setShowAlert(!alert);
     }
@@ -25,7 +25,7 @@ const RespondentProfileAlert = ({ error, alert, setShowAlert, hashKey, quizId })
                     ) : (
                         <Toast.Body>
                             Thank you for providing your information. Please click the link below to begin your quiz <br/>
-                            <Link style={{ color: 'black', fontSize: 18 }} to={`/takeQuiz/${hashKey}/quiz/${quizId}`}>Begin</Link>
+                            <Link style={{ color: 'black', fontSize: 18 }} to={`/${iv}/takeQuiz/${hashKey}/quiz/${quizId}`}>Begin</Link>
                         </Toast.Body>
                     )}
                 </Toast>

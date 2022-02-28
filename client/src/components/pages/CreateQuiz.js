@@ -433,6 +433,7 @@ function CreateQuiz(props) {
 			setCompleted(false);
 		}
 		clearErrors(quizDispatch);
+        setShowAlert(false);
 	};
 
 	const onTimeLimitChange = (e) => {
@@ -443,6 +444,7 @@ function CreateQuiz(props) {
 			setCompleted(false);
 		}
 		clearErrors(quizDispatch);
+        setShowAlert(false);
 	};
 
 	function onSubmit(event) {

@@ -73,15 +73,15 @@ function QuizSend() {
 			alert("Please enter at least one email address");
 		} else {
 			// This is to send email to employer
-
 			emailList[emailList.length] = user.email;
+            console.log(emailList);
 			for (let i = 0; i < emailList.length; i++) {
 				//axios to send data to backend to send out emails
 				if (validator.isEmail(emailList[i])) {
 					//if the email is true, send out email
 					axios({
 						method: "POST",
-						url: "http://localhost:7000/send", //we might need to change url for actual url for backend
+						url: `http://localhost:7000/send/${quiz_id}`, //we might need to change url for actual url for backend
 						data: {
 							name: emailSubject, //set data
 							email: emailList[i],
@@ -125,7 +125,7 @@ function QuizSend() {
 						alert(
 							"Emails have been sent successfully. You will be redirected to dashboard."
 						);
-						navigate("/");
+						navigate("/quizlist");
 					}
 				}
 				// need error toast
