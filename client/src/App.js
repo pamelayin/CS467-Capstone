@@ -40,11 +40,11 @@ function App() {
 											<Route path="/register" element={<Register />} />
 											<Route path="/login" element={<Login />} />
 											<Route
-												path="/userInfo/:hashKey/quiz/:quizId"
+												path="/:iv/userInfo/:hashKey/quiz/:quizId"
 												element={<RespondentInfo />}
 											/>
 											<Route
-												path="/takeQuiz/:hashKey/quiz/:quizId"
+												path="/:iv/takeQuiz/:hashKey/quiz/:quizId"
 												element={<RespondentQuiz />}
 											/>
                                             <Route 

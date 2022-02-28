@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { useQuizzes, getQuiz, updateQuiz } from "../../context/quiz/QuizState";
 import {
 	useRespondent,
@@ -20,11 +20,11 @@ const CalculateScore = (quiz_id, respondent_id) => {
 
 	useEffect(() => {
 		getQuiz(quizDispatch, quiz_id);
-	}, []);
+	}, [quizDispatch]);
 
 	useEffect(() => {
 		getRespondentQuizById(respondentDispatch, respondent_id, quiz_id);
-	}, []);
+	}, [respondentDispatch]);
 
 	// quiz && quiz_resp_ans && console.log(quiz);
 	// console.log(quiz_resp_ans.questionsAnswered);
@@ -85,5 +85,6 @@ const CalculateScore = (quiz_id, respondent_id) => {
 	}
 
 	return finishedGrading ? true : null;
+
 };
 export default CalculateScore;

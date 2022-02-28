@@ -1,20 +1,24 @@
 import React, { useEffect, useState, Fragment } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
-import { useRespondent, respondentInfo, clearErrors } from '../../context/respondent/RespondentState';
+import { useRespondent, respondentInfo, clearErrors, getRespondentInfo } from '../../context/respondent/RespondentState';
 
 import RespondentProfileAlert from '../Alerts/RespondentProfileAlert';
 
 const RespondentInfo = props => {
     const [respondentState, respondentDispatch] = useRespondent();
-    const { error } = respondentState;
-    const { hashKey, quizId } = useParams();
-    // const navigate = useNavigate();
+    const { error, respondent } = respondentState;
+    const { iv, hashKey, quizId } = useParams();
 
-    // const [completed, setCompleted] = useState(false);
-    const [isDisabled, setIsDisabled] = useState(false);
     const [alert, setShowAlert] = useState(false);
+
+    const [responInfo, setResponInfo] = useState({
+        firstName: '',
+        lastName: '',
+        school: '',
+        dateOfBirth: '',
+    });
 
     useEffect(() => {
         if(error) {
@@ -24,20 +28,10 @@ const RespondentInfo = props => {
                 setShowAlert(false);
             }, 5000)
         }
-        if(error === 'You have already submitted this quiz') {
-            setIsDisabled(true);
-        }
-    }, [error, respondentDispatch]);
+        getRespondentInfo(respondentDispatch, iv, hashKey, quizId);
+    }, [error, respondentDispatch, iv, hashKey, quizId]);
 
-    const [responInfo, setResponInfo] = useState({
-        firstName: '',
-        lastName: '',
-        school: '',
-        dateOfBirth: '',
-        email: ''
-    });
-
-    const { firstName, lastName, school, dateOfBirth, email } = responInfo;
+    const { firstName, lastName, school, dateOfBirth } = responInfo;
 
     const onChange = e => {
         setResponInfo({ ...responInfo, [e.target.name]: e.target.value });
@@ -48,18 +42,14 @@ const RespondentInfo = props => {
 
     const onSubmit = e => {
         e.preventDefault();
-
         if(!error) {
             respondentInfo(respondentDispatch, {
                 firstName,
                 lastName,
                 school,
                 dateOfBirth,
-                email,
-                quizzes: [{
-                    hashKey
-                }]
-            }, hashKey, quizId);
+                email: respondent && respondent.email ? respondent.email : respondent
+            }, iv, hashKey, quizId);
 
             clearErrors(respondentDispatch);
             setShowAlert(true);
@@ -68,7 +58,7 @@ const RespondentInfo = props => {
 
     return (
         <Fragment>
-            <RespondentProfileAlert error={error} alert={alert} setShowAlert={setShowAlert} hashKey={hashKey} quizId={quizId} />
+            <RespondentProfileAlert error={error} alert={alert} setShowAlert={setShowAlert} iv={iv} hashKey={hashKey} quizId={quizId} />
             <Container>
                 <Row className='mt-5'>
                     <Col lg={5} md={6} sm={12} className='p-5 m-auto shadow-sm rounded-lg'>
@@ -80,7 +70,8 @@ const RespondentInfo = props => {
                                     type='text' 
                                     name='firstName' 
                                     placeholder='First Name' 
-                                    value={firstName} 
+                                    disabled={respondent && respondent.firstName ? true : false}
+                                    value={respondent && respondent.firstName ? respondent.firstName : firstName} 
                                     onChange={onChange}
                                     />
                             </Form.Group>
@@ -90,7 +81,8 @@ const RespondentInfo = props => {
                                     type='text' 
                                     name='lastName' 
                                     placeholder='Last Name' 
-                                    value={lastName} 
+                                    disabled={respondent && respondent.lastName ? true : false}
+                                    value={respondent && respondent.lastName ? respondent.lastName : lastName} 
                                     onChange={onChange}
                                     />
                             </Form.Group>
@@ -100,7 +92,8 @@ const RespondentInfo = props => {
                                     type='text' 
                                     name='school' 
                                     placeholder='School' 
-                                    value={school} 
+                                    disabled={respondent && respondent.school ? true : false}
+                                    value={respondent && respondent.school ? respondent.school : school}  
                                     onChange={onChange}
                                     />
                             </Form.Group>
@@ -109,19 +102,20 @@ const RespondentInfo = props => {
                                 <Form.Control 
                                     type='date' 
                                     name='dateOfBirth' 
-                                    placeholder='Date of Birth' 
-                                    value={dateOfBirth} 
+                                    placeholder='Date of Birth'
+                                    disabled={respondent && respondent.dateOfBirth ? true : false}
+                                    value={respondent && respondent.dateOfBirth ? respondent.dateOfBirth : dateOfBirth} 
                                     onChange={onChange}
                                     />
                             </Form.Group>
                             <Form.Group>
                                 <Form.Label htmlFor='email'>Email</Form.Label>
                                 <Form.Control
-                                    disabled={isDisabled}
                                     type='email' 
                                     name='email' 
                                     placeholder='Email'
-                                    value={email} 
+                                    disabled={(respondent && respondent.email) || respondent ? true : false}
+                                    defaultValue={respondent && respondent.email ? respondent.email : respondent} 
                                     onChange={onChange}
                                     />
                             </Form.Group>

@@ -3,6 +3,7 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const path = require('path');
 const nodemailer = require("nodemailer");
+const { encrypt } = require('./server/middleware/EncryptDecrypt');
 
 //init middleware
 const app = express();
@@ -36,8 +37,14 @@ app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
 });
 
-app.post("/send", (req, res) => {
-	console.log(req.body);
+app.post("/send/:quizId", (req, res) => {
+	const quiz_id = req.params.quizId;
+
+    const { email } = req.body;
+
+    const emailHash = encrypt(email);
+
+    let url = `${req.protocol}://${req.hostname}:3000/${emailHash.iv}/userInfo/${emailHash.content}/quiz/${quiz_id}`;
 
 	const transporter = nodemailer.createTransport({
 		service: "gmail",
@@ -47,11 +54,13 @@ app.post("/send", (req, res) => {
 		},
 	});
 
+    const emailText = `You have been invited to take a quiz. Please fill out each question carefully.\nClick the link to begin\n${url}`;
+
 	const mailOptions = {
 		from: "quizbanana467@gmail.com",
 		to: req.body.email,
 		subject: `${req.body.name}`,
-		text: req.body.message,
+		text: emailText,
 	};
 
 	transporter.sendMail(mailOptions, (error, info) => {

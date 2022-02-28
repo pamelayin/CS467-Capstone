@@ -13,6 +13,7 @@ import {
 	TAKE_QUIZ,
 	GET_RESPONDENT_QUIZ_ANSWERED,
 	UPDATE_RESPONDENT_QUIZ,
+    GET_RESPONDENT_INFO
 } from "../types";
 
 //create custom hook for respondent context
@@ -29,7 +30,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 //create respondent info taken before quiz
-export const respondentInfo = async (dispatch, formData, hashKey, quizId) => {
+export const respondentInfo = async (dispatch, formData, iv, hashKey, quizId) => {
 	const config = {
 		headers: {
 			"Content-Type": "application/json",
@@ -37,7 +38,7 @@ export const respondentInfo = async (dispatch, formData, hashKey, quizId) => {
 	};
 	try {
 		const res = await axios.post(
-			`${RESPONDENT_ROUTE}/userInfo/${hashKey}/quiz/${quizId}`,
+			`${RESPONDENT_ROUTE}/${iv}/userInfo/${hashKey}/quiz/${quizId}`,
 			formData,
 			config
 		);
@@ -47,28 +48,45 @@ export const respondentInfo = async (dispatch, formData, hashKey, quizId) => {
 			payload: res.data,
 		});
 
-		// loadRespondent(respondentInfo, userId, quizId);
+		loadRespondent(dispatch, iv, hashKey, quizId);
 	} catch (err) {
 		dispatch({
 			type: RESPONDENT_ERROR,
 			payload: err.response.data.msg || err.response.data.errors[0].msg,
 		});
-
-		console.log(err.response);
 	}
 };
 
-export const getRespondentQuiz = async (dispatch, hashKey, quizId) => {
+//Load User info if exists
+export const getRespondentInfo = async (dispatch, iv, hashKey, quizId) => {
 	try {
 		const res = await axios.get(
-			`${RESPONDENT_ROUTE}/takeQuiz/${hashKey}/quiz/${quizId}`
+			`${RESPONDENT_ROUTE}/${iv}/userInfo/${hashKey}/quiz/${quizId}`
+		);
+
+		dispatch({
+			type: GET_RESPONDENT_INFO,
+			payload: res.data,
+		});
+	} catch (err) {
+		dispatch({
+			type: RESPONDENT_ERROR,
+			payload: err.response.data.msg || err.response.data.errors[0].msg,
+		});
+	}
+};
+
+export const getRespondentQuiz = async (dispatch, iv, hashKey, quizId) => {
+	try {
+		const res = await axios.get(
+			`${RESPONDENT_ROUTE}/${iv}/takeQuiz/${hashKey}/quiz/${quizId}`
 		);
 
 		dispatch({
 			type: GET_RESPONDENT_QUIZ,
 			payload: res.data.quiz_resp,
 		});
-		loadRespondent(dispatch, hashKey, quizId);
+		loadRespondent(dispatch, iv, hashKey, quizId);
 	} catch (err) {
 		dispatch({
 			type: RESPONDENT_ERROR,
@@ -113,11 +131,12 @@ export const loadRespondentById = async (dispatch, respondentId, quizId) => {
 		});
 	}
 };
+
 //Load User
-export const loadRespondent = async (dispatch, hashKey, quizId) => {
+export const loadRespondent = async (dispatch, iv, hashKey, quizId) => {
 	try {
 		const res = await axios.get(
-			`${RESPONDENT_ROUTE}/takeQuiz/${hashKey}/quiz/${quizId}`
+			`${RESPONDENT_ROUTE}/${iv}/takeQuiz/${hashKey}/quiz/${quizId}`
 		);
 
 		dispatch({
@@ -179,7 +198,7 @@ export const updateRespondentQuiz = async (
 		});
 	}
 };
-export const takeQuiz = async (dispatch, formData, hashKey, quizId) => {
+export const takeQuiz = async (dispatch, formData, iv, hashKey, quizId) => {
 	const config = {
 		headers: {
 			"Content-Type": "application/json",
@@ -188,7 +207,7 @@ export const takeQuiz = async (dispatch, formData, hashKey, quizId) => {
 
 	try {
 		const res = await axios.patch(
-			`${RESPONDENT_ROUTE}/takeQuiz/${hashKey}/quiz/${quizId}`,
+			`${RESPONDENT_ROUTE}/${iv}/takeQuiz/${hashKey}/quiz/${quizId}`,
 			formData,
 			config
 		);

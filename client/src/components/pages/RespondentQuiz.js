@@ -7,27 +7,31 @@ import {
 	getRespondentQuiz,
 	takeQuiz,
 } from "../../context/respondent/RespondentState";
+import AlertTestSubmit from '../Alerts/AlertTestSubmit';
 
 const RespondentQuiz = () => {
     const [respondentState, respondentDispatch] = useRespondent();
     const { error, respondent, quiz_resp } = respondentState;
-    const { hashKey, quizId } = useParams();
+    const { iv, hashKey, quizId } = useParams();
     const navigate = useNavigate();
 
     const [questionsAnswered, setQuestionsAnswered] = useState([]);
+    const [alert, setShowAlert] = useState(false);
+    const [confirmMessage, setConfirmMessage] = useState('');
+    const [confirm, setConfirm] = useState(false);
 
     let time = quiz_resp && quiz_resp.timeLimit;
-    const [stateTimeLimit, setStateTimeLimit] = useState(0);
+    const [stateTimeLimit, setStateTimeLimit] = useState(1);
 
 	const onTimeLimitChange = useCallback(() => {
 		setInterval(
-			() => setStateTimeLimit((stateTimeLimit) => stateTimeLimit - 1),
+			() => setStateTimeLimit((stateTimeLimit) => stateTimeLimit - 34),
 			60000
 		);
 	}, []);
 
     const clearTimer = () => {
-        clearInterval(setStateTimeLimit(0));
+        clearInterval(stateTimeLimit);
     }
 
     useEffect(() => {
@@ -38,9 +42,12 @@ const RespondentQuiz = () => {
         if(error) {
             console.log(error);
         }
+        getRespondentQuiz(respondentDispatch, iv, hashKey, quizId);
+    }, [respondentDispatch, error, iv, hashKey, quizId]);
+
+    useEffect(() => {
         onTimeLimitChange();
-        getRespondentQuiz(respondentDispatch, hashKey, quizId);
-    }, [respondentDispatch, error, hashKey, quizId, onTimeLimitChange]);
+    }, [onTimeLimitChange]);
 
 	const onChange = (e, type) => {
 		const answer = { question_id: e.target.id, answerGiven: e.target.value };
@@ -73,9 +80,7 @@ const RespondentQuiz = () => {
 	};
 
 	//https://stackoverflow.com/questions/57703415/how-to-merge-array-of-objects-if-duplicate-values-are-there-if-key-is-common-th
-	const mergeQuestionIds = (e) => {
-		e.preventDefault();
-
+	const mergeQuestionIds = () => {
 		const data = Object.values(
 			questionsAnswered.reduce((a, { question_id, answerGiven }) => {
 				a[question_id] = a[question_id] || {
@@ -101,10 +106,8 @@ const RespondentQuiz = () => {
         return totalTime;
     }
 
-    const onSubmit = e => {
-        e.preventDefault();
-        const quizData = mergeQuestionIds(e);
-
+    const submitTest = () => {
+        const quizData = mergeQuestionIds();
         const totalTime = timeTaken();
 
         takeQuiz(respondentDispatch, 
@@ -112,29 +115,55 @@ const RespondentQuiz = () => {
                 timeTaken: totalTime,
                 questionsAnswered: quizData
             },
+            iv,
             hashKey,
             quizId
         );
 
         clearTimer();
         navigate('/quizComplete', { state: {quiz_id: quizId, resp_id: respondent._id}})
-        
     }
+
+    const onSubmit = e => {
+        e.preventDefault();
+
+        const quizData = mergeQuestionIds();
+        const totalTime = timeTaken();
+
+        if(quizData.length < quiz_resp.questions.length && totalTime !== time) {
+            setConfirmMessage('You have unanswered questions left on the quiz. Are you sure you want to submit?');
+            setShowAlert(true);
+        } else {
+            submitTest();
+        }
+    }
+
+    useEffect(() => {
+        if(stateTimeLimit === 0) {
+            setConfirmMessage('Times up! Your quiz has now been submitted. Thank you.');
+            setShowAlert(true);
+        }
+    }, [stateTimeLimit]);
 
     return (
         <Container>
-            <Container>
-                <h1
-                    className="shadow-sm p-3 text-center rounded"
-                    style={{ color: "black" }}
-                >
+            <AlertTestSubmit 
+                confirmMessage={confirmMessage} 
+                alert={alert} 
+                setShowAlert={setShowAlert} 
+                submitTest={submitTest}
+                time={stateTimeLimit}
+            />
+            <Container className='shadow-sm p-3 text-center rounded' style={{ display: 'block', width: '80%'}}>
+                <h1>
                     {quiz_resp && quiz_resp.title}
                 </h1>
-                <span style={{ display: "inline" }}>
-                    Time Limit: {stateTimeLimit}{' '}
-                </span><span>
-                    Candidate ID: {respondent && respondent._id}
-                </span>
+                <h6>Time Limit: {stateTimeLimit}</h6>
+                <h6>Candidate ID: {respondent && respondent._id}</h6>
+                {/* <Container className='shadow-sm p-3 text-center rounded' style={{ display: 'block', width: '80%'}}>
+                    <h4>Time Limit: {stateTimeLimit}</h4>
+                    <h4>Candidate ID: {respondent && respondent._id}</h4>
+                </Container> */}
             </Container>
             {quiz_resp &&
                 quiz_resp.questions.map((q, i) => (
@@ -145,9 +174,9 @@ const RespondentQuiz = () => {
                             sm={12}
                             className="p-5 m-auto shadow-sm rounded-lg"
                         >
-                            <Form onSubmit={onSubmit}>
+                            <Form onSubmit={onSubmit} id='quizForm'>
                                 <Form.Group>
-                                    <Form.Label htmlFor="question">{q.question}</Form.Label>
+                                    <Form.Label htmlFor="question" style={{ 'fontSize': 20 }}>{q.question}</Form.Label>
                                 </Form.Group>
                                     <Form.Group>
                                         {q.answerOptions.map((a, index) => (
@@ -188,12 +217,21 @@ const RespondentQuiz = () => {
                         </Col>
                     </Row>
                 ))}
-                <Container 
-                    style={{ marginTop: "2rem", alignItems: 'center' }}>
+                <Container style={{
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        marginTop: '2rem'
+                    }}
+                >
                     <Button
                         variant="warning btn-block"
                         type="submit"
                         onClick={onSubmit}
+                        style={{ 
+                            marginBottom: '2rem', 
+                            width: '10rem'
+                        }}
                     >
                         Complete
                     </Button>

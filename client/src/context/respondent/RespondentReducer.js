@@ -8,6 +8,7 @@ import {
 	UPDATE_RESPONDENT_QUIZ,
 	TAKE_QUIZ,
     CLEAR_ERRORS,
+    GET_RESPONDENT_INFO
 } from "../types";
 
 const RespondentReducer = (state, action) => {
@@ -44,6 +45,12 @@ const RespondentReducer = (state, action) => {
 				// quiz_resp_all: action.payload.quiz_resp_all,
 				loading: false,
 			};
+        case GET_RESPONDENT_INFO:
+            return {
+                ...state,
+                respondent: action.payload,
+                loading: false
+            };
 		case RESPONDENT_ERROR:
 			return {
 				...state,
