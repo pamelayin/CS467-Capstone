@@ -1,13 +1,13 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const { decrypt } = require('../middleware/EncryptDecrypt');
 const { check, validationResult } = require('express-validator');
 
-const Respondent = require('../models/respondent.models');
-const Quiz = require('../models/quiz.models');
-const Employer = require('../models/employer.models');
+const Respondent = require("../models/respondent.models");
+const Quiz = require("../models/quiz.models");
+const Employer = require("../models/employer.models");
 
 // Route to get candidate info if it exists
 router.get('/:iv/userInfo/:hashKey/quiz/:quizId', async(req, res) => {
@@ -210,40 +210,45 @@ router.patch('/:iv/takeQuiz/:hashKey/quiz/:quizId', async(req, res) => {
     }
 });
 
-//get all respondents
+//get all respondents without quizzes array and only the current quiz
 router.get("/quiz/:quizId", async (req, res) => {
 	try {
-		// let quiz = await Quiz.findById(req.params.quizId);
-
-        let respondents = await Respondent.find({
-            'quizzes._id': req.params.quizId
-        })
-        res.status(200).json(respondents);
-		// res.status(200).json({ respondents: respondents, quiz_resp_all: quiz });
+		let respondents = await Respondent.find({
+			"quizzes.quiz_id": req.params.quizId,
+		}).lean();
+        for (respondent of respondents) {
+            let filtered_quiz = respondent.quizzes.find((quiz) => quiz.quiz_id == req.params.quizId);
+            respondent.current_quiz = filtered_quiz;
+            delete respondent.quizzes
+            // respondent.toObject();
+		}
+		console.log(respondents);
+		res.status(200).json(respondents);
 	} catch (err) {
 		console.error(err.message);
 		res.status(500).json({ msg: "Server Error" });
 	}
 });
 
-// Route to load the candidate info by respondent id 
+// Route to load the candidate info by respondent id
 router.get("/:respondentId/quiz/:quizId", async (req, res) => {
-	
 	try {
 		// let quiz = await Quiz.findById(req.params.quizId);
-        let respondent = await Respondent.findById(req.params.respondentId);
-        
-        let quiz_resp_ans = respondent.quizzes.find(
-					(quiz) => quiz.quiz_id == req.params.quizId
-				);
+		let respondent = await Respondent.findById(req.params.respondentId);
+
+		let quiz_resp_ans = respondent.quizzes.find(
+			(quiz) => quiz.quiz_id == req.params.quizId
+		);
 
 		if (!respondent) {
 			return res.status(400).json({ msg: "Candidate info not found" });
-        }
-        if (!quiz_resp_ans) {
-					return res.status(400).json({ msg: "Quiz info not found" });
-				}
-		res.status(200).json({ respondent: respondent, quiz_resp_ans: quiz_resp_ans });
+		}
+		if (!quiz_resp_ans) {
+			return res.status(400).json({ msg: "Quiz info not found" });
+		}
+		res
+			.status(200)
+			.json({ respondent: respondent, quiz_resp_ans: quiz_resp_ans });
 	} catch (err) {
 		console.error(err.message);
 		res.status(500).json({ msg: "Server Error" });
@@ -251,7 +256,6 @@ router.get("/:respondentId/quiz/:quizId", async (req, res) => {
 });
 
 router.put("/:respondentId/quiz/:quizId", async (req, res) => {
-
 	try {
 		respondent = await Respondent.findByIdAndUpdate(
 			req.params.respondentId,
