@@ -265,6 +265,7 @@ router.put("/:respondentId/quiz/:quizId", async (req, res) => {
 						quiz_id: req.params.quizId,
 						questionsAnswered: req.body.questionsAnswered,
 						totalPointsGiven: req.body.totalPointsGiven,
+						timeTaken: req.body.timeTaken
 					},
 				},
 			},

@@ -25,7 +25,7 @@ const RespondentQuiz = () => {
 
 	const onTimeLimitChange = useCallback(() => {
 		setInterval(
-			() => setStateTimeLimit((stateTimeLimit) => stateTimeLimit - 34),
+			() => setStateTimeLimit((stateTimeLimit) => stateTimeLimit - 1),
 			60000
 		);
 	}, []);
@@ -99,7 +99,7 @@ const RespondentQuiz = () => {
 	};
 
     const timeTaken = () => {
-        let totalTime;
+        let totalTime = 0;
 
         totalTime = time - stateTimeLimit;
 

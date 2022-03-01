@@ -12,11 +12,8 @@ const CalculateScore = (quiz_id, respondent_id) => {
 	const { quiz } = quizState;
 	const [respondentState, respondentDispatch] = useRespondent();
 	const { error, respondent, quiz_resp_ans, respondents } = respondentState;
-	// console.log("quiz id: " + quiz_id);
-	// console.log("resp_id:", respondent_id);
 
 	const [finishedGrading, setFinishedGrading] = useState(false);
-	// const [gradedQuiz, setGradedQuiz] = useState();
 
 	useEffect(() => {
 		getQuiz(quizDispatch, quiz_id);
@@ -26,9 +23,7 @@ const CalculateScore = (quiz_id, respondent_id) => {
 		getRespondentQuizById(respondentDispatch, respondent_id, quiz_id);
 	}, [respondentDispatch]);
 
-	// quiz && quiz_resp_ans && console.log(quiz);
-	// console.log(quiz_resp_ans.questionsAnswered);
-	if (quiz && quiz_resp_ans) {
+	if (quiz && quiz_resp_ans && finishedGrading === false) {
 		console.log(quiz);
 		console.log(quiz_resp_ans);
 		let gradedQuestions = [];
@@ -44,7 +39,6 @@ const CalculateScore = (quiz_id, respondent_id) => {
 					curr_question.questionType === "TF" ||
 					curr_question.questionType === "SC"
 				) {
-					// console.log('tf or sc');
 					if (curr_question.answer[0] === question_ans.answerGiven[0]) {
 						question_ans["pointsGiven"] = curr_question.points;
 						totalPoints += curr_question.points;
@@ -70,12 +64,19 @@ const CalculateScore = (quiz_id, respondent_id) => {
 				gradedQuestions.push(question_ans);
 				console.log("graded");
 				console.log(gradedQuestions);
+			} else {
+				question_ans = {};
+				question_ans["answerGiven"] = [];
+				question_ans["question_id"] = question_id;
+				question_ans["pointsGiven"] = 0;
+				gradedQuestions.push(question_ans);
 			}
 		}
 
 		updateRespondentQuiz(respondentDispatch, respondent_id, quiz_id, {
 			questionsAnswered: gradedQuestions,
 			totalPointsGiven: totalPoints,
+			timeTaken: quiz_resp_ans.timeTaken,
 		});
 		if (error) {
 			alert(error);
