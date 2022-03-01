@@ -1,8 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { Container, Table, Row, Col, Button } from "react-bootstrap";
+import React, { useState, useEffect, useRef } from "react";
+import {
+	Container,
+	Table,
+	Row,
+	Col,
+	Button,
+	Tooltip,
+	OverlayTrigger,
+} from "react-bootstrap";
 import { useAuth } from "../../context/auth/AuthState";
 import { useQuizzes, getQuiz } from "../../context/quiz/QuizState";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import {
+	Chart as ChartJS,
+	ArcElement,
+	Tooltip as ChartTooltip,
+	Legend,
+} from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { useParams } from "react-router-dom";
 import QuizModal from "../layouts/QuizModal";
@@ -10,10 +23,10 @@ import {
 	useRespondent,
 	getRespondentQuizById,
 	loadRespondents,
+	updateRespondentQuiz,
 } from "../../context/respondent/RespondentState";
-import CalculateScore from "../utils/CalculateScore";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, ChartTooltip, Legend);
 
 function QuizDashboard() {
 	const [authState] = useAuth();
@@ -23,6 +36,7 @@ function QuizDashboard() {
 	const { quiz } = quizState;
 	const [respondentState, respondentDispatch] = useRespondent();
 	const { error, respondent, quiz_resp_ans, respondents } = respondentState;
+	const tooltipRef = useRef();
 
 	useEffect(() => {
 		getQuiz(quizDispatch, quiz_id);
@@ -36,7 +50,12 @@ function QuizDashboard() {
 		datasets: [
 			{
 				label: "Quiz Completion Chart",
-				data: [15, 85],
+				data: [
+					quiz && respondents && quiz.totalEmailsSent
+						? quiz.totalEmailsSent - respondents.length
+						: 0,
+					respondents && respondents.length ? respondents.length : 0,
+				],
 				backgroundColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)"],
 				hoverOffset: 20,
 				hoverBorderWidth: 2,
@@ -63,16 +82,39 @@ function QuizDashboard() {
 		setShowModal(true);
 	};
 
+	const updateQuizConfirm = (updatedRespondentQuiz) => {
+		hideModal();
+		console.log(updatedRespondentQuiz);
+
+		updateRespondentQuiz(
+			respondentDispatch,
+			updatedRespondentQuiz.respondent_id,
+			updatedRespondentQuiz.quiz_id,
+			{
+				questionsAnswered: updatedRespondentQuiz.questionsAnswered,
+				totalPointsGiven: updatedRespondentQuiz.totalPointsGiven,
+				timeTaken: updatedRespondentQuiz.timeTaken,
+			}
+		);
+		if (error) {
+			alert(error);
+		} else {
+			window.location.reload();
+		}
+	};
 	return (
 		<Container className="w-75">
-			<h1 className="my-5">Quiz Dashboard - {quiz && quiz.title} </h1>
+			<h1 className="my-5" style={{ textAlign: "center" }}>
+				Quiz Dashboard - {quiz && quiz.title}{" "}
+			</h1>
 			<Row>
 				<Col>
 					<h4>Info</h4>
+
 					<Table responsive>
 						<tbody>
 							<tr>
-								<td>Total Points</td>
+								<td>Total Available Points</td>
 								<td>{quiz && quiz.totalScore}</td>
 							</tr>
 							<tr>
@@ -85,11 +127,15 @@ function QuizDashboard() {
 							</tr>
 							<tr>
 								<td>Quizzes Sent Out</td>
-								<td>100</td>
+								<td>
+									{quiz && quiz.totalEmailsSent ? quiz.totalEmailsSent : 0}
+								</td>
 							</tr>
 							<tr>
 								<td>Quizzes Taken</td>
-								<td>100</td>
+								<td>
+									{respondents && respondents.length ? respondents.length : 0}{" "}
+								</td>
 							</tr>
 						</tbody>
 					</Table>
@@ -134,55 +180,92 @@ function QuizDashboard() {
 				</Col>
 			</Row>
 			<Row>
-				<h4>Individual Respondent Stats</h4>
-				<Table striped bordered hover responsive>
-					<thead>
-						<tr>
-							<th>#</th>
-							<th>ID</th>
-							<th>Email</th>
-							<th>Name</th>
-							<th>Total Points</th>
-							<th>Time Used</th>
-							<th>Actions</th>
-						</tr>
-					</thead>
-					<tbody>
-						{respondents &&
-							respondents.map((respondent, index) => (
-								<tr key={respondent._id} id={respondent._id}>
-									<td>{index + 1}</td>
-									<td>{respondent._id}</td>
-									<td>{respondent.email}</td>
-									<td>
-										{respondent.firstName} {respondent.lastName}
-									</td>
-									<td>{respondent.totalScore} points</td>
-									<td>{respondent.timeUsed} minutes</td>
-									<td>
-										<a
-											className="mx-3"
-											href="#"
-											onClick={() => showQuizModal(respondent._id)}
-										>
-											view/grade quiz
-										</a>
-									</td>
-								</tr>
-							))}
-					</tbody>
-				</Table>
+				<h4 style={{ textAlign: "center" }}>Individual Respondent Stats</h4>
+				<br />
+				<br />
+				{respondents && respondents.length > 0 ? (
+					<Table striped bordered hover responsive>
+						<thead>
+							<tr>
+								<OverlayTrigger
+									placement="top"
+									overlay={
+										<Tooltip>
+											Ranking is based on total points received.
+										</Tooltip>
+									}
+								>
+									<th>Ranking </th>
+								</OverlayTrigger>
+								<th>Name</th>
+								<th>School</th>
+								<th>Email</th>
+								<th>Points Received</th>
+								<th>Time Used</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							{respondents &&
+								quiz &&
+								respondents
+									.sort(function (a, b) {
+										return (
+											(b.current_quiz.totalPointsGiven != null) -
+												(a.current_quiz.totalPointsGiven != null) ||
+											b.current_quiz.totalPointsGiven -
+												a.current_quiz.totalPointsGiven
+										);
+									})
+									.map((respondent, index) => (
+										<tr key={respondent._id} id={respondent._id}>
+											<td>{index + 1}</td>
+											<td>
+												{respondent.firstName} {respondent.lastName}
+											</td>
+											<td>{respondent.school}</td>
+											<td>{respondent.email}</td>
+											{respondent.current_quiz.hasOwnProperty(
+												"totalPointsGiven"
+											) ? (
+												<td>
+													{respondent.current_quiz.totalPointsGiven}/
+													{quiz.totalScore} points
+												</td>
+											) : (
+												<td style={{ color: "red" }}>Needs Grading</td>
+											)}
+											{respondent.current_quiz.hasOwnProperty("timeTaken") ? (
+												<td>{respondent.current_quiz.timeTaken} minutes</td>
+											) : (
+												<td>N/A</td>
+											)}
+											<td>
+												<a
+													className="mx-3"
+													href="#"
+													onClick={() => showQuizModal(respondent._id)}
+												>
+													view/grade quiz
+												</a>
+											</td>
+										</tr>
+									))}
+						</tbody>
+					</Table>
+				) : (
+					<h5>There are no respondents for this quiz. </h5>
+				)}
 			</Row>
 
 			{respondents && quiz && quiz_resp_ans && (
 				<QuizModal
 					showModal={showModal}
-					// confirmModal={deleteAccountConfirm}
+					confirmModal={updateQuizConfirm}
 					hideModal={hideModal}
 					quiz={quiz}
 					answered_quiz={quiz_resp_ans}
 					respondent={respondent}
-					// calculateScore={CalculateScore}
 				/>
 			)}
 		</Container>
