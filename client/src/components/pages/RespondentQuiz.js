@@ -100,7 +100,7 @@ const RespondentQuiz = () => {
 	};
 
     const timeTaken = () => {
-        let totalTime;
+        let totalTime = 0;
 
         totalTime = time - stateTimeLimit;
 
