@@ -124,7 +124,7 @@ function CreateQuiz(props) {
 	function checkMulti(name){
 		switch (name) {
 			case "A":
-				if(multi.Check1 == false)
+				if(multi.Check1 === false)
 				{
 
 					multi.Check1 = true;
@@ -135,7 +135,7 @@ function CreateQuiz(props) {
 				}
 				return;
 			case "B":
-				if(multi.Check2 == false)
+				if(multi.Check2 === false)
 				{
 					multi.Check2 = true;
 					tempNote.Sel2Open = true;
@@ -145,7 +145,7 @@ function CreateQuiz(props) {
 				}
 				return;
 			case "C":
-				if(multi.Check3 == false)
+				if(multi.Check3 === false)
 				{
 					multi.Check3 = true;
 					tempNote.Sel3Open = true;
@@ -155,7 +155,7 @@ function CreateQuiz(props) {
 				}
 				return;
 			case "D":
-				if(multi.Check4 == false)
+				if(multi.Check4 === false)
 				{
 					multi.Check4 = true;
 					tempNote.Sel4Open = true;
@@ -165,7 +165,7 @@ function CreateQuiz(props) {
 				}
 				return;
 			case "E":
-				if(multi.Check5 == false)
+				if(multi.Check5 === false)
 				{
 					multi.Check5 = true;
 					tempNote.Sel5Open = true;
@@ -175,7 +175,7 @@ function CreateQuiz(props) {
 				}
 				return;
 			case "F":
-				if(multi.Check6 == false)
+				if(multi.Check6 === false)
 				{
 					multi.Check6 = true;
 					tempNote.Sel6Open = true;
@@ -387,10 +387,10 @@ function CreateQuiz(props) {
 								/>
 							</Form.Group>
 							<InputGroup className="mb-3">
-							{tempNote.Type == "TF" && FormRenderCheck("radio")}
-							{tempNote.Type == "SC" && FormRenderCheck("radio")}
-						 	{tempNote.Type == "MC" && FormRenderCheck("checkbox")}
-							{tempNote.Type == "FR" && (
+							{tempNote.Type === "TF" && FormRenderCheck("radio")}
+							{tempNote.Type === "SC" && FormRenderCheck("radio")}
+						 	{tempNote.Type === "MC" && FormRenderCheck("checkbox")}
+							{tempNote.Type === "FR" && (
 								<FormControl
 								type="text"
 								name="AnswerKey"
@@ -494,7 +494,7 @@ function CreateQuiz(props) {
 	// it creats tempQuestion data
 	function createTemp(event, type, val1) {
 
-		if(type == "AnswerKey")
+		if(type === "AnswerKey")
 		{
 			handleInput(type);
 			setTemp((preveTemp) => {

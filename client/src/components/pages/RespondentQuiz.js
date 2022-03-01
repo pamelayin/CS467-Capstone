@@ -8,6 +8,7 @@ import {
 	takeQuiz,
 } from "../../context/respondent/RespondentState";
 import AlertTestSubmit from '../Alerts/AlertTestSubmit';
+import AlertTimeLeft from '../Alerts/AlertTimeLeft';
 
 const RespondentQuiz = () => {
     const [respondentState, respondentDispatch] = useRespondent();
@@ -16,12 +17,12 @@ const RespondentQuiz = () => {
     const navigate = useNavigate();
 
     const [questionsAnswered, setQuestionsAnswered] = useState([]);
-    const [alert, setShowAlert] = useState(false);
+    const [timeAlert, setShowTimeAlert] = useState(false);
+    const [submitAlert, setShowSubmitAlert] = useState(false);
     const [confirmMessage, setConfirmMessage] = useState('');
-    const [confirm, setConfirm] = useState(false);
 
     let time = quiz_resp && quiz_resp.timeLimit;
-    const [stateTimeLimit, setStateTimeLimit] = useState(1);
+    const [stateTimeLimit, setStateTimeLimit] = useState(2);
 
 	const onTimeLimitChange = useCallback(() => {
 		setInterval(
@@ -132,27 +133,38 @@ const RespondentQuiz = () => {
 
         if(quizData.length < quiz_resp.questions.length && totalTime !== time) {
             setConfirmMessage('You have unanswered questions left on the quiz. Are you sure you want to submit?');
-            setShowAlert(true);
+            setShowSubmitAlert(true);
         } else {
             submitTest();
         }
     }
 
     useEffect(() => {
-        if(stateTimeLimit === 0) {
-            setConfirmMessage('Times up! Your quiz has now been submitted. Thank you.');
-            setShowAlert(true);
+        if(time === 5 && stateTimeLimit === 5) {
+            setShowTimeAlert(false);
+        } else if((stateTimeLimit === 5 && time !== 5) || stateTimeLimit === 1) {
+            setConfirmMessage(`You have ${stateTimeLimit} minutes remaining!`);
+            setShowTimeAlert(true);
+        } else if(stateTimeLimit === 0) {
+            submitTest();
         }
-    }, [stateTimeLimit]);
+    }, [stateTimeLimit, time]);
 
     return (
         <Container>
-            <AlertTestSubmit 
+            <AlertTimeLeft 
                 confirmMessage={confirmMessage} 
-                alert={alert} 
-                setShowAlert={setShowAlert} 
+                alert={timeAlert} 
+                setShowAlert={setShowTimeAlert} 
                 submitTest={submitTest}
                 time={stateTimeLimit}
+                onSubmit={onSubmit}
+            />
+            <AlertTestSubmit 
+                confirmMessage={confirmMessage} 
+                alert={submitAlert} 
+                setShowAlert={setShowSubmitAlert} 
+                submitTest={submitTest}
             />
             <Container className='shadow-sm p-3 text-center rounded' style={{ display: 'block', width: '80%'}}>
                 <h1>

@@ -4,14 +4,15 @@ import { useParams } from 'react-router-dom';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { useRespondent, respondentInfo, clearErrors, getRespondentInfo } from '../../context/respondent/RespondentState';
 
-import RespondentProfileAlert from '../Alerts/RespondentProfileAlert';
+import AlertRespondentProfile from '../Alerts/AlertRespondentProfile';
 
-const RespondentInfo = props => {
+const RespondentInfo = () => {
     const [respondentState, respondentDispatch] = useRespondent();
     const { error, respondent } = respondentState;
     const { iv, hashKey, quizId } = useParams();
 
     const [alert, setShowAlert] = useState(false);
+    const [success, setShowSuccess] = useState(false);
 
     const [responInfo, setResponInfo] = useState({
         firstName: '',
@@ -31,6 +32,12 @@ const RespondentInfo = props => {
         getRespondentInfo(respondentDispatch, iv, hashKey, quizId);
     }, [error, respondentDispatch, iv, hashKey, quizId]);
 
+    useEffect(() => {
+        if(error) {
+            setShowSuccess(false);
+        }
+    }, [error]);
+
     const { firstName, lastName, school, dateOfBirth } = responInfo;
 
     const onChange = e => {
@@ -42,6 +49,7 @@ const RespondentInfo = props => {
 
     const onSubmit = e => {
         e.preventDefault();
+
         if(!error) {
             respondentInfo(respondentDispatch, {
                 firstName,
@@ -52,13 +60,22 @@ const RespondentInfo = props => {
             }, iv, hashKey, quizId);
 
             clearErrors(respondentDispatch);
-            setShowAlert(true);
+            setShowSuccess(true);
         }
     }
 
     return (
         <Fragment>
-            <RespondentProfileAlert error={error} alert={alert} setShowAlert={setShowAlert} iv={iv} hashKey={hashKey} quizId={quizId} />
+            <AlertRespondentProfile 
+                error={error} 
+                alert={alert}
+                success={success}
+                setShowAlert={setShowAlert}
+                setShowSuccess={setShowSuccess}
+                iv={iv}
+                hashKey={hashKey}
+                quizId={quizId}
+            />
             <Container>
                 <Row className='mt-5'>
                     <Col lg={5} md={6} sm={12} className='p-5 m-auto shadow-sm rounded-lg'>

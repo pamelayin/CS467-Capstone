@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Modal, Button } from 'react-bootstrap';
 
-const AlertTestSubmit = ({ confirmMessage, alert, setShowAlert, submitTest }) => {
+const AlertTimeLeft = ({ confirmMessage, alert, setShowAlert, time }) => {
     const toggleSetAlert = () => {
         setShowAlert(!alert);
     }
@@ -21,12 +21,13 @@ const AlertTestSubmit = ({ confirmMessage, alert, setShowAlert, submitTest }) =>
 			<Modal.Body>
 				{confirmMessage}
 			</Modal.Body>
+            {time === 5 || time === 1 ? (
                 <Modal.Footer>
-                    <Button variant='secondary' onClick={toggleSetAlert}>Cancel</Button>
-                    <Button variant="danger" onClick={submitTest}>Confirm</Button>
+                    <Button variant='danger' onClick={toggleSetAlert}>OK</Button>
                 </Modal.Footer>
+            ) :  null}
 		</Modal>
     )
 }
 
-export default AlertTestSubmit;
+export default AlertTimeLeft;
