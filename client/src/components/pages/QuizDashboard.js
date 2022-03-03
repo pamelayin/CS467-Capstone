@@ -1,4 +1,3 @@
-  
 import React, { useState, useEffect, useRef } from "react";
 import {
 	Container,
@@ -16,8 +15,11 @@ import {
 	ArcElement,
 	Tooltip as ChartTooltip,
 	Legend,
+	LinearScale,
+	PointElement,
+	LineElement,
 } from "chart.js";
-import { Doughnut } from "react-chartjs-2";
+import { Doughnut, Scatter } from "react-chartjs-2";
 import { useParams } from "react-router-dom";
 import QuizModal from "../layouts/QuizModal";
 import {
@@ -27,7 +29,14 @@ import {
 	updateRespondentQuiz,
 } from "../../context/respondent/RespondentState";
 
-ChartJS.register(ArcElement, ChartTooltip, Legend);
+ChartJS.register(
+	ArcElement,
+	ChartTooltip,
+	Legend,
+	LinearScale,
+	PointElement,
+	LineElement
+);
 
 const ColoredLine = ({ color }) => (
 	<hr
@@ -40,32 +49,28 @@ const ColoredLine = ({ color }) => (
 );
 
 function QuizDashboard() {
-	const [authState] = useAuth();
-	const { isAuthenticated, user } = authState;
 	const { quiz_id } = useParams();
 	const [quizState, quizDispatch] = useQuizzes();
 	const { quiz } = quizState;
 	const [respondentState, respondentDispatch] = useRespondent();
 	const { error, respondent, quiz_resp_ans, respondents } = respondentState;
-	const tooltipRef = useRef();
 
 	const [numStatus, setNum] = useState({
 		dataLoad: false,
-		numSent:0,
-		numTaken:0,
-		numNotTaken:0,
-		totalPoint:0,
-		titmeLimit:0,
-		numQuestion:0,
-		totalPoint:0,
-		AvgScore:0,
-		HighestScore:0,
-		LowestScore:0,
-		AverageTime:0,
-		aboveAvg:0,
-		belowAvg:0,
-		aroundAvg:0,
-	})
+		numSent: 0,
+		numTaken: 0,
+		numNotTaken: 0,
+		totalPoint: 0,
+		titmeLimit: 0,
+		numQuestion: 0,
+		AvgScore: 0,
+		HighestScore: 0,
+		LowestScore: 0,
+		AverageTime: 0,
+		aboveAvg: 0,
+		belowAvg: 0,
+		aroundAvg: 0,
+	});
 
 	useEffect(() => {
 		getQuiz(quizDispatch, quiz_id);
@@ -74,7 +79,7 @@ function QuizDashboard() {
 		loadRespondents(respondentDispatch, quiz_id);
 	}, [respondentDispatch, quiz_id]);
 
-	const completionData = {
+	const donutData = {
 		labels: ["Not Completed", "Completed"],
 		datasets: [
 			{
@@ -86,17 +91,58 @@ function QuizDashboard() {
 					respondents && respondents.length ? respondents.length : 0,
 				],
 				backgroundColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)"],
-				hoverOffset: 20,
+				hoverOffset: 10,
 				hoverBorderWidth: 2,
 				offset: 5,
 			},
 		],
 	};
 
-	const options = {
+	const scatterData = {
+		datasets: [
+			{
+				label: "Respondent Data",
+				data:
+					respondents &&
+					quiz &&
+					respondents.map((respondent) => ({
+						x:
+							(respondent.current_quiz.totalPointsGiven / quiz.timeLimit) * 100,
+						y: respondent.current_quiz.timeTaken,
+					})),
+
+				backgroundColor: "rgb(255, 99, 132)",
+			},
+		],
+	};
+
+	const donutOptions = {
 		layout: {
-			padding: 30,
+			padding: 40,
 			margin: 30,
+		},
+	};
+
+	const scatterOptions = {
+		scales: {
+			y: {
+				beginAtZero: true,
+				title: {
+					text: "Time (min)",
+					display: true,
+				},
+				min: 0,
+				max: quiz && quiz.timeLimit,
+			},
+			x: {
+				beginAtZero: true,
+				title: {
+					text: "Score (%)",
+					display: true,
+				},
+				min: 0,
+				max: 100,
+			},
 		},
 	};
 
@@ -132,67 +178,57 @@ function QuizDashboard() {
 		}
 	};
 
-	const dataLoadAll = () =>{
-		if(quiz && respondents){
-			var totalS = 0;
-			var totalT = 0;
+	const dataLoadAll = () => {
+		if (quiz && respondents) {
+			var totalScore = 0;
+			var totalTime = 0;
 			var high = 0;
 			var low = quiz.totalScore;
-			var Average = 0;
-			var avgHigh = 0;
-			var avgLow = 0;
-			var avgAround = 0;
+			var avgScore = 0;
+			var avgTime = 0;
 
-			for(var i = 0; i < respondents.length; i++)
-			{
+			for (var i = 0; i < respondents.length; i++) {
 				var curr_point = respondents[i].current_quiz.totalPointsGiven;
 				var curr_time = respondents[i].current_quiz.timeTaken;
-				totalS += curr_point;
-				totalT += curr_time;
-				if(curr_point > high){high = curr_point}
-				if(curr_point < low){low = curr_point}
+
+				if (curr_time) {
+					totalTime += curr_time;
+				}
+				if (curr_point) {
+					totalScore += curr_point;
+					if (curr_point > high) {
+						high = curr_point;
+					}
+					if (curr_point < low) {
+						low = curr_point;
+					}
+				}
 			}
 
-			Average = totalS/respondents.length;
-
-			for(var i = 0; i < respondents.length; i++)
-			{
-				var curr_point = respondents[i].current_quiz.totalPointsGiven;
-				if(curr_point == Math.floor(Average) || Math.ceil(Average)){
-					avgAround++;
-				}
-				else if(curr_point > Math.floor(Average)){
-					avgHigh++;
-				}
-				else{
-					avgLow++;
-				}
-			}
+			avgScore = totalScore / respondents.length;
+			avgTime = totalTime / respondents.length;
 
 			setNum({
-				dataLoad : true,
+				dataLoad: true,
 				numSent: quiz.totalEmailsSent,
 				numTaken: respondents.length,
-				numNotTaken:(quiz.totalEmailsSent - respondents.length),
-				totalPoint:quiz.totalScore,
-				titmeLimit:quiz.timeLimit,
-				numQuestion:quiz.questions.length,
-				AvgScore:Average,
-				HighestScore:high,
-				LowestScore:low,
-				AverageTime:(totalT/respondents.length),
-				aboveAvg:avgHigh,
-				belowAvg:avgLow,
-				aroundAvg:avgAround,
-			})
+				numNotTaken: quiz.totalEmailsSent - respondents.length,
+				totalPoint: quiz.totalScore,
+				titmeLimit: quiz.timeLimit,
+				numQuestion: quiz.questions.length,
+				averageScore: avgScore.toFixed(1),
+				highestScore: high.toFixed(1),
+				lowestScore: low.toFixed(1),
+				averageTime: avgTime.toFixed(1),
+			});
 		}
-	}
+	};
 
-	function drawData(){
-		if(numStatus.dataLoad == false){
-			dataLoadAll()
-		}else{
-			return(
+	function drawData() {
+		if (numStatus.dataLoad === false) {
+			dataLoadAll();
+		} else {
+			return (
 				<Container fluid>
 					<Row>
 						<Col>
@@ -228,19 +264,19 @@ function QuizDashboard() {
 								<tbody>
 									<tr>
 										<td>Average Score</td>
-										<td>{numStatus.AvgScore}</td>
+										<td>{numStatus.averageScore}</td>
 									</tr>
 									<tr>
 										<td>Highest Score</td>
-										<td>{numStatus.HighestScore}</td>
+										<td>{numStatus.highestScore}</td>
 									</tr>
 									<tr>
 										<td>Lowest Score</td>
-										<td>{numStatus.LowestScore}</td>
+										<td>{numStatus.lowestScore}</td>
 									</tr>
 									<tr>
-										<td>Average Time Taken</td>
-										<td>{numStatus.AverageTime}</td>
+										<td>Average Time (min)</td>
+										<td>{numStatus.averageTime}</td>
 									</tr>
 								</tbody>
 							</Table>
@@ -248,31 +284,33 @@ function QuizDashboard() {
 							<br />
 						</Col>
 					</Row>
-					<br/>
+					<br />
 					<br />
 					<Row>
-				<Col>
-					<h4 style={{ textAlign: "center" }}>Quiz Completion Status</h4>
-					<Doughnut data={completionData} options={options} />
-					<br />
-					<br />
-				</Col>
-				<Col>
-					<h4 style={{ textAlign: "center", paddingBottom:100}}>Score Distribution (%)</h4>
-					<br />
-					<br />
-				</Col>
-			</Row>
-			</Container>
-			)
+						<Col lg={6}>
+							<h4 style={{ textAlign: "center" }}>Quiz Completion Status</h4>
+							<Doughnut data={donutData} options={donutOptions} />
+							<br />
+							<br />
+						</Col>
+						<Col lg={6}>
+							<h4 style={{ textAlign: "center", paddingBottom: 100 }}>
+								Time Taken vs. Score
+							</h4>
+							<Scatter data={scatterData} options={scatterOptions} />
+							<br />
+							<br />
+						</Col>
+					</Row>
+				</Container>
+			);
 		}
-		
 	}
 
 	return (
 		<Container className="w-75">
-			{drawData()},
-			{ColoredLine("grey")},
+			{drawData()}
+			{ColoredLine("grey")}
 			<Row>
 				<h4 style={{ textAlign: "center" }}>Individual Respondent Stats</h4>
 				<br />
@@ -289,7 +327,7 @@ function QuizDashboard() {
 										</Tooltip>
 									}
 								>
-									<th>Ranking </th>
+									<th>Ranking*</th>
 								</OverlayTrigger>
 								<th>Name</th>
 								<th>School</th>
@@ -367,4 +405,3 @@ function QuizDashboard() {
 }
 
 export default QuizDashboard;
-

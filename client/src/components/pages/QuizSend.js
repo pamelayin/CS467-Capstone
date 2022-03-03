@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Nav, Tab, Row, Col, Container, Form, Button } from "react-bootstrap";
+import { Container, Form, Button } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import validator from "validator";
@@ -42,14 +42,13 @@ function QuizSend() {
 	};
 
 	const [authState] = useAuth();
-	const { isAuthenticated, user } = authState;
+	const { user } = authState;
 
 	//collect all email addresses as a single string
 	const [eAddress, setEmail] = useState({
 		emailText: "",
 	});
 
-	const [eAddresses, setState] = useState([]);
 	const navigate = useNavigate();
 
 	function getEmail(event) {
@@ -132,13 +131,6 @@ function QuizSend() {
 			}, 2000);
 		}
 	}
-
-	// function backToDash() {
-	// 	let text = "If you click 'OK', you will lose all your data.";
-	// 	if (window.confirm(text) === true) {
-	// 		navigate("/quizlist");
-	// 	}
-	// }
 
 	return (
 		<div>
