@@ -9,7 +9,6 @@ import {
 	Row,
 	Col,
 } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 import Radium from "radium";
 
 import Questions from "../layouts/Questions";
@@ -20,6 +19,7 @@ import {
 	createQuiz,
 	useQuizzes,
 } from "../../context/quiz/QuizState";
+import AlertQuizSubmit from "../Alerts/AlertQuizSubmit";
 
 const answerKeyWidth = { 
 	padding:"5px", 
@@ -49,20 +49,21 @@ function CreateQuiz(props) {
 	const [title, setTitle] = useState("");
 	const [timeLimit, setTimeLimit] = useState(0);
 	const [alert, setShowAlert] = useState(false);
-	const [completed, setCompleted] = useState(false);
+	const [quizCreatedModal, setQuizCreatedModal] = useState(false);
+    const [confirmMessage, setConfirmMessage] = useState('');
+    const [completed, setCompleted] = useState(false);
 
-	const navigate = useNavigate();
 	const { error } = quizState;
 
 	useEffect(() => {
-		if (error && !completed) {
+		if (error) {
 			setShowAlert(true);
 			setTimeout(() => {
 				clearErrors(quizDispatch);
 				setShowAlert(false);
 			}, 5000);
 		}
-	}, [error, quizDispatch, completed]);
+	}, [error, quizDispatch]);
 
 	//Temp data to hold edit data
 	const [tempNote, setTemp] = useState({
@@ -658,22 +659,12 @@ function CreateQuiz(props) {
 
 	const onTitleChange = (e) => {
 		setTitle(e.target.value);
-		if (title !== "" && timeLimit > 0) {
-			setCompleted(true);
-		} else {
-			setCompleted(false);
-		}
 		clearErrors(quizDispatch);
         setShowAlert(false);
 	};
 
 	const onTimeLimitChange = (e) => {
 		setTimeLimit(e.target.value);
-		if (timeLimit > 0 && title !== "") {
-			setCompleted(true);
-		} else {
-			setCompleted(false);
-		}
 		clearErrors(quizDispatch);
         setShowAlert(false);
 	};
@@ -692,15 +683,13 @@ function CreateQuiz(props) {
 				totalScore,
 			});
 
+            if(title !== '' && timeLimit > 0) {
+                setConfirmMessage("You have successfully created your quiz! Please click 'OK' to navigate to your dashboard.");
+                setQuizCreatedModal(true);
+            }
+
 			setTitle("");
 			setTimeLimit(0);
-			setShowAlert(true);
-		}
-
-		console.log(completed);
-
-		if (completed) {
-			setTimeout(() => navigate("/"), 5000);
 		}
 	}
 
@@ -711,6 +700,12 @@ function CreateQuiz(props) {
 				alert={alert}
 				setShowAlert={setShowAlert}
 			/>
+            <AlertQuizSubmit 
+                confirmMessage={confirmMessage}
+                alert={quizCreatedModal}
+                setShowAlert={setQuizCreatedModal}
+                submitTest={null}
+            />
 			<DynamicForm onAdd={addNote} />
 			<br />
 			<Form onSubmit={onSubmit}>

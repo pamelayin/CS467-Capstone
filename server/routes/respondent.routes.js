@@ -1,13 +1,27 @@
 const express = require("express");
 const router = express.Router();
 const nodemailer = require('nodemailer');
-const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
+const handlebars = require('handlebars');
 const { decrypt } = require('../middleware/EncryptDecrypt');
 const { check, validationResult } = require('express-validator');
 
 const Respondent = require("../models/respondent.models");
 const Quiz = require("../models/quiz.models");
 const Employer = require("../models/employer.models");
+
+
+var readHTMLFile = (path, callback) => {
+    fs.readFile(path, {encoding: 'utf-8'}, (err, html) => {
+        if(err) {
+            callback(err);
+            throw err;
+        } else {
+            callback(null, html);
+        }
+    });
+};
 
 // Route to get candidate info if it exists
 router.get('/:iv/userInfo/:hashKey/quiz/:quizId', async(req, res) => {
@@ -160,8 +174,8 @@ router.patch('/:iv/takeQuiz/:hashKey/quiz/:quizId', async(req, res) => {
 
     try {
         let user = await Respondent.findOne({ email: email });
-        let employer = await Quiz.findById(req.params.quizId);
-        let employerEmail = await Employer.findById(employer.employer_id);
+        let quiz = await Quiz.findById(req.params.quizId);
+        let employer = await Employer.findById(quiz.employer_id);
 
         await Respondent.findOneAndUpdate(
             { email: email },
@@ -183,25 +197,37 @@ router.patch('/:iv/takeQuiz/:hashKey/quiz/:quizId', async(req, res) => {
                 user: "quizbanana467@gmail.com",
                 pass: "OSUcapston1111"
             }
-        })
-    
-        const mailOptions = {
-            from: "quizbanana467@gmail.com",
-            to: employerEmail.email,
-            subject: `Quiz ${req.params.quizId} completed!`,
-            text: `Quiz ${req.params.quizId} has been completed by ${user.firstName} ${user.lastName}`
-        }
-    
-        transporter.sendMail(mailOptions, (error, info) =>{
-            if(error){
-                console.log(error);
-                res.json({msg: 'fail'});
-            }else{
-                console.log("good")
-                res.json({msg: 'success'});
-    
-            }
-        })
+        });
+
+        readHTMLFile(path.join(__dirname, '..', '..', 'client', 'src', 'email', 'QuizCompleteEmail.html'), (err, html) => {
+            var template = handlebars.compile(html);
+            var replacements = {
+                employerFirstName: employer.firstName,
+                respondentEmail: user.email,
+                quizTitle: quiz.title,
+            };
+            var htmlToSend = template(replacements);
+            const mailOptions = {
+                from: "quizbanana467@gmail.com",
+                to: employer.email,
+                subject: `Quiz ${quiz.title} Completed`,
+                html: htmlToSend,
+                attachments: [{
+                    filename: 'logo_small.png',
+                    path: path.join(__dirname, '..', '..', 'client', 'src', 'assets', 'logo_small.png'),
+                    cid: 'banana'
+                }]
+            };
+        
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.log(error);
+                    res.json({ msg: error });
+                } else {
+                    res.json({ msg: "success" });
+                }
+            });
+        });
 
         res.status(202).end();
     } catch (err) {
@@ -239,6 +265,8 @@ router.get("/:respondentId/quiz/:quizId", async (req, res) => {
 		let quiz_resp_ans = respondent.quizzes.find(
 			(quiz) => quiz.quiz_id == req.params.quizId
 		);
+
+        console.log(quiz_resp_ans);
 
 		if (!respondent) {
 			return res.status(400).json({ msg: "Candidate info not found" });
@@ -278,4 +306,5 @@ router.put("/:respondentId/quiz/:quizId", async (req, res) => {
 		res.status(500).json({ msg: err.message });
 	}
 });
+
 module.exports = router;

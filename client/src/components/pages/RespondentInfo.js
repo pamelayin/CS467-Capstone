@@ -2,9 +2,15 @@ import React, { useEffect, useState, Fragment } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
-import { useRespondent, respondentInfo, clearErrors, getRespondentInfo } from '../../context/respondent/RespondentState';
+import { 
+    useRespondent, 
+    respondentInfo, 
+    clearErrors, 
+    getRespondentInfo
+} from '../../context/respondent/RespondentState';
 
 import AlertRespondentProfile from '../Alerts/AlertRespondentProfile';
+import AlertQuizTaken from '../Alerts/AlertQuizTaken';
 
 const RespondentInfo = () => {
     const [respondentState, respondentDispatch] = useRespondent();
@@ -13,6 +19,7 @@ const RespondentInfo = () => {
 
     const [alert, setShowAlert] = useState(false);
     const [success, setShowSuccess] = useState(false);
+    const [quizTaken, setQuizTaken] = useState(false);
 
     const [responInfo, setResponInfo] = useState({
         firstName: '',
@@ -22,7 +29,17 @@ const RespondentInfo = () => {
     });
 
     useEffect(() => {
+        if(respondent && respondent.quizzes) {
+            const quiz = respondent.quizzes.find(quiz => quiz.quiz_id === quizId);
+            if(quiz) {
+                setQuizTaken(true);
+            }
+        }
+    }, [respondent, quizId]);
+
+    useEffect(() => {
         if(error) {
+            setShowSuccess(false);
             setShowAlert(true);
             setTimeout(() => {
                 clearErrors(respondentDispatch);
@@ -30,13 +47,7 @@ const RespondentInfo = () => {
             }, 5000)
         }
         getRespondentInfo(respondentDispatch, iv, hashKey, quizId);
-    }, [error, respondentDispatch, iv, hashKey, quizId]);
-
-    useEffect(() => {
-        if(error) {
-            setShowSuccess(false);
-        }
-    }, [error]);
+    }, [error, respondentDispatch, iv, hashKey, quizId, success]);
 
     const { firstName, lastName, school, dateOfBirth } = responInfo;
 
@@ -60,7 +71,10 @@ const RespondentInfo = () => {
             }, iv, hashKey, quizId);
 
             clearErrors(respondentDispatch);
-            setShowSuccess(true);
+
+            if((respondent && respondent.firstName) || (firstName !== '' && lastName !== '' && school !== '' && dateOfBirth !== '')) {
+                setShowSuccess(true);
+            }
         }
     }
 
@@ -76,8 +90,12 @@ const RespondentInfo = () => {
                 hashKey={hashKey}
                 quizId={quizId}
             />
+            <AlertQuizTaken 
+                quizTaken={quizTaken}
+                setQuizTaken={setQuizTaken}
+            />
             <Container>
-                <Row className='mt-5'>
+                <Row className='mt-1'>
                     <Col lg={5} md={6} sm={12} className='p-5 m-auto shadow-sm rounded-lg'>
                         <h1 className='shadow-sm p-3 text-center rounded' style={{ color: 'black' }}>Register Quiz</h1>
                         <Form onSubmit={onSubmit}>

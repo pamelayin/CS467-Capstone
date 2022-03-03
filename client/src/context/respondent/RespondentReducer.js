@@ -8,7 +8,7 @@ import {
 	UPDATE_RESPONDENT_QUIZ,
 	TAKE_QUIZ,
     CLEAR_ERRORS,
-    GET_RESPONDENT_INFO
+    GET_RESPONDENT_INFO,
 } from "../types";
 
 const RespondentReducer = (state, action) => {
