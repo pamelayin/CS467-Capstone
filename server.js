@@ -3,7 +3,11 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const path = require('path');
 const nodemailer = require("nodemailer");
+const fs = require('fs');
+const handlebars = require('handlebars');
 const { encrypt } = require('./server/middleware/EncryptDecrypt');
+
+const Quiz = require('./server/models/quiz.models');
 
 //init middleware
 const app = express();
@@ -37,12 +41,27 @@ app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
 });
 
-app.post("/send/:quizId", (req, res) => {
+var readHTMLFile = (path, callback) => {
+    fs.readFile(path, {encoding: 'utf-8'}, (err, html) => {
+        if(err) {
+            callback(err);
+            throw err;
+        } else {
+            callback(null, html);
+        }
+    });
+};
+
+app.post("/send/:quizId", async(req, res) => {
 	const quiz_id = req.params.quizId;
+
+    const quizTitle = await Quiz.findById(quiz_id);
 
     const { email } = req.body;
 
     const emailHash = encrypt(email);
+
+    console.log(req.body.email);
 
     let url = `${req.protocol}://${req.hostname}:3000/${emailHash.iv}/userInfo/${emailHash.content}/quiz/${quiz_id}`;
 
@@ -54,21 +73,48 @@ app.post("/send/:quizId", (req, res) => {
 		},
 	});
 
-    const emailText = `You have been invited to take a quiz. Please fill out each question carefully.\nClick the link to begin\n${url}`;
+    readHTMLFile(__dirname + '/client/src/email/RespondentEmail.html', (err, html) => {
+        var template = handlebars.compile(html);
+        var replacements = {
+            quizTitle: quizTitle.title,
+            url: url
+        };
+        var htmlToSend = template(replacements);
+        const mailOptions = {
+            from: "quizbanana467@gmail.com",
+            to: req.body.email,
+            subject: `${req.body.name}`,
+            html: htmlToSend,
+            attachments: [{
+                filename: 'logo_small.png',
+                path: __dirname + '/client/src/assets/logo_small.png',
+                cid: 'banana'
+            }]
+        };
+    
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+                res.json({ msg: error });
+            } else {
+                res.json({ msg: "success" });
+            }
+        });
+    })
 
-	const mailOptions = {
-		from: "quizbanana467@gmail.com",
-		to: req.body.email,
-		subject: `${req.body.name}`,
-		text: emailText,
-	};
+	// const mailOptions = {
+	// 	from: "quizbanana467@gmail.com",
+	// 	to: req.body.email,
+	// 	subject: `${req.body.name}`,
+	// 	text: emailText,
+	// };
 
-	transporter.sendMail(mailOptions, (error, info) => {
-		if (error) {
-			console.log(error);
-			res.json({ msg: error });
-		} else {
-			res.json({ msg: "success" });
-		}
-	});
+	// transporter.sendMail(mailOptions, (error, info) => {
+	// 	if (error) {
+	// 		console.log(error);
+	// 		res.json({ msg: error });
+	// 	} else {
+	// 		res.json({ msg: "success" });
+	// 	}
+	// });
 });
