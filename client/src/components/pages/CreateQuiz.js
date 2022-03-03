@@ -119,7 +119,21 @@ function CreateQuiz(props) {
 		tempNote.AnsKeyOpen = passedNotes[tempNote.id].AnsKeyOpen;
 		tempNote.addOpen = passedNotes[tempNote.id].addOpen;
 		multi.multiAnswer = passedNotes[tempNote.id].AnswerKey.split(",")
-		console.log(multi.multiAnswer)
+		updateMulti()
+	}
+	function updateMulti(){
+		multi.multiAnswer.includes(tempNote.Choice1) ? multi.Check1 = true : multi.Check1 = false
+		multi.multiAnswer.includes(tempNote.Choice2) ? multi.Check2 = true : multi.Check2 = false
+		multi.multiAnswer.includes(tempNote.Choice3) ? multi.Check3 = true : multi.Check3 = false
+		multi.multiAnswer.includes(tempNote.Choice4) ? multi.Check4 = true : multi.Check4 = false
+		multi.multiAnswer.includes(tempNote.Choice5) ? multi.Check5 = true : multi.Check5 = false
+		multi.multiAnswer.includes(tempNote.Choice6) ? multi.Check6 = true : multi.Check6 = false
+		tempNote.Sel1Open = multi.Check1
+		tempNote.Sel2Open = multi.Check2
+		tempNote.Sel3Open = multi.Check3
+		tempNote.Sel4Open = multi.Check4
+		tempNote.Sel5Open = multi.Check5
+		tempNote.Sel6Open = multi.Check6
 	}
 
 	function checkMulti(name){
@@ -191,7 +205,7 @@ function CreateQuiz(props) {
 	};
 
 	function handleMultiChange(event) {
-
+		console.log(event)
 		checkMulti(event.target.getAttribute("id"));
 		let newArray = [...multi.multiAnswer, event.target.value];
 		if (multi.multiAnswer.includes(event.target.value)) {
@@ -572,6 +586,16 @@ function CreateQuiz(props) {
 			AnsKeyOpen: true,
 			show: false,
 		});
+		setMulti({
+			multiAnswer:[],
+			Check1: false,
+			Check2: false,
+			Check3: false,
+			Check4: false,
+			Check5: false,
+			Check6: false,
+		});
+
 		reRender();
 	}
 

@@ -71,17 +71,18 @@ const CalculateScore = (quiz_id, respondent_id) => {
 				question_ans["pointsGiven"] = 0;
 				gradedQuestions.push(question_ans);
 			}
-		}
+		};
 
 		updateRespondentQuiz(respondentDispatch, respondent_id, quiz_id, {
 			questionsAnswered: gradedQuestions,
 			totalPointsGiven: totalPoints,
 			timeTaken: quiz_resp_ans.timeTaken,
 		});
+		
 		if (error) {
 			alert(error);
 		} else {
-			setFinishedGrading(true);
+			setFinishedGrading(true)
 		}
 	}
 

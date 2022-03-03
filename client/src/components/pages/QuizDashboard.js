@@ -1,3 +1,4 @@
+  
 import React, { useState, useEffect, useRef } from "react";
 import {
 	Container,
@@ -28,6 +29,16 @@ import {
 
 ChartJS.register(ArcElement, ChartTooltip, Legend);
 
+const ColoredLine = ({ color }) => (
+	<hr
+		style={{
+			color: color,
+			backgroundColor: color,
+			height: 1,
+		}}
+	/>
+);
+
 function QuizDashboard() {
 	const [authState] = useAuth();
 	const { isAuthenticated, user } = authState;
@@ -37,6 +48,24 @@ function QuizDashboard() {
 	const [respondentState, respondentDispatch] = useRespondent();
 	const { error, respondent, quiz_resp_ans, respondents } = respondentState;
 	const tooltipRef = useRef();
+
+	const [numStatus, setNum] = useState({
+		dataLoad: false,
+		numSent:0,
+		numTaken:0,
+		numNotTaken:0,
+		totalPoint:0,
+		titmeLimit:0,
+		numQuestion:0,
+		totalPoint:0,
+		AvgScore:0,
+		HighestScore:0,
+		LowestScore:0,
+		AverageTime:0,
+		aboveAvg:0,
+		belowAvg:0,
+		aroundAvg:0,
+	})
 
 	useEffect(() => {
 		getQuiz(quizDispatch, quiz_id);
@@ -102,71 +131,126 @@ function QuizDashboard() {
 			window.location.reload();
 		}
 	};
-	return (
-		<Container className="w-75">
-			<h1 className="my-5" style={{ textAlign: "center" }}>
-				Quiz Dashboard - {quiz && quiz.title}{" "}
-			</h1>
-			<Row>
-				<Col>
-					<h4>Info</h4>
 
-					<Table responsive>
-						<tbody>
-							<tr>
-								<td>Total Available Points</td>
-								<td>{quiz && quiz.totalScore}</td>
-							</tr>
-							<tr>
-								<td>Time Limit</td>
-								<td>{quiz && quiz.timeLimit}</td>
-							</tr>
-							<tr>
-								<td>Number of Questions</td>
-								<td>{quiz && quiz.questions.length}</td>
-							</tr>
-							<tr>
-								<td>Quizzes Sent Out</td>
-								<td>
-									{quiz && quiz.totalEmailsSent ? quiz.totalEmailsSent : 0}
-								</td>
-							</tr>
-							<tr>
-								<td>Quizzes Taken</td>
-								<td>
-									{respondents && respondents.length ? respondents.length : 0}{" "}
-								</td>
-							</tr>
-						</tbody>
-					</Table>
-				</Col>
-				<Col>
-					<h4>Stats</h4>
-					<Table responsive>
-						<tbody>
-							<tr>
-								<td>Average Score</td>
-								<td>50 points</td>
-							</tr>
-							<tr>
-								<td>Highest Score</td>
-								<td>100 points</td>
-							</tr>
-							<tr>
-								<td>Lowest Score</td>
-								<td>0 points</td>
-							</tr>
-							<tr>
-								<td>Average Time Taken</td>
-								<td>30 minutes</td>
-							</tr>
-						</tbody>
-					</Table>
+	const dataLoadAll = () =>{
+		if(quiz && respondents){
+			var totalS = 0;
+			var totalT = 0;
+			var high = 0;
+			var low = quiz.totalScore;
+			var Average = 0;
+			var avgHigh = 0;
+			var avgLow = 0;
+			var avgAround = 0;
+
+			for(var i = 0; i < respondents.length; i++)
+			{
+				var curr_point = respondents[i].current_quiz.totalPointsGiven;
+				var curr_time = respondents[i].current_quiz.timeTaken;
+				totalS += curr_point;
+				totalT += curr_time;
+				if(curr_point > high){high = curr_point}
+				if(curr_point < low){low = curr_point}
+			}
+
+			Average = totalS/respondents.length;
+
+			for(var i = 0; i < respondents.length; i++)
+			{
+				var curr_point = respondents[i].current_quiz.totalPointsGiven;
+				if(curr_point == Math.floor(Average) || Math.ceil(Average)){
+					avgAround++;
+				}
+				else if(curr_point > Math.floor(Average)){
+					avgHigh++;
+				}
+				else{
+					avgLow++;
+				}
+			}
+
+			setNum({
+				dataLoad : true,
+				numSent: quiz.totalEmailsSent,
+				numTaken: respondents.length,
+				numNotTaken:(quiz.totalEmailsSent - respondents.length),
+				totalPoint:quiz.totalScore,
+				titmeLimit:quiz.timeLimit,
+				numQuestion:quiz.questions.length,
+				AvgScore:Average,
+				HighestScore:high,
+				LowestScore:low,
+				AverageTime:(totalT/respondents.length),
+				aboveAvg:avgHigh,
+				belowAvg:avgLow,
+				aroundAvg:avgAround,
+			})
+		}
+	}
+
+	function drawData(){
+		if(numStatus.dataLoad == false){
+			dataLoadAll()
+		}else{
+			return(
+				<Container fluid>
+					<Row>
+						<Col>
+							<h4>Quiz Information</h4>
+							<Table responsive>
+								<tbody>
+									<tr>
+										<td>Total Points</td>
+										<td>{numStatus.totalPoint}</td>
+									</tr>
+									<tr>
+										<td>Time Limit</td>
+										<td>{numStatus.titmeLimit}</td>
+									</tr>
+									<tr>
+										<td>Number of Questions</td>
+										<td>{numStatus.numQuestion}</td>
+									</tr>
+									<tr>
+										<td>Quizzes Sent Out</td>
+										<td>{numStatus.numSent}</td>
+									</tr>
+									<tr>
+										<td>Quizzes Taken</td>
+										<td>{numStatus.numTaken}</td>
+									</tr>
+								</tbody>
+							</Table>
+						</Col>
+						<Col>
+							<h4>Quiz Statistic</h4>
+							<Table responsive>
+								<tbody>
+									<tr>
+										<td>Average Score</td>
+										<td>{numStatus.AvgScore}</td>
+									</tr>
+									<tr>
+										<td>Highest Score</td>
+										<td>{numStatus.HighestScore}</td>
+									</tr>
+									<tr>
+										<td>Lowest Score</td>
+										<td>{numStatus.LowestScore}</td>
+									</tr>
+									<tr>
+										<td>Average Time Taken</td>
+										<td>{numStatus.AverageTime}</td>
+									</tr>
+								</tbody>
+							</Table>
+							<br />
+							<br />
+						</Col>
+					</Row>
+					<br/>
 					<br />
-					<br />
-				</Col>
-			</Row>
-			<Row>
+					<Row>
 				<Col>
 					<h4 style={{ textAlign: "center" }}>Quiz Completion Status</h4>
 					<Doughnut data={completionData} options={options} />
@@ -174,11 +258,21 @@ function QuizDashboard() {
 					<br />
 				</Col>
 				<Col>
-					<h4>Chart 2</h4>
+					<h4 style={{ textAlign: "center", paddingBottom:100}}>Score Distribution (%)</h4>
 					<br />
 					<br />
 				</Col>
 			</Row>
+			</Container>
+			)
+		}
+		
+	}
+
+	return (
+		<Container className="w-75">
+			{drawData()},
+			{ColoredLine("grey")},
 			<Row>
 				<h4 style={{ textAlign: "center" }}>Individual Respondent Stats</h4>
 				<br />
@@ -273,3 +367,4 @@ function QuizDashboard() {
 }
 
 export default QuizDashboard;
+
