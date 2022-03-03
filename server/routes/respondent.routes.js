@@ -262,8 +262,8 @@ router.get("/:respondentId/quiz/:quizId", async (req, res) => {
 		// let quiz = await Quiz.findById(req.params.quizId);
 		let respondent = await Respondent.findById(req.params.respondentId);
 
-		let quiz_resp_ans = respondent.quizzes.find(
-			(quiz) => quiz.quiz_id == req.params.quizId
+		let quiz_resp_ans = await respondent.quizzes.find(
+			(quiz) => quiz.quiz_id.toString() === req.params.quizId.toString()
 		);
 
         console.log(quiz_resp_ans);

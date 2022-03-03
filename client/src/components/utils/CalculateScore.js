@@ -17,11 +17,11 @@ const CalculateScore = (quiz_id, respondent_id) => {
 
 	useEffect(() => {
 		getQuiz(quizDispatch, quiz_id);
-	}, [quizDispatch]);
+	}, [quizDispatch, quiz_id]);
 
 	useEffect(() => {
 		getRespondentQuizById(respondentDispatch, respondent_id, quiz_id);
-	}, [respondentDispatch]);
+	}, [respondentDispatch, quiz_id, respondent_id]);
 
 	if (quiz && quiz_resp_ans && finishedGrading === false) {
 		console.log(quiz);
