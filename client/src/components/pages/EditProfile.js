@@ -98,7 +98,7 @@ function EditProfile() {
 
 	return (
 		<Container className="w-75">
-			<h1 className="my-5">Edit Profile</h1>
+			<h3 className="my-5">Edit Profile</h3>
 			<div className="w-75 p-3 my-3">
 				<AlertEditProfile alert={alert} setShowAlert={setShowAlert} />
 				<Form onSubmit={onSubmit}>

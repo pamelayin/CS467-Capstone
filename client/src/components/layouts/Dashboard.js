@@ -5,9 +5,9 @@ import Radium,{styleRoot} from "radium";
 
 const reSizeDash = {
 	float: "left",
-    width: "30%",
+    width: "46%",
 	height: "130px",
-	margin: "1.5%",
+	margin: "2%",
 	padding: "4% 0 0 0",
 	border: "1px solid rgb(182, 182, 182)",
 	borderRadius: "7px",
@@ -23,7 +23,7 @@ const reSizeDash = {
 }
 
 const Dashboard = () => {
-    const currentYear = new Date().getFullYear();
+    
 
     return (
 			<div>
@@ -31,24 +31,24 @@ const Dashboard = () => {
 					<span className="mb-0 h3">Dashboard / Access your services</span>
 				</Container>
 				<div className="dash-card-row">
-					<div className="dash-card-cell-a">
+					<div className="dash-card-cell-b">
 						<a href="/createquiz" style={reSizeDash}>Create Quiz</a>
 					</div>
 					<div className="dash-card-cell-b" >
 						<a href="/quizlist" style={reSizeDash}>Past Quizzes</a>
 					</div>
-					<div className="dash-card-cell-a" >
+					{/* <div className="dash-card-cell-a" >
 						<a href="#" style={reSizeDash}> Mailing List (TBD)</a>
-					</div>
+					</div> */}
 				</div>
 				<div className="dash-card-row">
 					<div className="dash-card-cell-b" >
 						<a href="/account" style={reSizeDash}> Manage Account</a>
 					</div>
-					<div className="dash-card-cell-a">
+					<div className="dash-card-cell-b">
 						<a href="/contact" style={reSizeDash}> Customer Service</a>
 					</div>
-					<div className="dash-card-cell-b">
+					{/* <div className="dash-card-cell-b">
 						<a href="#" style={reSizeDash}>
 							{" "}
 							<img
@@ -56,10 +56,8 @@ const Dashboard = () => {
 								className="img-fluid shadow-4"
 							/>
 						</a>
-					</div>
-					<div>
-						All copyrights reserved, quizbanana.,llc {currentYear}
-					</div>
+					</div> */}
+
 				</div>
 			</div>
 		);

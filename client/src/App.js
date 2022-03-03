@@ -1,16 +1,16 @@
 import React, { Fragment, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Radium,{StyleRoot} from 'radium';
-
-import Register from "./components/auth/Register";
+import {StyleRoot} from 'radium';
 import PrivateRoute from "./components/routes/PrivateRoute";
-import ContactUs from "./components/pages/ContactUs";
+import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
+import Dashboard from "./components/layouts/Dashboard";
+import Navigation from "./components/layouts/Navigation";
+import Footer from "./components/layouts/Footer";
 import ManageAccount from "./components/pages/ManageAccount";
 import EditProfile from "./components/pages/EditProfile";
 import QuizList from "./components/pages/QuizList";
-import Dashboard from "./components/layouts/Dashboard";
-import Navigation from "./components/layouts/Navigation";
+import ContactUs from "./components/pages/ContactUs";
 import CreateQuiz from "./components/pages/CreateQuiz";
 import QuizSend from "./components/pages/QuizSend";
 import QuizDashboard from "./components/pages/QuizDashboard";
@@ -89,6 +89,7 @@ function App() {
 												/>
 											</Route>
 										</Routes>
+										<Footer style={{width: 100}}/>
 									</div>
 								</StyleRoot>
 							</Fragment>
