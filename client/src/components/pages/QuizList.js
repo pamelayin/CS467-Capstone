@@ -44,7 +44,7 @@ function QuizList() {
 
 	return (
 		<Container>
-			<h1 className="my-5">Past Quizzes</h1>
+			<h3 className="my-5">Past Quizzes</h3>
 			{quizzes ? (
 				<Table striped bordered hover responsive>
 					<thead>
@@ -70,16 +70,14 @@ function QuizList() {
 									<td>{quiz.totalScore} points</td>
 									<td>{quiz.timeLimit} minutes</td>
 									<td>{moment(quiz.createdAt).format("YYYY-MM-DD HH:mm")}</td>
-									<td>
-										<Link to={`/quiz/${quiz._id}`} className="mx-3">
-											view
-										</Link>
+									<td align="center">
+										<Link to={`/quiz/${quiz._id}`}>view</Link>
 										<Link to={`/sendquiz/${quiz._id}`} className="mx-3">
-											send quiz
+											send
 										</Link>
-										<a href="#" onClick={() => showModal(quiz._id)}>
+										<Link to={``} onClick={() => showModal(quiz._id)}>
 											delete
-										</a>
+										</Link>
 									</td>
 								</tr>
 							))}
