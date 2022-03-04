@@ -236,6 +236,7 @@ const RespondentState = (props) => {
 		quiz_resp_ans: null,
 		error: null,
 		loading: true,
+		updateFinish: false
 	};
 
 	const [state, dispatch] = useReducer(RespondentReducer, initialState);

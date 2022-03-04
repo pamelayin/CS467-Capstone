@@ -1,5 +1,5 @@
-import React, { useState, useEffect, Fragment } from "react";
-import { useQuizzes, getQuiz, updateQuiz } from "../../context/quiz/QuizState";
+import { useState, useEffect} from "react";
+import { useQuizzes, getQuiz } from "../../context/quiz/QuizState";
 import {
 	useRespondent,
 	getRespondentQuizById,
@@ -11,7 +11,7 @@ const CalculateScore = (quiz_id, respondent_id) => {
 	const [quizState, quizDispatch] = useQuizzes();
 	const { quiz } = quizState;
 	const [respondentState, respondentDispatch] = useRespondent();
-	const { error, respondent, quiz_resp_ans, respondents } = respondentState;
+	const { error, respondent, quiz_resp_ans,respondents, updateFinish } = respondentState;
 
 	const [finishedGrading, setFinishedGrading] = useState(false);
 
@@ -20,14 +20,17 @@ const CalculateScore = (quiz_id, respondent_id) => {
 	}, [quizDispatch]);
 
 	useEffect(() => {
-		getRespondentQuizById(respondentDispatch, respondent_id, quiz_id);
-	}, [respondentDispatch]);
+		if (updateFinish) {
+			getRespondentQuizById(respondentDispatch, respondent_id, quiz_id);
+		}
+	}, [respondentDispatch, updateFinish]);
 
 	if (quiz && quiz_resp_ans && finishedGrading === false) {
 		console.log(quiz);
 		console.log(quiz_resp_ans);
 		let gradedQuestions = [];
 		let totalPoints = 0.0;
+		let hasFreeResponse = false;
 		for (var i = 0; i < quiz.questions.length; i++) {
 			let curr_question = quiz.questions[i];
 			let question_id = curr_question._id;
@@ -60,6 +63,8 @@ const CalculateScore = (quiz_id, respondent_id) => {
 					}
 					question_ans["pointsGiven"] = totalMCPoints;
 					totalPoints += totalMCPoints;
+				} else {
+					hasFreeResponse = true;
 				}
 				gradedQuestions.push(question_ans);
 				console.log("graded");
@@ -72,12 +77,18 @@ const CalculateScore = (quiz_id, respondent_id) => {
 				gradedQuestions.push(question_ans);
 			}
 		};
-
-		updateRespondentQuiz(respondentDispatch, respondent_id, quiz_id, {
-			questionsAnswered: gradedQuestions,
-			totalPointsGiven: totalPoints,
-			timeTaken: quiz_resp_ans.timeTaken,
-		});
+		if (hasFreeResponse === false) {
+			updateRespondentQuiz(respondentDispatch, respondent_id, quiz_id, {
+				questionsAnswered: gradedQuestions,
+				totalPointsGiven: totalPoints,
+				timeTaken: quiz_resp_ans.timeTaken,
+			});
+		} else {
+			updateRespondentQuiz(respondentDispatch, respondent_id, quiz_id, {
+				questionsAnswered: gradedQuestions,
+				timeTaken: quiz_resp_ans.timeTaken,
+			});
+		}
 		
 		if (error) {
 			alert(error);

@@ -68,6 +68,7 @@ const RespondentReducer = (state, action) => {
 				...state,
 				respondent: action.payload,
 				loading: false,
+				updateFinish: true,
 			};
 		case CLEAR_ERRORS:
 			return {
