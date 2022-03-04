@@ -17,7 +17,7 @@ const ColoredLine = ({ color }) => (
 	/>
 );
 
-const Navigation = () => {
+const Navigation = (props) => {
 	const [authState, authDispatch] = useAuth();
 	const { isAuthenticated, user } = authState;
 	const { greeting, setGreeting } = useContext(GreetContext);
@@ -38,7 +38,9 @@ const Navigation = () => {
 			setGreeting("Create Quiz");
 		} else if (location.pathname.substring(0, location.pathname.lastIndexOf("/")) === "/sendquiz") {
 			setGreeting("Send Quiz");
-		}
+		} else {
+            setGreeting('Welcome');
+        }
 	}, [location, location.pathname, setGreeting, authDispatch]);
 
 	const onLogout = () => {

@@ -263,13 +263,6 @@ const RespondentState = (props) => {
 
 	const [state, dispatch] = useReducer(RespondentReducer, initialState);
 
-	// if(state.loading) {
-	//     loadRespondent(dispatch, state.respondent.id)
-	// }
-
-	// useEffect(() => {
-	// }, [state.respondent]);
-
 	return (
 		<RespondentContext.Provider
 			value={{

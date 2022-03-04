@@ -124,7 +124,7 @@ function QuizSend() {
 						alert(
 							"Emails have been sent successfully. You will be redirected to dashboard."
 						);
-						navigate("/");
+						navigate("/quizlist");
 					}
 				}
 				// need error toast

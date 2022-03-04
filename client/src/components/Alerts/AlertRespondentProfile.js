@@ -12,11 +12,12 @@ const AlertRespondentProfile = ({ error, setShowAlert, alert, success, setShowSu
 
     const toggleSetAlert = () => {
         setShowAlert(!alert);
+        setShowSuccess(!success);
     }
 
     useEffect(() => {
         getQuiz(quizDispatch, quizId);
-    }, [setShowSuccess, quizDispatch, quizId]);
+    }, [quizDispatch, quizId]);
 
     return (
         <Container>

@@ -24,6 +24,7 @@ const CalculateScore = (quiz_id, respondent_id) => {
 		}
 	}, [respondentDispatch, updateFinish]);
 
+
 	if (quiz && quiz_resp_ans && finishedGrading === false) {
 		console.log(quiz);
 		console.log(quiz_resp_ans);

@@ -7,7 +7,7 @@ import {
 	getRespondentQuiz,
 	takeQuiz,
 } from "../../context/respondent/RespondentState";
-import AlertTestSubmit from '../Alerts/AlertTestSubmit';
+import AlertQuizSubmit from '../Alerts/AlertQuizSubmit';
 import AlertTimeLeft from '../Alerts/AlertTimeLeft';
 
 const RespondentQuiz = () => {
@@ -125,6 +125,11 @@ const RespondentQuiz = () => {
         navigate('/quizComplete', { state: {quiz_id: quizId, resp_id: respondent._id}})
     }
 
+    // const alertUser = e => {
+    //     e.preventDefault();
+    //     return e.returnValue = '';
+    // };
+
     const onSubmit = e => {
         e.preventDefault();
 
@@ -150,6 +155,23 @@ const RespondentQuiz = () => {
         }
     }, [stateTimeLimit, time]);
 
+    // useEffect(() => {
+    //     window.addEventListener('beforeunload', alertUser);
+    //     window.onload = submitTest;
+    //     return () => {
+    //         window.removeEventListener('beforeunload', alertUser);
+    //     }
+    // }, []);
+
+    // useEffect(() => {
+    //     if(respondent && respondent.quizzes) {
+    //         const quiz = respondent.quizzes.find(quiz => quiz.quiz_id === quizId);
+    //         if(quiz) {
+    //             navigate('/quizComplete', { state: {quiz_id: quizId, resp_id: respondent._id}});
+    //         }
+    //     }
+    // }, [respondent, navigate, quizId]);
+
     return (
         <Container>
             <AlertTimeLeft 
@@ -160,7 +182,7 @@ const RespondentQuiz = () => {
                 time={stateTimeLimit}
                 onSubmit={onSubmit}
             />
-            <AlertTestSubmit 
+            <AlertQuizSubmit 
                 confirmMessage={confirmMessage} 
                 alert={submitAlert} 
                 setShowAlert={setShowSubmitAlert} 
@@ -170,12 +192,8 @@ const RespondentQuiz = () => {
                 <h1>
                     {quiz_resp && quiz_resp.title}
                 </h1>
-                <h6>Time Limit: {stateTimeLimit}</h6>
+                <h6>Time Limit: {stateTimeLimit} minutes</h6>
                 <h6>Candidate ID: {respondent && respondent._id}</h6>
-                {/* <Container className='shadow-sm p-3 text-center rounded' style={{ display: 'block', width: '80%'}}>
-                    <h4>Time Limit: {stateTimeLimit}</h4>
-                    <h4>Candidate ID: {respondent && respondent._id}</h4>
-                </Container> */}
             </Container>
             {quiz_resp &&
                 quiz_resp.questions.map((q, i) => (

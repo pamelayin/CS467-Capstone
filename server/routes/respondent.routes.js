@@ -1,13 +1,27 @@
 const express = require("express");
 const router = express.Router();
-const nodemailer = require("nodemailer");
-const crypto = require("crypto");
-const { decrypt } = require("../middleware/EncryptDecrypt");
-const { check, validationResult } = require("express-validator");
+const nodemailer = require('nodemailer');
+const fs = require('fs');
+const path = require('path');
+const handlebars = require('handlebars');
+const { decrypt } = require('../middleware/EncryptDecrypt');
+const { check, validationResult } = require('express-validator');
 
 const Respondent = require("../models/respondent.models");
 const Quiz = require("../models/quiz.models");
 const Employer = require("../models/employer.models");
+
+
+var readHTMLFile = (path, callback) => {
+    fs.readFile(path, {encoding: 'utf-8'}, (err, html) => {
+        if(err) {
+            callback(err);
+            throw err;
+        } else {
+            callback(null, html);
+        }
+    });
+};
 
 // Route to get candidate info if it exists
 router.get("/:iv/userInfo/:hashKey/quiz/:quizId", async (req, res) => {
@@ -160,67 +174,80 @@ router.get("/:iv/takeQuiz/:hashKey/quiz/:quizId", async (req, res) => {
 	}
 });
 
-// Route to update the quiz data with the candidate's answers
-router.patch("/:iv/takeQuiz/:hashKey/quiz/:quizId", async (req, res) => {
-	const { timeTaken, questionsAnswered } = req.body;
-	const hashKey = req.params.iv;
-	const hashContent = req.params.hashKey;
+router.patch('/:iv/takeQuiz/:hashKey/quiz/:quizId', async(req, res) => {
+    const { timeTaken, questionsAnswered } = req.body;
+    const hashKey = req.params.iv;
+    const hashContent = req.params.hashKey;
 
-	const emailObject = {
-		iv: hashKey,
-		content: hashContent,
-	};
+    const emailObject = {
+        iv: hashKey,
+        content: hashContent
+    };
 
-	const email = decrypt(emailObject);
+    const email = decrypt(emailObject);
 
-	try {
-		let user = await Respondent.findOne({ email: email });
-		let employer = await Quiz.findById(req.params.quizId);
-		let employerEmail = await Employer.findById(employer.employer_id);
+    try {
+        let user = await Respondent.findOne({ email: email });
+        let quiz = await Quiz.findById(req.params.quizId);
+        let employer = await Employer.findById(quiz.employer_id);
 
-		await Respondent.findOneAndUpdate(
-			{ email: email },
-			{
-				$push: {
-					quizzes: {
-						quiz_id: req.params.quizId,
-						timeTaken: timeTaken,
-						questionsAnswered: questionsAnswered,
-					},
-				},
-			},
-			{ new: true }
-		);
+        await Respondent.findOneAndUpdate(
+            { email: email },
+            { $push: 
+                { 
+                    quizzes: {
+                        quiz_id: req.params.quizId,
+                        timeTaken: timeTaken, 
+                        questionsAnswered: questionsAnswered,
+                    },
+                }
+            },
+            { new: true }
+        );
 
-		const transporter = nodemailer.createTransport({
-			service: "Gmail",
-			auth: {
-				user: "quizbanana467@gmail.com",
-				pass: "OSUcapston1111",
-			},
-		});
+        const transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            auth:{
+                user: "quizbanana467@gmail.com",
+                pass: "OSUcapston1111"
+            }
+        });
 
-		const mailOptions = {
-			from: "quizbanana467@gmail.com",
-			to: employerEmail.email,
-			subject: `Quiz ${req.params.quizId} completed!`,
-			text: `Quiz ${req.params.quizId} has been completed by ${user.firstName} ${user.lastName}`,
-		};
+        readHTMLFile(path.join(__dirname, '..', '..', 'client', 'src', 'email', 'QuizCompleteEmail.html'), (err, html) => {
+            var template = handlebars.compile(html);
+            var replacements = {
+                employerFirstName: employer.firstName,
+                respondentEmail: user.email,
+                quizTitle: quiz.title,
+            };
+            var htmlToSend = template(replacements);
+            const mailOptions = {
+                from: "quizbanana467@gmail.com",
+                to: employer.email,
+                subject: `Quiz ${quiz.title} Completed`,
+                html: htmlToSend,
+                attachments: [{
+                    filename: 'logo_small.png',
+                    path: path.join(__dirname, '..', '..', 'client', 'src', 'assets', 'logo_small.png'),
+                    cid: 'banana'
+                }]
+            };
+        
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.log(error);
+                    res.json({ msg: error });
+                } else {
+                    res.json({ msg: "success" });
+                }
+            });
+        });
 
-		transporter.sendMail(mailOptions, (error, info) => {
-			if (error) {
-				console.log(error);
-				res.json({ msg: "fail" });
-			} else {
-				res.json({ msg: "success" });
-			}
-		});
-		res.status(200).json(user);
-		// res.status(202).end();
-	} catch (err) {
-		console.error(err.message);
-		res.status(500).json({ msg: err.message });
-	}
+        res.status(202).end();
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ msg: err.message });
+    }
 });
 
 //get all respondents without quizzes array and only the current quiz
@@ -251,9 +278,11 @@ router.get("/:respondentId/quiz/:quizId", async (req, res) => {
 		// let quiz = await Quiz.findById(req.params.quizId);
 		let respondent = await Respondent.findById(req.params.respondentId);
 
-		let quiz_resp_ans = respondent.quizzes.find(
-			(quiz) => quiz.quiz_id == req.params.quizId
+		let quiz_resp_ans = await respondent.quizzes.find(
+			(quiz) => quiz.quiz_id.toString() === req.params.quizId.toString()
 		);
+
+        console.log(quiz_resp_ans);
 
 		if (!respondent) {
 			return res.status(400).json({ msg: "Candidate info not found" });
@@ -304,6 +333,7 @@ router.put("/:respondentId/quiz/:quizId", async (req, res) => {
 	}
 });
 
+
 //get quiz without auth
 router.get("/getquiz/:id", async (req, res) => {
 	try {
@@ -314,4 +344,5 @@ router.get("/getquiz/:id", async (req, res) => {
 		res.status(500).json({ msg: "Server Error" });
 	}
 });
+
 module.exports = router;
