@@ -395,21 +395,20 @@ function DynamicForm(props) {
 						<span className="mb-0 h3">Create your quiz</span>
 					</Container>
 					<Container>
-						Please read this carefully and follow the instruction to create your
-						quiz <br />
+						Please read this carefully and follow the instructions to create your
+						quiz. <br />
 						<br />
-						1. Enter your Question <br />
-						2. Decide the points for the question <br />
-						3. Select a type <br />
-						4. Fill the choices up to 6<br />
-						5. Give an answer key <br />
-						6. Please review contents before add <br />
-						7. If you feel good to add, click add
+						1. Enter a prompt under Question. <br />
+						2. Decide the points for the question. <br />
+						3. Select question type from the Type dropdown. <br />
+						4. Fill in the answer choices up to 6.<br />
+						5. Select the answer key based on the selection. <br />
+						7. Click Add Question to add question to the quiz.
 						<br />
 						<br />
-						After create as much questions as you want, please review and edit
-						your questions if you want to change your question. Once you
-						finalized your review, please click "Complete"
+						After you finish with quiz creation, please review and edit
+						your questions as needed. Once you
+						finalized your review, please click Complete to save.
 					</Container>
 				</div>
 				<div style={resizeRight}>
@@ -421,6 +420,7 @@ function DynamicForm(props) {
 								name="Question"
 								onChange={handleChange}
 								value={note.Question}
+								placeholder="Quiz Question"
 							/>
 						</Form.Group>
                         <InputGroup className="mb-3">

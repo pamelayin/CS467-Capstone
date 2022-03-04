@@ -13,7 +13,9 @@ import {
 	TAKE_QUIZ,
 	GET_RESPONDENT_QUIZ_ANSWERED,
 	UPDATE_RESPONDENT_QUIZ,
-    GET_RESPONDENT_INFO
+	GET_RESPONDENT_INFO,
+	GET_QUIZ_FROM_RESP,
+	GET_QUIZ_ERROR,
 } from "../types";
 
 //create custom hook for respondent context
@@ -225,6 +227,24 @@ export const takeQuiz = async (dispatch, formData, iv, hashKey, quizId) => {
 	}
 };
 
+//get quiz
+export const getQuiz = async (dispatch, _id) => {
+    try {
+		const res = await axios.get(`${RESPONDENT_ROUTE}/getquiz/${_id}`);
+
+		dispatch({
+            type: GET_QUIZ_FROM_RESP,
+			payload: res.data,
+        });
+        console.log(res.data)
+	} catch (err) {
+		dispatch({
+			type: GET_QUIZ_ERROR,
+			payload: err.response.data.msg || err.response.data.errors[0].msg,
+		});
+	}
+};
+
 export const clearErrors = (dispatch) => dispatch({ type: CLEAR_ERRORS });
 
 const RespondentState = (props) => {
@@ -236,7 +256,9 @@ const RespondentState = (props) => {
 		quiz_resp_ans: null,
 		error: null,
 		loading: true,
-		updateFinish: false
+		updateFinish: false,
+		quiz: null,
+		quiz_error: null
 	};
 
 	const [state, dispatch] = useReducer(RespondentReducer, initialState);

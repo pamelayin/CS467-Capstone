@@ -8,7 +8,9 @@ import {
 	UPDATE_RESPONDENT_QUIZ,
 	TAKE_QUIZ,
     CLEAR_ERRORS,
-    GET_RESPONDENT_INFO
+	GET_RESPONDENT_INFO,
+	GET_QUIZ_ERROR,
+	GET_QUIZ_FROM_RESP
 } from "../types";
 
 const RespondentReducer = (state, action) => {
@@ -45,12 +47,12 @@ const RespondentReducer = (state, action) => {
 				// quiz_resp_all: action.payload.quiz_resp_all,
 				loading: false,
 			};
-        case GET_RESPONDENT_INFO:
-            return {
-                ...state,
-                respondent: action.payload,
-                loading: false
-            };
+		case GET_RESPONDENT_INFO:
+			return {
+				...state,
+				respondent: action.payload,
+				loading: false,
+			};
 		case RESPONDENT_ERROR:
 			return {
 				...state,
@@ -70,10 +72,23 @@ const RespondentReducer = (state, action) => {
 				loading: false,
 				updateFinish: true,
 			};
+		case GET_QUIZ_ERROR:
+			return {
+				...state,
+				quiz_error: action.payload,
+				loading: true,
+			};
+		case GET_QUIZ_FROM_RESP:
+			return {
+				...state,
+				quiz: action.payload,
+				loading: false,
+			};
 		case CLEAR_ERRORS:
 			return {
 				...state,
 				error: null,
+				quiz_error: null
 			};
 		default:
 			throw new Error(`Unsupported type of: ${action.type}`);

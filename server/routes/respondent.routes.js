@@ -303,4 +303,15 @@ router.put("/:respondentId/quiz/:quizId", async (req, res) => {
 		res.status(500).json({ msg: err.message });
 	}
 });
+
+//get quiz without auth
+router.get("/getquiz/:id", async (req, res) => {
+	try {
+		const quiz = await Quiz.findById(req.params.id);
+		res.status(200).json(quiz);
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).json({ msg: "Server Error" });
+	}
+});
 module.exports = router;

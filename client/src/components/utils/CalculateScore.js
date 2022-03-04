@@ -1,23 +1,22 @@
 import { useState, useEffect} from "react";
-import { useQuizzes, getQuiz } from "../../context/quiz/QuizState";
+// import { useQuizzes, getQuiz } from "../../context/quiz/QuizState";
 import {
 	useRespondent,
 	getRespondentQuizById,
 	loadRespondent,
 	updateRespondentQuiz,
+	getQuiz
 } from "../../context/respondent/RespondentState";
 
 const CalculateScore = (quiz_id, respondent_id) => {
-	const [quizState, quizDispatch] = useQuizzes();
-	const { quiz } = quizState;
-	const [respondentState, respondentDispatch] = useRespondent();
-	const { error, respondent, quiz_resp_ans,respondents, updateFinish } = respondentState;
 
+	const [respondentState, respondentDispatch] = useRespondent();
+	const { error, respondent, quiz_resp_ans,respondents, updateFinish, quiz } = respondentState;
 	const [finishedGrading, setFinishedGrading] = useState(false);
 
 	useEffect(() => {
-		getQuiz(quizDispatch, quiz_id);
-	}, [quizDispatch]);
+		getQuiz(respondentDispatch, quiz_id);
+	}, [respondentDispatch]);
 
 	useEffect(() => {
 		if (updateFinish) {
