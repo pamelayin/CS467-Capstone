@@ -403,7 +403,7 @@ function DynamicForm(props) {
 						3. Select question type from the Type dropdown. <br />
 						4. Fill in the answer choices up to 6.<br />
 						5. Select the answer key based on the selection. <br />
-						7. Click Add Question to add question to the quiz.
+						6. Click Add Question to add question to the quiz.
 						<br />
 						<br />
 						After you finish with quiz creation, please review and edit
@@ -443,7 +443,7 @@ function DynamicForm(props) {
                                     </option>
                                     <option value="TF">True or False</option>
                                     <option value="SC">Single Choice</option>
-                                    <option value="MC">Multiple Choice</option>
+                                    <option value="MC">Multiple Selection</option>
                                     <option value="FR">Free Response</option>
                                 </Form.Select>
                         </InputGroup>
