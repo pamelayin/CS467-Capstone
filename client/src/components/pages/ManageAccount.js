@@ -12,7 +12,7 @@ function ManageAccount() {
 
 	return (
 		<Container>
-			<h3 className="my-5" >Your Account</h3>
+			<h3 className="my-3">Account Details</h3>
 			<Row>
 				<Col xs={12} md={6}>
 					<Card

@@ -12,7 +12,7 @@ import AlertTimeLeft from '../Alerts/AlertTimeLeft';
 
 const RespondentQuiz = () => {
     const [respondentState, respondentDispatch] = useRespondent();
-    const { error, respondent, quiz_resp } = respondentState;
+    const { error, respondent, quiz_resp, updateFinish } = respondentState;
     const { iv, hashKey, quizId } = useParams();
     const navigate = useNavigate();
 

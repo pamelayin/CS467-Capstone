@@ -312,7 +312,7 @@ function QuizDashboard() {
 			{drawData()}
 			{ColoredLine("grey")}
 			<Row>
-				<h4 style={{ textAlign: "center" }}>Individual Respondent Stats</h4>
+				<h4 style={{ textAlign: "center" }}>Ranking & Individual Results</h4>
 				<br />
 				<br />
 				{respondents && respondents.length > 0 ? (
