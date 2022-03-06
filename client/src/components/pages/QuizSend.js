@@ -72,8 +72,8 @@ function QuizSend() {
 			alert("Please enter at least one email address");
 		} else {
 			// This is to send email to employer
-			emailList[emailList.length] = user.email;
-            console.log(emailList);
+			// emailList[emailList.length] = user.email;
+            // console.log(emailList);
 			for (let i = 0; i < emailList.length; i++) {
 				//axios to send data to backend to send out emails
 				if (validator.isEmail(emailList[i])) {

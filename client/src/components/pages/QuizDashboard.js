@@ -61,7 +61,7 @@ function QuizDashboard() {
 		numTaken: 0,
 		numNotTaken: 0,
 		totalPoint: 0,
-		titmeLimit: 0,
+		timeLimit: 0,
 		numQuestion: 0,
 		AvgScore: 0,
 		HighestScore: 0,
@@ -214,7 +214,7 @@ function QuizDashboard() {
 				numTaken: respondents.length,
 				numNotTaken: quiz.totalEmailsSent - respondents.length,
 				totalPoint: quiz.totalScore,
-				titmeLimit: quiz.timeLimit,
+				timeLimit: quiz.timeLimit,
 				numQuestion: quiz.questions.length,
 				averageScore: avgScore.toFixed(1),
 				highestScore: high.toFixed(1),
@@ -241,7 +241,7 @@ function QuizDashboard() {
 									</tr>
 									<tr>
 										<td>Time Limit</td>
-										<td>{numStatus.titmeLimit}</td>
+										<td>{numStatus.timeLimit}</td>
 									</tr>
 									<tr>
 										<td>Number of Questions</td>
@@ -249,7 +249,7 @@ function QuizDashboard() {
 									</tr>
 									<tr>
 										<td>Quizzes Sent Out</td>
-										<td>{numStatus.numSent}</td>
+										<td>{numStatus.numSent ? numStatus.numSent : 0}</td>
 									</tr>
 									<tr>
 										<td>Quizzes Taken</td>
@@ -386,7 +386,7 @@ function QuizDashboard() {
 						</tbody>
 					</Table>
 				) : (
-					<h5>There are no respondents for this quiz. </h5>
+					<h5 style={{textAlign: "center"}}>There are no respondents for this quiz. </h5>
 				)}
 			</Row>
 

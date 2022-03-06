@@ -148,7 +148,7 @@ const RespondentQuiz = () => {
         if(time === 5 && stateTimeLimit === 5) {
             setShowTimeAlert(false);
         } else if((stateTimeLimit === 5 && time !== 5) || stateTimeLimit === 1) {
-            setConfirmMessage(`You have ${stateTimeLimit} minutes remaining!`);
+            setConfirmMessage(`You have ${stateTimeLimit} minute(s) remaining!`);
             setShowTimeAlert(true);
         } else if(stateTimeLimit === 0) {
             submitTest();
@@ -192,7 +192,7 @@ const RespondentQuiz = () => {
                 <h1>
                     {quiz_resp && quiz_resp.title}
                 </h1>
-                <h6>Time Limit: {stateTimeLimit} minutes</h6>
+                <h6>Time Limit: {stateTimeLimit} minute(s)</h6>
                 <h6>Candidate ID: {respondent && respondent._id}</h6>
             </Container>
             {quiz_resp &&

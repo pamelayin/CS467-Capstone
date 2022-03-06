@@ -11,10 +11,10 @@ const reSizeDash = {
 	padding: "4% 0 0 0",
 	border: "1px solid rgb(182, 182, 182)",
 	borderRadius: "7px",
-    '@media (max-width: 1410px)': {
-        width: "47%",
-		padding: "5% 0 0 0",
-      },
+    // '@media (max-width: 1410px)': {
+    //     width: "47%",
+	// 	padding: "5% 0 0 0",
+    //   },
 
 	'@media (max-width: 900px)': {
     	width: "100%",
