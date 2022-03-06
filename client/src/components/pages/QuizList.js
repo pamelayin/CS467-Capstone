@@ -45,7 +45,7 @@ function QuizList() {
 	return (
 		<Container>
 			<h3 className="my-5">Past Quizzes</h3>
-			{quizzes ? (
+			{quizzes && quizzes.length > 0 ? (
 				<Table striped bordered hover responsive>
 					<thead>
 						<tr>
@@ -91,7 +91,7 @@ function QuizList() {
 					</tbody>
 				</Table>
 			) : (
-				<h1>There are no quizzes to display.</h1>
+				<h3>There are no quizzes to display.</h3>
 			)}
 		</Container>
 	);

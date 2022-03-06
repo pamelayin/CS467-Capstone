@@ -11,7 +11,7 @@ import {
 
 const resizeLeft = {
     float: "left",
-    width: "25%",
+    width: "30%",
     '@media (max-width: 1410px)': {
         width: "100%",
       },
@@ -19,7 +19,7 @@ const resizeLeft = {
 
 const resizeRight = {
     float: "right",
-    width: "75%",
+    width: "70%",
     '@media (max-width: 1410px)': {
         width: "100%",
       },
@@ -404,6 +404,9 @@ function DynamicForm(props) {
 						4. Fill in the answer choices up to 6.<br />
 						5. Select the answer key based on the selection. <br />
 						6. Click Add Question to add question to the quiz.
+						<br />
+						<br />
+						Free response questions need to be graded manually.
 						<br />
 						<br />
 						After you finish with quiz creation, please review and edit

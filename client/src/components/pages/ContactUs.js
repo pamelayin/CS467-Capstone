@@ -12,15 +12,21 @@ const ContactUs = () => {
 					<Row>
 						<Col sm={3}>
 							<Nav variant="pills" className="flex-column">
-								<Nav.Item>
+								<Nav.Item
+									style={{ border: "1px solid rgba(255, 195, 0, 0.5)" }}
+								>
 									<Nav.Link eventKey="first">
 										How do I contact QuizBanana?{" "}
 									</Nav.Link>
 								</Nav.Item>
-								<Nav.Item>
+								<Nav.Item
+									style={{ border: "1px solid rgba(255, 195, 0, 0.5)" }}
+								>
 									<Nav.Link eventKey="second">How can I create quiz?</Nav.Link>
 								</Nav.Item>
-								<Nav.Item>
+								<Nav.Item
+									style={{ border: "1px solid rgba(255, 195, 0, 0.5)" }}
+								>
 									<Nav.Link eventKey="thrid">
 										How do I analyze survey results?
 									</Nav.Link>
@@ -28,7 +34,9 @@ const ContactUs = () => {
 							</Nav>
 						</Col>
 						<Col sm={9}>
-							<Tab.Content>
+							<Tab.Content
+								style={{ border: "1px solid rgba(255, 195, 0, 0.5)", padding: "5px" }}
+							>
 								<Tab.Pane eventKey="first">
 									<span style={{ fontWeight: 500 }}>Email: </span>
 									<br />
@@ -85,13 +93,11 @@ const ContactUs = () => {
 									All quiz questions will be automatically graded based on your
 									quiz data except free response question type. You are able to
 									grade these by clicking on the link under Ranking & Individual
-									Results table. All quiz questions submitted blank will automatically receive
-									0 points.
+									Results table. All quiz questions submitted blank will
+									automatically receive 0 points.
 									<br />
 									<br />
-									<span style={{ fontWeight: 500 }}>
-										Sharing Quiz Results
-									</span>
+									<span style={{ fontWeight: 500 }}>Sharing Quiz Results</span>
 									<br />
 									Unfortunately, we do not support the quiz sharing at this
 									moment. We are trying our best to provide sharing service as
@@ -109,12 +115,13 @@ const ContactUs = () => {
 						{" "}
 						Contact Us{" "}
 					</span>
-					<br /><br />
+					<br />
+					<br />
 					QuizBanana’s mission is to be "Earth’s most customer-centric company",
 					and our Customer Service Team is an essential part of that mission.
-					Through our innovative and technologies developed by our development team, we
-					support customers from multiple locations around the nation. We
-					consider each contact an opportunity to advocate for customers and
+					Through our innovative and technologies developed by our development
+					team, we support customers from multiple locations around the nation.
+					We consider each contact an opportunity to advocate for customers and
 					provide support via phone and email. Working in a dynamic and fast
 					paced environment, our team is continuously raising the bar on
 					customer experience by advocating and inventing for customers, playing
