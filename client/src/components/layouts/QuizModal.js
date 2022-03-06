@@ -85,7 +85,7 @@ const QuizModal = ({
 						<Row>
 							<p>
 								<strong>Total Score: </strong>
-								{answered_quiz.totalPointsGiven !== null ? (
+								{answered_quiz.totalPointsGiven ? (
 									<span>
 										{answered_quiz.totalPointsGiven} / {quiz.totalScore} points
 										(
@@ -101,7 +101,7 @@ const QuizModal = ({
 							</p>
 							<p>
 								<strong>Time Used: </strong>
-								{answered_quiz.timeTaken !== null ? (
+								{answered_quiz.timeTaken ? (
 									<span>
 										{answered_quiz.timeTaken} / {quiz.timeLimit} minutes
 									</span>
