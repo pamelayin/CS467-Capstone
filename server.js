@@ -63,7 +63,7 @@ app.post("/send/:quizId", async(req, res) => {
 
     console.log(req.body.email);
 
-    let url = `${req.protocol}://${req.hostname}:3000/${emailHash.iv}/userInfo/${emailHash.content}/quiz/${quiz_id}`;
+    let url = `${req.protocol}://${req.hostname}/${emailHash.iv}/userInfo/${emailHash.content}/quiz/${quiz_id}`;
 
 	const transporter = nodemailer.createTransport({
 		service: "gmail",

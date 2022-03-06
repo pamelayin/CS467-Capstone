@@ -80,7 +80,7 @@ function QuizSend() {
 					//if the email is true, send out email
 					axios({
 						method: "POST",
-						url: `http://localhost:7000/send/${quiz_id}`, //we might need to change url for actual url for backend
+						url: `/send/${quiz_id}`, //we might need to change url for actual url for backend
 						data: {
 							name: emailSubject, //set data
 							email: emailList[i],
