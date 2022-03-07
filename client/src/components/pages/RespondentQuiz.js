@@ -12,7 +12,7 @@ import AlertTimeLeft from '../Alerts/AlertTimeLeft';
 
 const RespondentQuiz = () => {
     const [respondentState, respondentDispatch] = useRespondent();
-    const { error, respondent, quiz_resp, updateFinish } = respondentState;
+    const { error, respondent, quiz_resp} = respondentState;
     const { iv, hashKey, quizId } = useParams();
     const navigate = useNavigate();
 
@@ -104,6 +104,10 @@ const RespondentQuiz = () => {
 
         totalTime = time - stateTimeLimit;
 
+        if(totalTime < 0) {
+            totalTime = 0;
+        }
+
         return totalTime;
     }
 
@@ -125,10 +129,10 @@ const RespondentQuiz = () => {
         navigate('/quizComplete', { state: {quiz_id: quizId, resp_id: respondent._id}})
     }
 
-    // const alertUser = e => {
-    //     e.preventDefault();
-    //     return e.returnValue = '';
-    // };
+    const alertUser = e => {
+        e.preventDefault();
+        return e.returnValue = '';
+    };
 
     const onSubmit = e => {
         e.preventDefault();
@@ -155,22 +159,22 @@ const RespondentQuiz = () => {
         }
     }, [stateTimeLimit, time]);
 
-    // useEffect(() => {
-    //     window.addEventListener('beforeunload', alertUser);
-    //     window.onload = submitTest;
-    //     return () => {
-    //         window.removeEventListener('beforeunload', alertUser);
-    //     }
-    // }, []);
+    useEffect(() => {
+        window.addEventListener('beforeunload', alertUser);
+        window.onload = submitTest;
+        return () => {
+            window.removeEventListener('beforeunload', alertUser);
+        }
+    }, []);
 
-    // useEffect(() => {
-    //     if(respondent && respondent.quizzes) {
-    //         const quiz = respondent.quizzes.find(quiz => quiz.quiz_id === quizId);
-    //         if(quiz) {
-    //             navigate('/quizComplete', { state: {quiz_id: quizId, resp_id: respondent._id}});
-    //         }
-    //     }
-    // }, [respondent, navigate, quizId]);
+    useEffect(() => {
+        if(respondent && respondent.quizzes) {
+            const quiz = respondent.quizzes.find(quiz => quiz.quiz_id === quizId);
+            if(quiz) {
+                navigate('/quizComplete', { state: {quiz_id: quizId, resp_id: respondent._id}});
+            }
+        }
+    }, [respondent, navigate, quizId]);
 
     return (
         <Container>

@@ -52,6 +52,7 @@ const AlertRespondentProfile = ({ error, setShowAlert, alert, success, setShowSu
                     <Modal.Body>
                         <p>Thank you for providing your information. Your information and results will be saved and calculated at the end of the test.</p>
                         <p>The quiz is approximately {quiz && quiz.timeLimit} minute(s) with {quiz && quiz.questions.length} question(s).</p>
+                        <p>IMPORTANT! Please do not refresh the page. You will lose all saved information on your quiz and you will receive a 0.</p>
                         <p>Click 'Begin' to begin the quiz.</p>
                         <h6>Good Luck!</h6>
                     </Modal.Body>

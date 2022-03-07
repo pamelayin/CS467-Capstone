@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
+
+import { useNavigate } from "react-router-dom";
+
 import { Modal, Button } from "react-bootstrap";
 
 // source: https://codemoto.io/coding/react/react-delete-confirmation-modal
 const AlertModal = ({ showModal, hideModal, message, confirmModal, type, id }) => {
+    const navigate = useNavigate();
 
 	var showCloseButton = true;
 	if (type === 'reconfirm') {
@@ -26,8 +30,11 @@ const AlertModal = ({ showModal, hideModal, message, confirmModal, type, id }) =
 				{showCloseButton? (<Button variant="secondary" onClick={hideModal}>
 					Close
 				</Button>) : (<> </>)}
-				
-				<Button variant="danger" onClick={() => confirmModal(id)}>Confirm</Button>
+				{type === 'sendquiz' ? (
+                    <Button variant="danger" onClick={() => navigate('/')}>Confirm</Button>
+                ) : (
+                    <Button variant="danger" onClick={() => confirmModal(id)}>Confirm</Button>
+                )}
 			</Modal.Footer>
 		</Modal>
 
