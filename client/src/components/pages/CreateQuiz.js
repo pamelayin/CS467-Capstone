@@ -56,14 +56,14 @@ function CreateQuiz(props) {
 	const { error } = quizState;
 
 	useEffect(() => {
-		if (error) {
+		if (error && !completed) {
 			setShowAlert(true);
 			setTimeout(() => {
 				clearErrors(quizDispatch);
 				setShowAlert(false);
 			}, 5000);
 		}
-	}, [error, quizDispatch]);
+	}, [error, quizDispatch, completed]);
 
 	//Temp data to hold edit data
 	const [tempNote, setTemp] = useState({
@@ -899,12 +899,14 @@ function CreateQuiz(props) {
 	const onTitleChange = (e) => {
 		setTitle(e.target.value);
 		clearErrors(quizDispatch);
+        setCompleted(true);
         setShowAlert(false);
 	};
 
 	const onTimeLimitChange = (e) => {
-		setTimeLimit(e.target.value);
+		setTimeLimit(Math.round(e.target.value));
 		clearErrors(quizDispatch);
+        setCompleted(true);
         setShowAlert(false);
 	};
 
@@ -922,13 +924,13 @@ function CreateQuiz(props) {
 				totalScore,
 			});
 
-            if(title !== '' && timeLimit > 0) {
-                setConfirmMessage("You have successfully created your quiz! Please click 'OK' to navigate to your dashboard. You can see newly created quiz and send out to your candidates on Past Quizzes page.");
+            if(title !== '' && timeLimit > 0 && completed) {
+                setConfirmMessage("You have successfully created your quiz! Please click 'OK' to navigate to your dashboard.");
                 setQuizCreatedModal(true);
-            }
 
-			setTitle("");
-			setTimeLimit(0);
+                setTitle("");
+                setTimeLimit(0);
+            }
 		}
 	}
 

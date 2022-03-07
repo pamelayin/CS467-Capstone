@@ -39,7 +39,6 @@ const AlertQuizSubmit = ({ confirmMessage, alert, setShowAlert, submitTest }) =>
                     <Button variant="danger" onClick={submitTest}>Confirm</Button>
                 </Modal.Footer>
             )}
-
 		</Modal>
     )
 }

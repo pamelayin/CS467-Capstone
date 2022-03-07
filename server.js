@@ -61,9 +61,14 @@ app.post("/send/:quizId", async(req, res) => {
 
     const emailHash = encrypt(email);
 
-    console.log(req.body.email);
+    var url = '';
+    if(process.env.NODE_ENV === 'production') {
+        url = `${req.protocol}://${req.hostname}:3000/${emailHash.iv}/userInfo/${emailHash.content}/quiz/${quiz_id}`;
+    } else {
+        url = `${req.protocol}://${req.hostname}/${emailHash.iv}/userInfo/${emailHash.content}/quiz/${quiz_id}`;
+    }
 
-    let url = `${req.protocol}://${req.hostname}/${emailHash.iv}/userInfo/${emailHash.content}/quiz/${quiz_id}`;
+    // let url = `${req.protocol}://${req.hostname}:3000/${emailHash.iv}/userInfo/${emailHash.content}/quiz/${quiz_id}`;
 
 	const transporter = nodemailer.createTransport({
 		service: "gmail",
@@ -101,20 +106,4 @@ app.post("/send/:quizId", async(req, res) => {
             }
         });
     })
-
-	// const mailOptions = {
-	// 	from: "quizbanana467@gmail.com",
-	// 	to: req.body.email,
-	// 	subject: `${req.body.name}`,
-	// 	text: emailText,
-	// };
-
-	// transporter.sendMail(mailOptions, (error, info) => {
-	// 	if (error) {
-	// 		console.log(error);
-	// 		res.json({ msg: error });
-	// 	} else {
-	// 		res.json({ msg: "success" });
-	// 	}
-	// });
 });
