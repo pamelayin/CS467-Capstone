@@ -556,7 +556,7 @@ function DynamicForm(props) {
 					<Form>
 						<Form.Group className="mb-3">
 							<Form.Label>Question:</Form.Label>
-							<Form.Control
+ 							<Form.Control
 								type="text"
 								name="Question"
 								onChange={handleChange}
