@@ -1,5 +1,5 @@
 import React from 'react'
-import {Container, Table} from 'react-bootstrap';
+import {Container, Table, OverlayTrigger, Tooltip} from 'react-bootstrap';
 import{NavLink as RouterNavLink, Link } from 'react-router-dom';
 import Radium,{styleRoot} from "radium";
 
@@ -32,21 +32,61 @@ const Dashboard = () => {
 				</Container>
 				<div className="dash-card-row">
 					<div className="dash-card-cell-b">
-						<a href="/createquiz" style={reSizeDash}>Create Quiz</a>
+						<OverlayTrigger
+							placement="top"
+							overlay={
+								<Tooltip>
+									create quiz to save to your account
+								</Tooltip>
+							}
+						>
+							<a href="/createquiz" style={reSizeDash}>
+								Create Quiz
+							</a>
+						</OverlayTrigger>
 					</div>
-					<div className="dash-card-cell-b" >
-						<a href="/quizlist" style={reSizeDash}>Past Quizzes</a>
+					<div className="dash-card-cell-b">
+						<OverlayTrigger
+							placement="top"
+							overlay={
+								<Tooltip>
+									view all quiz info & analysis, send, or delete quiz
+								</Tooltip>
+							}
+						>
+							<a href="/quizlist" style={reSizeDash}>
+								Past Quizzes
+							</a>
+						</OverlayTrigger>
 					</div>
 					{/* <div className="dash-card-cell-a" >
 						<a href="#" style={reSizeDash}> Mailing List (TBD)</a>
 					</div> */}
 				</div>
 				<div className="dash-card-row">
-					<div className="dash-card-cell-b" >
-						<a href="/account" style={reSizeDash}> Manage Account</a>
+					<div className="dash-card-cell-b">
+						<OverlayTrigger
+							placement="top"
+							overlay={
+								<Tooltip>view, edit, or delete your account info</Tooltip>
+							}
+						>
+							<a href="/account" style={reSizeDash}>
+								{" "}
+								Manage Account
+							</a>
+						</OverlayTrigger>
 					</div>
 					<div className="dash-card-cell-b">
-						<a href="/contact" style={reSizeDash}> Customer Service</a>
+						<OverlayTrigger
+							placement="top"
+							overlay={<Tooltip>FAQ and contact info</Tooltip>}
+						>
+							<a href="/contact" style={reSizeDash}>
+								{" "}
+								Customer Service
+							</a>
+						</OverlayTrigger>
 					</div>
 					{/* <div className="dash-card-cell-b">
 						<a href="#" style={reSizeDash}>
@@ -57,7 +97,6 @@ const Dashboard = () => {
 							/>
 						</a>
 					</div> */}
-
 				</div>
 			</div>
 		);
