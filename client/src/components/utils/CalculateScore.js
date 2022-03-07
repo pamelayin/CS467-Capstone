@@ -61,7 +61,7 @@ const CalculateScore = (quiz_id, respondent_id) => {
 							totalMCPoints += partialPoints;
 						}
 					}
-					question_ans["pointsGiven"] = totalMCPoints;
+					question_ans["pointsGiven"] = totalMCPoints.toFixed(2);
 					totalPoints += totalMCPoints;
 				} else {
 					hasFreeResponse = true;

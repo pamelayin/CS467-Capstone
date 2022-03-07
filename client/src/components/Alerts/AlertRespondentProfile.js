@@ -3,21 +3,22 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Row, Col, Toast, Modal, Button, Container } from 'react-bootstrap';
 
-import { getQuiz, useQuizzes } from '../../context/quiz/QuizState';
+import {
+	useRespondent, getQuiz 
+} from "../../context/respondent/RespondentState";
 
 const AlertRespondentProfile = ({ error, setShowAlert, alert, success, setShowSuccess, iv, hashKey, quizId }) => {
-    // const [quizState, quizDispatch] = useQuizzes();
+    const [respondentState, respondentDispatch] = useRespondent();
+    const { quiz } = respondentState;
 
-    // const { quiz } = quizState;
-
+    useEffect(() => {
+			getQuiz(respondentDispatch, quizId);
+    }, [respondentDispatch, quizId]);
+    
     const toggleSetAlert = () => {
         setShowAlert(!alert);
         setShowSuccess(!success);
     }
-
-    // useEffect(() => {
-    //     getQuiz(quizDispatch, quizId);
-    // }, [quizDispatch, quizId]);
 
     return (
         <Container>
