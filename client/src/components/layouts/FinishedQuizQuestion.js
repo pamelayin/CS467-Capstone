@@ -75,7 +75,7 @@ const FinishedQuizQuestion = ({ question, answer, index, onEdit }) => {
 									</Form.Group>
 								) : editDone ? (<span style={instyle}>
 										Points [ {points.value} / {question.points} ]
-									</span>) : answer.pointsGiven ? (
+									</span>) : answer.hasOwnProperty('pointsGiven')  ? (
 									<span style={instyle}>
 										Points [ {answer.pointsGiven} / {question.points} ]
 									</span>

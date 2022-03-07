@@ -20,7 +20,7 @@ import {
 	LineElement,
 } from "chart.js";
 import { Doughnut, Scatter } from "react-chartjs-2";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import QuizModal from "../layouts/QuizModal";
 import {
 	useRespondent,
@@ -50,6 +50,7 @@ const ColoredLine = ({ color }) => (
 
 
 function QuizDashboard() {
+	const navigate = useNavigate();
 	const { quiz_id } = useParams();
 	const [quizState, quizDispatch] = useQuizzes();
 	const { quiz } = quizState;
@@ -82,14 +83,16 @@ function QuizDashboard() {
 		loadRespondents(respondentDispatch, quiz_id);
 	}, [respondentDispatch, quiz_id]);
 
+	useEffect(() => {}, [goBack]);
+	function goBack() {
+		navigate("/quizlist");
+	}
 	const donutData = {
 		labels: ["Not Completed", "Completed"],
 		datasets: [
 			{
 				label: "Quiz Completion Chart",
-				data: [
-					numStatus.numNotTaken, numStatus.numTaken,
-				],
+				data: [numStatus.numNotTaken, numStatus.numTaken],
 				backgroundColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)"],
 				hoverOffset: 10,
 				hoverBorderWidth: 2,
@@ -107,14 +110,15 @@ function QuizDashboard() {
 					quiz &&
 					respondents.map((respondent) => ({
 						x:
-							(respondent.current_quiz.totalPointsGiven / quiz.timeLimit) * 100,
+							(respondent.current_quiz.totalPointsGiven / quiz.totalScore) * 100,
 						y: respondent.current_quiz.timeTaken,
 					})),
-
+				
 				backgroundColor: "rgb(255, 99, 132)",
 			},
 		],
 	};
+	console.log(scatterData['datasets']);
 
 	const donutOptions = {
 		layout: {
@@ -124,6 +128,10 @@ function QuizDashboard() {
 	};
 
 	const scatterOptions = {
+		responsive: true,
+		layout: {
+			padding: 5,
+		},
 		scales: {
 			y: {
 				beginAtZero: true,
@@ -178,7 +186,7 @@ function QuizDashboard() {
 		}
 	};
 
-	function dataLoadAll(){
+	function dataLoadAll() {
 		if (quiz && respondents) {
 			var totalScore = 0;
 			var totalTime = 0;
@@ -189,8 +197,8 @@ function QuizDashboard() {
 			var notGraded = 0;
 
 			for (var i = 0; i < respondents.length; i++) {
-				if(!respondents[i].current_quiz.totalPointsGiven){
-					notGraded++
+				if (!respondents[i].current_quiz.totalPointsGiven) {
+					notGraded++;
 				}
 				var curr_point = respondents[i].current_quiz.totalPointsGiven;
 				var curr_time = respondents[i].current_quiz.timeTaken;
@@ -212,7 +220,7 @@ function QuizDashboard() {
 			avgScore = totalScore / respondents.length;
 			avgTime = totalTime / respondents.length;
 
-			if(respondents.length === 0){
+			if (respondents.length === 0) {
 				setNum({
 					dataLoad: true,
 					noRespond: true,
@@ -227,8 +235,7 @@ function QuizDashboard() {
 					lowestScore: 0,
 					averageTime: 0,
 				});
-				
-			}else if(notGraded > 0){
+			} else if (notGraded > 0) {
 				setNum({
 					dataLoad: true,
 					gradNotification: true,
@@ -243,38 +250,36 @@ function QuizDashboard() {
 					lowestScore: 0,
 					averageTime: 0,
 				});
-			} 
-			else{
+			} else {
 				setNum({
-				dataLoad: true,
-				numSent: quiz.totalEmailsSent,
-				numTaken: respondents.length,
-				numNotTaken: quiz.totalEmailsSent - respondents.length,
-				totalPoint: quiz.totalScore,
-				timeLimit: quiz.timeLimit,
-				numQuestion: quiz.questions.length,
-				averageScore: avgScore.toFixed(1),
-				highestScore: high.toFixed(1),
-				lowestScore: low.toFixed(1),
-				averageTime: avgTime.toFixed(1),
-			});
+					dataLoad: true,
+					numSent: quiz.totalEmailsSent,
+					numTaken: respondents.length,
+					numNotTaken: quiz.totalEmailsSent - respondents.length,
+					totalPoint: quiz.totalScore,
+					timeLimit: quiz.timeLimit,
+					numQuestion: quiz.questions.length,
+					averageScore: avgScore.toFixed(1),
+					highestScore: high.toFixed(1),
+					lowestScore: low.toFixed(1),
+					averageTime: avgTime.toFixed(1),
+				});
 			}
-		
 		}
-	};
+	}
 
-	function summaryNoti(text){
-		return(
+	function summaryNoti(text) {
+		return (
 			<Container fluid>
-					<h4 style={{ textAlign: "center" }}>Quiz Summary</h4>
-					<h5 style={{textAlign: "center", marginTop:"1%"}}>{text}</h5>
-					<br/>
-					{ColoredLine("grey")}
+				<h4 style={{ textAlign: "center" }}>Quiz Summary</h4>
+				<h5 style={{ textAlign: "center", marginTop: "1%" }}>{text}</h5>
+				<br />
+				{ColoredLine("grey")}
 			</Container>
 		);
 	}
 
-	function infoAndChart(){
+	function infoAndChart() {
 		return (
 			<Container>
 				<Row>
@@ -351,37 +356,28 @@ function QuizDashboard() {
 				</Row>
 				{ColoredLine("grey")}
 			</Container>
-
 		);
 	}
 
 	function drawData() {
 		if (numStatus.dataLoad === false) {
 			dataLoadAll();
-			return(
-				summaryNoti("Data Loading")
+			return summaryNoti("Data Loading");
+		}
+		if (numStatus.gradNotification === true) {
+			return summaryNoti("Please complete grading to generate Quiz Analysis");
+		} else if (numStatus.noRespond === true) {
+			return summaryNoti(
+				"Not Available - No Respondents"
 			);
-		} 
-		if (numStatus.gradNotification === true){
-			return(
-				summaryNoti("Please complete grading to generate Quiz Analysis")
-			)
-		}
-		else if(numStatus.noRespond === true){
-			return(
-				summaryNoti("Quiz Summary is not available : There are no respondents for this quiz")
-			)
-		}
-		else{
-			return(
-				infoAndChart()
-			)
+		} else {
+			return infoAndChart();
 		}
 	}
 
 	return (
 		<Container className="w-75">
-			<br/>
+			<br />
 			<br />
 			{drawData()}
 			<Row>
@@ -459,10 +455,22 @@ function QuizDashboard() {
 						</tbody>
 					</Table>
 				) : (
-					<h5 style={{textAlign: "center", marginTop:"1%"}}>- respondents data- </h5>
+					<h5 style={{ textAlign: "center", marginTop: "1%" }}>
+						Not Available - No Respondents Data{" "}
+					</h5>
 				)}
 			</Row>
-
+			<Row>
+				<Col className="w-25 d-flex justify-content-center my-3">
+					<Button
+						variant="warning"
+						className="mx-3 justify-content-center align-content-center"
+						onClick={goBack}
+					>
+						Go Back
+					</Button>
+				</Col>
+			</Row>
 			{respondents && quiz && quiz_resp_ans && (
 				<QuizModal
 					showModal={showModal}
