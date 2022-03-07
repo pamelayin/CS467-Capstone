@@ -61,9 +61,14 @@ app.post("/send/:quizId", async(req, res) => {
 
     const emailHash = encrypt(email);
 
-    console.log(req.body.email);
+    var url = '';
+    if(process.env.NODE_ENV === 'production') {
+        url = `${req.protocol}://${req.hostname}:3000/${emailHash.iv}/userInfo/${emailHash.content}/quiz/${quiz_id}`;
+    } else {
+        url = `${req.protocol}://${req.hostname}/${emailHash.iv}/userInfo/${emailHash.content}/quiz/${quiz_id}`;
+    }
 
-    let url = `${req.protocol}://${req.hostname}:3000/${emailHash.iv}/userInfo/${emailHash.content}/quiz/${quiz_id}`;
+    // let url = `${req.protocol}://${req.hostname}:3000/${emailHash.iv}/userInfo/${emailHash.content}/quiz/${quiz_id}`;
 
 	const transporter = nodemailer.createTransport({
 		service: "gmail",
