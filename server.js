@@ -63,9 +63,9 @@ app.post("/send/:quizId", async(req, res) => {
 
     var url = '';
     if(process.env.NODE_ENV === 'production') {
-        url = `${req.protocol}://${req.hostname}:3000/${emailHash.iv}/userInfo/${emailHash.content}/quiz/${quiz_id}`;
-    } else {
         url = `${req.protocol}://${req.hostname}/${emailHash.iv}/userInfo/${emailHash.content}/quiz/${quiz_id}`;
+    } else {
+        url = `${req.protocol}://${req.hostname}:3000/${emailHash.iv}/userInfo/${emailHash.content}/quiz/${quiz_id}`;
     }
 
     // let url = `${req.protocol}://${req.hostname}:3000/${emailHash.iv}/userInfo/${emailHash.content}/quiz/${quiz_id}`;
