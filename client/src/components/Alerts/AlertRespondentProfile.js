@@ -6,18 +6,18 @@ import { Row, Col, Toast, Modal, Button, Container } from 'react-bootstrap';
 import { getQuiz, useQuizzes } from '../../context/quiz/QuizState';
 
 const AlertRespondentProfile = ({ error, setShowAlert, alert, success, setShowSuccess, iv, hashKey, quizId }) => {
-    const [quizState, quizDispatch] = useQuizzes();
+    // const [quizState, quizDispatch] = useQuizzes();
 
-    const { quiz } = quizState;
+    // const { quiz } = quizState;
 
     const toggleSetAlert = () => {
         setShowAlert(!alert);
         setShowSuccess(!success);
     }
 
-    useEffect(() => {
-        getQuiz(quizDispatch, quizId);
-    }, [quizDispatch, quizId]);
+    // useEffect(() => {
+    //     getQuiz(quizDispatch, quizId);
+    // }, [quizDispatch, quizId]);
 
     return (
         <Container>
