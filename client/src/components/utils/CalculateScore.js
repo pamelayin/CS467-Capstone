@@ -80,7 +80,7 @@ const CalculateScore = (quiz_id, respondent_id) => {
 		if (hasFreeResponse === false) {
 			updateRespondentQuiz(respondentDispatch, respondent_id, quiz_id, {
 				questionsAnswered: gradedQuestions,
-				totalPointsGiven: totalPoints,
+				totalPointsGiven: totalPoints.toFixed(2),
 				timeTaken: quiz_resp_ans.timeTaken,
 			});
 		} else {

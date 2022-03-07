@@ -282,6 +282,7 @@ function QuizDashboard() {
 	function infoAndChart() {
 		return (
 			<Container>
+				<h2 style={{ textAlign: "center" }}>{quiz.title}</h2>
 				<Row>
 					<Col lg={6}>
 						<h4 style={{ textAlign: "center" }}>Quiz Information</h4>
@@ -311,7 +312,7 @@ function QuizDashboard() {
 						</Table>
 					</Col>
 					<Col lg={6}>
-						<h4 style={{ textAlign: "center" }}>Quiz Statistic</h4>
+						<h4 style={{ textAlign: "center" }}>Quiz Statistics</h4>
 						<Table responsive>
 							<tbody>
 								<tr>
