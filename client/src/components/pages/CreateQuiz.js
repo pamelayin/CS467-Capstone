@@ -136,82 +136,185 @@ function CreateQuiz(props) {
 		tempNote.Sel6Open = multi.Check6
 	}
 
-	function checkMulti(name){
-		switch (name) {
-			case "A":
-				if(multi.Check1 === false)
-				{
-
+	function checkMulti(name, type){
+		if(tempNote.Type === "TF")
+		{
+			return
+		}
+		if(type === "radio"){
+			switch (name) {
+				case "A":
 					multi.Check1 = true;
-					tempNote.Sel1Open = true;
-				} else{
-					multi.Check1 = false;
-					tempNote.Sel1Open = false;
-				}
-				return;
-			case "B":
-				if(multi.Check2 === false)
-				{
-					multi.Check2 = true;
-					tempNote.Sel2Open = true;
-				} else{
 					multi.Check2 = false;
-					tempNote.Sel2Open = false;
-				}
-				return;
-			case "C":
-				if(multi.Check3 === false)
-				{
-					multi.Check3 = true;
-					tempNote.Sel3Open = true;
-				} else{
 					multi.Check3 = false;
-					tempNote.Sel3Open = false;
-				}
-				return;
-			case "D":
-				if(multi.Check4 === false)
-				{
-					multi.Check4 = true;
-					tempNote.Sel4Open = true;
-				} else{
 					multi.Check4 = false;
-					tempNote.Sel4Open = false;
-				}
-				return;
-			case "E":
-				if(multi.Check5 === false)
-				{
-					multi.Check5 = true;
-					tempNote.Sel5Open = true;
-				} else{
 					multi.Check5 = false;
-					tempNote.Sel5Open = false;
-				}
-				return;
-			case "F":
-				if(multi.Check6 === false)
-				{
-					multi.Check6 = true;
-					tempNote.Sel6Open = true;
-				} else{
 					multi.Check6 = false;
-					tempNote.Sel6Open = false;
+					tempNote.Sel1Open = true;
+					tempNote.Sel2Open = tempNote.Choice1 === "" ? true : false;
+					tempNote.Sel3Open = tempNote.Choice2 === "" ? true : false;
+					tempNote.Sel4Open = tempNote.Choice3 === "" ? true : false;
+					tempNote.Sel5Open = tempNote.Choice4 === "" ? true : false;
+					tempNote.Sel6Open = tempNote.Choice5 === "" ? true : false;
+					return;
+				case "B":
+					multi.Check1 = false;
+					multi.Check2 = true;
+					multi.Check3 = false;
+					multi.Check4 = false;
+					multi.Check5 = false;
+					multi.Check6 = false;
+					tempNote.Sel1Open = tempNote.Choice1 === "" ? true : false;
+					tempNote.Sel2Open = true;
+					tempNote.Sel3Open = tempNote.Choice2 === "" ? true : false;
+					tempNote.Sel4Open = tempNote.Choice3 === "" ? true : false;
+					tempNote.Sel5Open = tempNote.Choice4 === "" ? true : false;
+					tempNote.Sel6Open = tempNote.Choice5 === "" ? true : false;
+					return;
+				case "C":
+					multi.Check1 = false;
+					multi.Check2 = false;
+					multi.Check3 = true;
+					multi.Check4 = false;
+					multi.Check5 = false;
+					multi.Check6 = false;
+					tempNote.Sel1Open = tempNote.Choice1 === "" ? true : false;
+					tempNote.Sel2Open = tempNote.Choice2 === "" ? true : false;
+					tempNote.Sel3Open = true;
+					tempNote.Sel4Open = tempNote.Choice3 === "" ? true : false;
+					tempNote.Sel5Open = tempNote.Choice4 === "" ? true : false;
+					tempNote.Sel6Open = tempNote.Choice5 === "" ? true : false;
+					return;
+				case "D":
+					multi.Check1 = false;
+					multi.Check2 = false;
+					multi.Check3 = false;
+					multi.Check4 = true;
+					multi.Check5 = false;
+					multi.Check6 = false;
+					tempNote.Sel1Open = tempNote.Choice1 === "" ? true : false;
+					tempNote.Sel2Open = tempNote.Choice2 === "" ? true : false;
+					tempNote.Sel3Open = tempNote.Choice3 === "" ? true : false;
+					tempNote.Sel4Open = true;
+					tempNote.Sel5Open = tempNote.Choice4 === "" ? true : false;
+					tempNote.Sel6Open = tempNote.Choice5 === "" ? true : false;
+					return;
+				case "E":
+					multi.Check1 = false;
+					multi.Check2 = false;
+					multi.Check3 = false;
+					multi.Check4 = false;
+					multi.Check5 = true;
+					multi.Check6 = false;
+					tempNote.Sel1Open = tempNote.Choice1 === "" ? true : false;
+					tempNote.Sel2Open = tempNote.Choice2 === "" ? true : false;
+					tempNote.Sel3Open = tempNote.Choice3 === "" ? true : false;
+					tempNote.Sel4Open = tempNote.Choice4 === "" ? true : false;
+					tempNote.Sel5Open = true;
+					tempNote.Sel6Open = tempNote.Choice5 === "" ? true : false;
+					return;
+				case "F":
+					multi.Check1 = false;
+					multi.Check2 = false;
+					multi.Check3 = false;
+					multi.Check4 = false;
+					multi.Check5 = false;
+					multi.Check6 = true;
+					tempNote.Sel1Open = tempNote.Choice1 === "" ? true : false;
+					tempNote.Sel2Open = tempNote.Choice2 === "" ? true : false;
+					tempNote.Sel3Open = tempNote.Choice3 === "" ? true : false;
+					tempNote.Sel4Open = tempNote.Choice4 === "" ? true : false;
+					tempNote.Sel5Open = tempNote.Choice5 === "" ? true : false;
+					tempNote.Sel6Open = true;
+					return;
+				default:
+					return;
 				}
-				return;
-            default:
-                return;
+		}
+		else{
+			switch (name) {
+				case "A":
+					if(multi.Check1 === false)
+					{
+	
+						multi.Check1 = true;
+						tempNote.Sel1Open = true;
+					} else{
+						multi.Check1 = false;
+						tempNote.Sel1Open = false;
+					}
+					return;
+				case "B":
+					if(multi.Check2 === false)
+					{
+						multi.Check2 = true;
+						tempNote.Sel2Open = true;
+					} else{
+						multi.Check2 = false;
+						tempNote.Sel2Open = false;
+					}
+					return;
+				case "C":
+					if(multi.Check3 === false)
+					{
+						multi.Check3 = true;
+						tempNote.Sel3Open = true;
+					} else{
+						multi.Check3 = false;
+						tempNote.Sel3Open = false;
+					}
+					return;
+				case "D":
+					if(multi.Check4 === false)
+					{
+						multi.Check4 = true;
+						tempNote.Sel4Open = true;
+					} else{
+						multi.Check4 = false;
+						tempNote.Sel4Open = false;
+					}
+					return;
+				case "E":
+					if(multi.Check5 === false)
+					{
+						multi.Check5 = true;
+						tempNote.Sel5Open = true;
+					} else{
+						multi.Check5 = false;
+						tempNote.Sel5Open = false;
+					}
+					return;
+				case "F":
+					if(multi.Check6 === false)
+					{
+						multi.Check6 = true;
+						tempNote.Sel6Open = true;
+					} else{
+						multi.Check6 = false;
+						tempNote.Sel6Open = false;
+					}
+					return;
+				default:
+					return;
+			}
 		}
 	};
+	
+	
 
 	function handleMultiChange(event) {
-		console.log(event)
-		checkMulti(event.target.getAttribute("id"));
+		var type = event.target.type
+		checkMulti(event.target.getAttribute("id"), type);
 		let newArray = [...multi.multiAnswer, event.target.value];
 		if (multi.multiAnswer.includes(event.target.value)) {
 		  newArray = newArray.filter(ans => ans !== event.target.value);
 		} 
 		
+		if(type === "radio"){
+			createTemp(event)
+			return
+		}
+
 		setMulti((prevMulti)=>{
 			return {
 				...prevMulti,
@@ -228,87 +331,166 @@ function CreateQuiz(props) {
 			tempNote.AnswerKey = "";
 		}
 		createTemp("","AnswerKey",tempNote.AnswerKey);
+		return
 	}
 
 	function FormRenderCheck(type){
-		return(
-			<Form.Group>
-					<InputGroup >
-					<InputGroup.Text>Anwser Key</InputGroup.Text>
-						<div style={answerKeyWidth}>
-						<Form.Check
-							type = {type}
-							id = "A"
-							label="A"
-	                        name='AnswerKey'
-							Value = {tempNote.Choice1}
-							disabled= {tempNote.Choice1 == "" ? true : false}
-							checked= {multi.multiAnswer.includes(tempNote.Choice1) ? true : false}
-							inline = {true}
-							onChange={handleMultiChange}
-						 />
-						 <Form.Check
-						 	type = {type}
-							id = "B"
-							label="B"
-	                        name='AnswerKey'
-							Value = {tempNote.Choice2}
-							disabled= {tempNote.Choice2 == "" ? true : false}
-							checked= {multi.multiAnswer.includes(tempNote.Choice2) ? true : false}
-							inline = {true}
-							onChange={handleMultiChange}
-
-						 />
-						<Form.Check
-							type = {type}
-							id = "C"
-							label="C"
-	                        name='AnswerKey'
-							Value = {tempNote.Choice3}
-							disabled= {tempNote.Choice3 == "" ? true : false}
-							checked= {multi.multiAnswer.includes(tempNote.Choice3) ? true : false}
-
-							inline = {true}
-							onChange={handleMultiChange}
-						 />
-						 <Form.Check
-							type = {type}
-							id = "D"
-							label="D"
-	                        name='AnswerKey'
-							Value = {tempNote.Choice4}
-							disabled= {tempNote.Choice4 == "" ? true : false}
-							checked= {multi.multiAnswer.includes(tempNote.Choice4) ? true : false}
-							inline = {true}
-							onChange={handleMultiChange}
-						 />
-						 <Form.Check
-						 	type = {type}
-						 	id = "E"
-							label="E"
-	                        name='AnswerKey'
-							Value = {tempNote.Choice5}
-							disabled= {tempNote.Choice5 == "" ? true : false}
-							checked= {multi.multiAnswer.includes(tempNote.Choice5) ? true : false}
-							inline = {true}
-							onChange={handleMultiChange}
-						 />
-						 <Form.Check
-						 	type = {type}
-						 	id = "F"
-							label="F"
-	                        name='AnswerKey'
-							Value = {tempNote.Choice6}
-							disabled= {tempNote.Choice6 == "" ? true : false}
-							checked= {multi.multiAnswer.includes(tempNote.Choice6) ? true : false}
-							inline = {true}
-							onChange={handleMultiChange}
-						 />
-						 </div>
-					</InputGroup>
-				</Form.Group>
-
-		)
+		if(type === "checkbox"){
+			return(
+				<Form.Group>
+						<InputGroup >
+						<InputGroup.Text>Anwser Key</InputGroup.Text>
+							<div style={answerKeyWidth}>
+							<Form.Check
+								type = {type}
+								id = "A"
+								label="A"
+								name='AnswerKey'
+								Value = {tempNote.Choice1}
+								disabled= {tempNote.Choice1 == "" ? true : false}
+								checked= {multi.multiAnswer.includes(tempNote.Choice1) ? true : false}
+								inline = {true}
+								onChange={handleMultiChange}
+							 />
+							 <Form.Check
+								 type = {type}
+								id = "B"
+								label="B"
+								name='AnswerKey'
+								Value = {tempNote.Choice2}
+								disabled= {tempNote.Choice2 == "" ? true : false}
+								checked= {multi.multiAnswer.includes(tempNote.Choice2) ? true : false}
+								inline = {true}
+								onChange={handleMultiChange}
+	
+							 />
+							<Form.Check
+								type = {type}
+								id = "C"
+								label="C"
+								name='AnswerKey'
+								Value = {tempNote.Choice3}
+								disabled= {tempNote.Choice3 == "" ? true : false}
+								checked= {multi.multiAnswer.includes(tempNote.Choice3) ? true : false}
+	
+								inline = {true}
+								onChange={handleMultiChange}
+							 />
+							 <Form.Check
+								type = {type}
+								id = "D"
+								label="D"
+								name='AnswerKey'
+								Value = {tempNote.Choice4}
+								disabled= {tempNote.Choice4 == "" ? true : false}
+								checked= {multi.multiAnswer.includes(tempNote.Choice4) ? true : false}
+								inline = {true}
+								onChange={handleMultiChange}
+							 />
+							 <Form.Check
+								 type = {type}
+								 id = "E"
+								label="E"
+								name='AnswerKey'
+								Value = {tempNote.Choice5}
+								disabled= {tempNote.Choice5 == "" ? true : false}
+								checked= {multi.multiAnswer.includes(tempNote.Choice5) ? true : false}
+								inline = {true}
+								onChange={handleMultiChange}
+							 />
+							 <Form.Check
+								 type = {type}
+								 id = "F"
+								label="F"
+								name='AnswerKey'
+								Value = {tempNote.Choice6}
+								disabled= {tempNote.Choice6 == "" ? true : false}
+								checked= {multi.multiAnswer.includes(tempNote.Choice6) ? true : false}
+								inline = {true}
+								onChange={handleMultiChange}
+							 />
+							 </div>
+						</InputGroup>
+					</Form.Group>
+			)
+		}else{
+			return(
+				<Form.Group>
+						<InputGroup >
+						<InputGroup.Text>Anwser Key</InputGroup.Text>
+							<div style={answerKeyWidth}>
+							<Form.Check
+								type = {type}
+								id = "A"
+								label="A"
+								name='AnswerKey'
+								Value = {tempNote.Choice1}
+								disabled= {tempNote.Choice1 == "" ? true : false}
+								checked= {tempNote.AnswerKey === tempNote.Choice1 ? true : false}
+								inline = {true}
+								onChange={handleMultiChange}
+							 />
+							 <Form.Check
+								 type = {type}
+								id = "B"
+								label="B"
+								name='AnswerKey'
+								Value = {tempNote.Choice2}
+								disabled= {tempNote.Choice2 == "" ? true : false}
+								checked= {tempNote.AnswerKey === tempNote.Choice2 ? true : false}
+								inline = {true}
+								onChange={handleMultiChange}
+	
+							 />
+							<Form.Check
+								type = {type}
+								id = "C"
+								label="C"
+								name='AnswerKey'
+								Value = {tempNote.Choice3}
+								disabled= {tempNote.Choice3 == "" ? true : false}
+								checked= {tempNote.AnswerKey === tempNote.Choice3 ? true : false}
+								inline = {true}
+								onChange={handleMultiChange}
+							 />
+							 <Form.Check
+								type = {type}
+								id = "D"
+								label="D"
+								name='AnswerKey'
+								Value = {tempNote.Choice4}
+								disabled= {tempNote.Choice4 == "" ? true : false}
+								checked= {tempNote.AnswerKey === tempNote.Choice4 ? true : false}
+								inline = {true}
+								onChange={handleMultiChange}
+							 />
+							 <Form.Check
+								 type = {type}
+								 id = "E"
+								label="E"
+								name='AnswerKey'
+								Value = {tempNote.Choice5}
+								disabled= {tempNote.Choice5 == "" ? true : false}
+								checked= {tempNote.AnswerKey === tempNote.Choice5 ? true : false}
+								inline = {true}
+								onChange={handleMultiChange}
+							 />
+							 <Form.Check
+								 type = {type}
+								 id = "F"
+								label="F"
+								name='AnswerKey'
+								Value = {tempNote.Choice6}
+								disabled= {tempNote.Choice6 == "" ? true : false}
+								checked= {tempNote.AnswerKey === tempNote.Choice6 ? true : false}
+								inline = {true}
+								onChange={handleMultiChange}
+							 />
+							 </div>
+						</InputGroup>
+					</Form.Group>
+			)
+		}
 	}
 
 	//function to modal to get a new data input from a user
@@ -366,7 +548,7 @@ function CreateQuiz(props) {
 									onChange={createTemp}
 									value={tempNote.Choice2}
 									placeholder="Selection B"
-									disabled={tempNote.Sel2Open}
+									disabled={tempNote.Choice1 === "" ? true : false}
 								/>
 								<Form.Control
 									type="text"
@@ -374,7 +556,7 @@ function CreateQuiz(props) {
 									onChange={createTemp}
 									value={tempNote.Choice3}
 									placeholder="Selection C"
-									disabled={tempNote.Sel3Open}
+									disabled={tempNote.Choice2 === "" ? true : false}
 								/>
 								<Form.Control
 									type="text"
@@ -382,7 +564,7 @@ function CreateQuiz(props) {
 									onChange={createTemp}
 									value={tempNote.Choice4}
 									placeholder="Selection D"
-									disabled={tempNote.Sel4Open}
+									disabled={tempNote.Choice3 === "" ? true : false}
 								/>
 								<Form.Control
 									type="text"
@@ -390,7 +572,7 @@ function CreateQuiz(props) {
 									onChange={createTemp}
 									value={tempNote.Choice5}
 									placeholder="Selection E"
-									disabled={tempNote.Sel5Open}
+									disabled={tempNote.Choice4 === "" ? true : false}
 								/>
 								<Form.Control
 									type="text"
@@ -398,7 +580,7 @@ function CreateQuiz(props) {
 									onChange={createTemp}
 									value={tempNote.Choice6}
 									placeholder="Selection F"
-									disabled={tempNote.Sel6Open}
+									disabled={tempNote.Choice5 === "" ? true : false}
 								/>
 							</Form.Group>
 							<InputGroup className="mb-3">
@@ -467,8 +649,9 @@ function CreateQuiz(props) {
 					tempNote.Choice4 = "";
 					tempNote.Choice5 = "";
 					tempNote.Choice6 = "";
+					tempNote.addOpen = true
 					tempNote.AnswerKey = "";
-					tempNote.AnsKeyOpen = false;
+					tempNote.AnsKeyOpen = true;
 					tempNote.Sel1Open = true;
 					tempNote.Sel2Open = true;
 					tempNote.Sel3Open = true;
@@ -477,12 +660,38 @@ function CreateQuiz(props) {
 					return (tempNote.Sel6Open = true);
 				}
 				if (value === "SC") {
-					tempNote.AnsKeyOpen = true;
+					tempNote.Choice1 = "";
+					tempNote.Choice2 = "";
+					tempNote.Choice3 = "";
+					tempNote.Choice4 = "";
+					tempNote.Choice5 = "";
+					tempNote.Choice6 = "";
+					tempNote.addOpen = true
+					tempNote.AnswerKey = "";
+					tempNote.Sel1Open = false;
+					tempNote.Sel2Open = true;
+					tempNote.Sel3Open = true;
+					tempNote.Sel4Open = true;
+					tempNote.Sel5Open = true;
+					return (tempNote.Sel6Open = true);
 				}
 				if (value === "MC") {
-					tempNote.AnsKeyOpen = true;
+					tempNote.Choice1 = "";
+					tempNote.Choice2 = "";
+					tempNote.Choice3 = "";
+					tempNote.Choice4 = "";
+					tempNote.Choice5 = "";
+					tempNote.Choice6 = "";
+					tempNote.AnswerKey = "";
+					tempNote.addOpen = true
+					tempNote.Sel1Open = false;
+					tempNote.Sel2Open = true;
+					tempNote.Sel3Open = true;
+					tempNote.Sel4Open = true;
+					tempNote.Sel5Open = true;
+					return (tempNote.Sel6Open = true);
 				}
-				return (tempNote.Sel1Open = false);
+				return ;
 			case "Choice1":
 				tempNote.AnsKeyOpen = false;
 				return (tempNote.Sel2Open = false);
@@ -528,6 +737,12 @@ function CreateQuiz(props) {
 				console.log(tempNote[name])
 
 			}
+
+			//assgin value in advance to update the add button
+			if(name === "AnswerKey"){
+				tempNote[name] = value;	
+			}
+
 			handleInput(name, value);
 			setTemp((preveTemp) => {
 				return {
@@ -708,7 +923,7 @@ function CreateQuiz(props) {
 			});
 
             if(title !== '' && timeLimit > 0) {
-                setConfirmMessage("You have successfully created your quiz! Please click 'OK' to navigate to your dashboard.");
+                setConfirmMessage("You have successfully created your quiz! Please click 'OK' to navigate to your dashboard. You can see newly created quiz and send out to your candidates on Past Quizzes page.");
                 setQuizCreatedModal(true);
             }
 
