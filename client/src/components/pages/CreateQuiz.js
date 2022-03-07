@@ -56,7 +56,7 @@ function CreateQuiz(props) {
 	const { error } = quizState;
 
 	useEffect(() => {
-		if (error && !completed) {
+		if (error) {
 			setShowAlert(true);
 			setTimeout(() => {
 				clearErrors(quizDispatch);
@@ -71,7 +71,7 @@ function CreateQuiz(props) {
 		Question: "",
         points: 0,
 		Type: "NA",
-		Choice1: "",
+		Choice1: " ",
 		Choice2: "",
 		Choice3: "",
 		Choice4: "",
@@ -540,7 +540,6 @@ function CreateQuiz(props) {
 									onChange={createTemp}
 									value={tempNote.Choice1}
 									placeholder="Selection A"
-									disabled={tempNote.Sel1Open}
 								/>
 								<Form.Control
 									type="text"
@@ -627,7 +626,7 @@ function CreateQuiz(props) {
 			case "Type":
 				if (value === "FR") {
 					tempNote.addOpen = true;
-					tempNote.Choice1 = "";
+					tempNote.Choice1 = " ";
 					tempNote.Choice2 = "";
 					tempNote.Choice3 = "";
 					tempNote.Choice4 = "";
@@ -904,7 +903,7 @@ function CreateQuiz(props) {
 	};
 
 	const onTimeLimitChange = (e) => {
-		setTimeLimit(Math.round(e.target.value));
+		setTimeLimit(Math.trunc(e.target.value));
 		clearErrors(quizDispatch);
         setCompleted(true);
         setShowAlert(false);
@@ -925,7 +924,11 @@ function CreateQuiz(props) {
 			});
 
             if(title !== '' && timeLimit > 0 && completed) {
-                setConfirmMessage("You have successfully created your quiz! Please click 'OK' to navigate to your dashboard.");
+                setConfirmMessage(
+                    "You have successfully created your quiz!" + 
+                    "Please click 'OK' to navigate to your dashboard." + 
+                    "You can see newly created quiz and send out to your candidates on Past Quizzes page."
+                    );
                 setQuizCreatedModal(true);
 
                 setTitle("");

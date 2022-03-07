@@ -74,7 +74,6 @@ router.post(
 		check("timeLimit").not().isEmpty().isInt({ min: 1 }).withMessage('A value greater than zero must be given for the time limit'),
 	],
 	async (req, res) => {
-		console.log(req.body);
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return res.status(400).json({ errors: errors.array() });
