@@ -20,7 +20,7 @@ import {
 	LineElement,
 } from "chart.js";
 import { Doughnut, Scatter } from "react-chartjs-2";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import QuizModal from "../layouts/QuizModal";
 import {
 	useRespondent,
@@ -48,7 +48,9 @@ const ColoredLine = ({ color }) => (
 	/>
 );
 
+
 function QuizDashboard() {
+	const navigate = useNavigate();
 	const { quiz_id } = useParams();
 	const [quizState, quizDispatch] = useQuizzes();
 	const { quiz } = quizState;
@@ -56,6 +58,8 @@ function QuizDashboard() {
 	const { error, respondent, quiz_resp_ans, respondents } = respondentState;
 
 	const [numStatus, setNum] = useState({
+		noRespond: false,
+		gradNotification: false,
 		dataLoad: false,
 		numSent: 0,
 		numTaken: 0,
@@ -79,17 +83,16 @@ function QuizDashboard() {
 		loadRespondents(respondentDispatch, quiz_id);
 	}, [respondentDispatch, quiz_id]);
 
+	useEffect(() => {}, [goBack]);
+	function goBack() {
+		navigate("/quizlist");
+	}
 	const donutData = {
 		labels: ["Not Completed", "Completed"],
 		datasets: [
 			{
 				label: "Quiz Completion Chart",
-				data: [
-					quiz && respondents && quiz.totalEmailsSent
-						? quiz.totalEmailsSent - respondents.length
-						: 0,
-					respondents && respondents.length ? respondents.length : 0,
-				],
+				data: [numStatus.numNotTaken, numStatus.numTaken],
 				backgroundColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)"],
 				hoverOffset: 10,
 				hoverBorderWidth: 2,
@@ -107,14 +110,15 @@ function QuizDashboard() {
 					quiz &&
 					respondents.map((respondent) => ({
 						x:
-							(respondent.current_quiz.totalPointsGiven / quiz.timeLimit) * 100,
+							(respondent.current_quiz.totalPointsGiven / quiz.totalScore) * 100,
 						y: respondent.current_quiz.timeTaken,
 					})),
-
+				
 				backgroundColor: "rgb(255, 99, 132)",
 			},
 		],
 	};
+	console.log(scatterData['datasets']);
 
 	const donutOptions = {
 		layout: {
@@ -124,6 +128,10 @@ function QuizDashboard() {
 	};
 
 	const scatterOptions = {
+		responsive: true,
+		layout: {
+			padding: 5,
+		},
 		scales: {
 			y: {
 				beginAtZero: true,
@@ -178,7 +186,7 @@ function QuizDashboard() {
 		}
 	};
 
-	const dataLoadAll = () => {
+	function dataLoadAll() {
 		if (quiz && respondents) {
 			var totalScore = 0;
 			var totalTime = 0;
@@ -186,8 +194,12 @@ function QuizDashboard() {
 			var low = quiz.totalScore;
 			var avgScore = 0;
 			var avgTime = 0;
+			var notGraded = 0;
 
 			for (var i = 0; i < respondents.length; i++) {
+				if (!respondents[i].current_quiz.totalPointsGiven) {
+					notGraded++;
+				}
 				var curr_point = respondents[i].current_quiz.totalPointsGiven;
 				var curr_time = respondents[i].current_quiz.timeTaken;
 
@@ -208,109 +220,166 @@ function QuizDashboard() {
 			avgScore = totalScore / respondents.length;
 			avgTime = totalTime / respondents.length;
 
-			setNum({
-				dataLoad: true,
-				numSent: quiz.totalEmailsSent,
-				numTaken: respondents.length,
-				numNotTaken: quiz.totalEmailsSent - respondents.length,
-				totalPoint: quiz.totalScore,
-				timeLimit: quiz.timeLimit,
-				numQuestion: quiz.questions.length,
-				averageScore: avgScore.toFixed(1),
-				highestScore: high.toFixed(1),
-				lowestScore: low.toFixed(1),
-				averageTime: avgTime.toFixed(1),
-			});
+			if (respondents.length === 0) {
+				setNum({
+					dataLoad: true,
+					noRespond: true,
+					numSent: quiz.totalEmailsSent === 0 ? 0 : quiz.totalEmailsSent,
+					numTaken: 0,
+					numNotTaken: 0,
+					totalPoint: quiz.totalScore,
+					titmeLimit: quiz.timeLimit,
+					numQuestion: quiz.questions.length,
+					averageScore: 0,
+					highestScore: 0,
+					lowestScore: 0,
+					averageTime: 0,
+				});
+			} else if (notGraded > 0) {
+				setNum({
+					dataLoad: true,
+					gradNotification: true,
+					numSent: quiz.totalEmailsSent === 0 ? 0 : quiz.totalEmailsSent,
+					numTaken: 0,
+					numNotTaken: 0,
+					totalPoint: quiz.totalScore,
+					titmeLimit: quiz.timeLimit,
+					numQuestion: quiz.questions.length,
+					averageScore: 0,
+					highestScore: 0,
+					lowestScore: 0,
+					averageTime: 0,
+				});
+			} else {
+				setNum({
+					dataLoad: true,
+					numSent: quiz.totalEmailsSent,
+					numTaken: respondents.length,
+					numNotTaken: quiz.totalEmailsSent - respondents.length,
+					totalPoint: quiz.totalScore,
+					timeLimit: quiz.timeLimit,
+					numQuestion: quiz.questions.length,
+					averageScore: avgScore.toFixed(1),
+					highestScore: high.toFixed(1),
+					lowestScore: low.toFixed(1),
+					averageTime: avgTime.toFixed(1),
+				});
+			}
 		}
-	};
+	}
+
+	function summaryNoti(text) {
+		return (
+			<Container fluid>
+				<h4 style={{ textAlign: "center" }}>Quiz Summary</h4>
+				<h5 style={{ textAlign: "center", marginTop: "1%" }}>{text}</h5>
+				<br />
+				{ColoredLine("grey")}
+			</Container>
+		);
+	}
+
+	function infoAndChart() {
+		return (
+			<Container>
+				<Row>
+					<Col lg={6}>
+						<h4 style={{ textAlign: "center" }}>Quiz Information</h4>
+						<Table responsive>
+							<tbody>
+								<tr>
+									<td>Total Points</td>
+									<td>{numStatus.totalPoint}</td>
+								</tr>
+								<tr>
+									<td>Time Limit</td>
+									<td>{numStatus.timeLimit}</td>
+								</tr>
+								<tr>
+									<td>Number of Questions</td>
+									<td>{numStatus.numQuestion}</td>
+								</tr>
+								<tr>
+									<td>Quizzes Sent Out</td>
+									<td>{numStatus.numSent ? numStatus.numSent : 0}</td>
+								</tr>
+								<tr>
+									<td>Quizzes Taken</td>
+									<td>{numStatus.numTaken}</td>
+								</tr>
+							</tbody>
+						</Table>
+					</Col>
+					<Col lg={6}>
+						<h4 style={{ textAlign: "center" }}>Quiz Statistic</h4>
+						<Table responsive>
+							<tbody>
+								<tr>
+									<td>Average Score</td>
+									<td>{numStatus.averageScore}</td>
+								</tr>
+								<tr>
+									<td>Highest Score</td>
+									<td>{numStatus.highestScore}</td>
+								</tr>
+								<tr>
+									<td>Lowest Score</td>
+									<td>{numStatus.lowestScore}</td>
+								</tr>
+								<tr>
+									<td>Average Time (min)</td>
+									<td>{numStatus.averageTime}</td>
+								</tr>
+							</tbody>
+						</Table>
+						<br />
+						<br />
+					</Col>
+				</Row>
+				<br />
+				<br />
+				<Row>
+					<Col lg={6}>
+						<h4 style={{ textAlign: "center" }}>Quiz Completion Status</h4>
+						<Doughnut data={donutData} options={donutOptions} />
+						<br />
+						<br />
+					</Col>
+					<Col lg={6}>
+						<h4 style={{ textAlign: "center", paddingBottom: 100 }}>
+							Time Taken vs. Score
+						</h4>
+						<Scatter data={scatterData} options={scatterOptions} />
+						<br />
+						<br />
+					</Col>
+				</Row>
+				{ColoredLine("grey")}
+			</Container>
+		);
+	}
 
 	function drawData() {
 		if (numStatus.dataLoad === false) {
 			dataLoadAll();
-		} else {
-			return (
-				<Container fluid>
-					<Row>
-						<Col>
-							<h4>Quiz Information</h4>
-							<Table responsive>
-								<tbody>
-									<tr>
-										<td>Total Points</td>
-										<td>{numStatus.totalPoint}</td>
-									</tr>
-									<tr>
-										<td>Time Limit</td>
-										<td>{numStatus.timeLimit}</td>
-									</tr>
-									<tr>
-										<td>Number of Questions</td>
-										<td>{numStatus.numQuestion}</td>
-									</tr>
-									<tr>
-										<td>Quizzes Sent Out</td>
-										<td>{numStatus.numSent ? numStatus.numSent : 0}</td>
-									</tr>
-									<tr>
-										<td>Quizzes Taken</td>
-										<td>{numStatus.numTaken}</td>
-									</tr>
-								</tbody>
-							</Table>
-						</Col>
-						<Col>
-							<h4>Quiz Statistic</h4>
-							<Table responsive>
-								<tbody>
-									<tr>
-										<td>Average Score</td>
-										<td>{numStatus.averageScore}</td>
-									</tr>
-									<tr>
-										<td>Highest Score</td>
-										<td>{numStatus.highestScore}</td>
-									</tr>
-									<tr>
-										<td>Lowest Score</td>
-										<td>{numStatus.lowestScore}</td>
-									</tr>
-									<tr>
-										<td>Average Time (min)</td>
-										<td>{numStatus.averageTime}</td>
-									</tr>
-								</tbody>
-							</Table>
-							<br />
-							<br />
-						</Col>
-					</Row>
-					<br />
-					<br />
-					<Row>
-						<Col lg={6}>
-							<h4 style={{ textAlign: "center" }}>Quiz Completion Status</h4>
-							<Doughnut data={donutData} options={donutOptions} />
-							<br />
-							<br />
-						</Col>
-						<Col lg={6}>
-							<h4 style={{ textAlign: "center", paddingBottom: 100 }}>
-								Time Taken vs. Score
-							</h4>
-							<Scatter data={scatterData} options={scatterOptions} />
-							<br />
-							<br />
-						</Col>
-					</Row>
-				</Container>
+			return summaryNoti("Data Loading");
+		}
+		if (numStatus.gradNotification === true) {
+			return summaryNoti("Please complete grading to generate Quiz Analysis");
+		} else if (numStatus.noRespond === true) {
+			return summaryNoti(
+				"Not Available - No Respondents"
 			);
+		} else {
+			return infoAndChart();
 		}
 	}
 
 	return (
 		<Container className="w-75">
+			<br />
+			<br />
 			{drawData()}
-			{ColoredLine("grey")}
 			<Row>
 				<h4 style={{ textAlign: "center" }}>Ranking & Individual Results</h4>
 				<br />
@@ -386,10 +455,22 @@ function QuizDashboard() {
 						</tbody>
 					</Table>
 				) : (
-					<h5 style={{textAlign: "center"}}>There are no respondents for this quiz. </h5>
+					<h5 style={{ textAlign: "center", marginTop: "1%" }}>
+						Not Available - No Respondents Data{" "}
+					</h5>
 				)}
 			</Row>
-
+			<Row>
+				<Col className="w-25 d-flex justify-content-center my-3">
+					<Button
+						variant="warning"
+						className="mx-3 justify-content-center align-content-center"
+						onClick={goBack}
+					>
+						Go Back
+					</Button>
+				</Col>
+			</Row>
 			{respondents && quiz && quiz_resp_ans && (
 				<QuizModal
 					showModal={showModal}

@@ -91,7 +91,7 @@ function DynamicForm(props) {
 			case "Type":
 				if (value === "FR") {
 					note.addOpen = true;
-					note.Choice1 = " ";
+					note.Choice1 = "";
 					note.Choice2 = "";
 					note.Choice3 = "";
 					note.Choice4 = "";
@@ -113,6 +113,8 @@ function DynamicForm(props) {
 					note.Choice4 = "";
 					note.Choice5 = "";
 					note.Choice6 = "";
+					note.AnswerKey = "";
+					note.addOpen = true
 					note.AnsKeyOpen = false;
 					note.Sel1Open = true;
 					note.Sel2Open = true;
@@ -122,12 +124,38 @@ function DynamicForm(props) {
 					return (note.Sel6Open = true);
 				}
 				if (value === "SC") {
-					note.AnsKeyOpen = true;
+					note.Choice1 = "";
+					note.Choice2 = "";
+					note.Choice3 = "";
+					note.Choice4 = "";
+					note.Choice5 = "";
+					note.Choice6 = "";
+					note.AnswerKey = "";
+					note.addOpen = true
+					note.Sel1Open = false;
+					note.Sel2Open = true;
+					note.Sel3Open = true;
+					note.Sel4Open = true;
+					note.Sel5Open = true;
+					return (note.Sel6Open = true);
 				}
 				if (value === "MC") {
-					note.AnsKeyOpen = true;
+					note.Choice1 = "";
+					note.Choice2 = "";
+					note.Choice3 = "";
+					note.Choice4 = "";
+					note.Choice5 = "";
+					note.Choice6 = "";
+					note.AnswerKey = "";
+					note.addOpen = true
+					note.Sel1Open = false;
+					note.Sel2Open = true;
+					note.Sel3Open = true;
+					note.Sel4Open = true;
+					note.Sel5Open = true;
+					return (note.Sel6Open = true);
 				}
-				return (note.Sel1Open = false);
+				return ;
 			case "Choice1":
 				note.AnsKeyOpen = false;
 				return (note.Sel2Open = false);
@@ -140,7 +168,7 @@ function DynamicForm(props) {
 			case "Choice5":
 				return (note.Sel6Open = false);
 			case "AnswerKey":
-				if(note.AnswerKey.length == 0){
+				if(note.AnswerKey.length === 0){
 					return (note.addOpen = true);
 				}else{
 					return (note.addOpen = false);
@@ -150,79 +178,184 @@ function DynamicForm(props) {
 		}
 	};
 
-	function checkMulti(name){
-		console.log("multi.Check1", name)
-
-		switch (name) {
-			case "A":
-				if(multi.Check1 == false)
-				{
-
+	function checkMulti(name, type){
+		if(note.Type === "TF")
+		{
+			return
+		}
+		if(type === "radio"){
+			switch (name) {
+				case "A":
 					multi.Check1 = true;
-					note.Sel1Open = true;
-				} else{
-					multi.Check1 = false;
-					note.Sel1Open = false;
-				}
-				return;
-			case "B":
-				if(multi.Check2 == false)
-				{
-					multi.Check2 = true;
-					note.Sel2Open = true;
-				} else{
 					multi.Check2 = false;
-					note.Sel2Open = false;
-				}
-				return;
-			case "C":
-				if(multi.Check3 == false)
-				{
-					multi.Check3 = true;
-					note.Sel3Open = true;
-				} else{
 					multi.Check3 = false;
-					note.Sel3Open = false;
-				}
-				return;
-			case "D":
-				if(multi.Check4 == false)
-				{
-					multi.Check4 = true;
-					note.Sel4Open = true;
-				} else{
 					multi.Check4 = false;
-					note.Sel4Open = false;
-				}
-				return;
-			case "E":
-				if(multi.Check5 == false)
-				{
-					multi.Check5 = true;
-					note.Sel5Open = true;
-				} else{
 					multi.Check5 = false;
-					note.Sel5Open = false;
-				}
-				return;
-			case "F":
-				if(multi.Check6 == false)
-				{
-					multi.Check6 = true;
-					note.Sel6Open = true;
-				} else{
 					multi.Check6 = false;
-					note.Sel6Open = false;
+					note.Sel1Open = true;
+					note.Sel2Open = note.Choice1 === "" ? true : false;
+					note.Sel3Open = note.Choice2 === "" ? true : false;
+					note.Sel4Open = note.Choice3 === "" ? true : false;
+					note.Sel5Open = note.Choice4 === "" ? true : false;
+					note.Sel6Open = note.Choice5 === "" ? true : false;
+					return;
+				case "B":
+					multi.Check1 = false;
+					multi.Check2 = true;
+					multi.Check3 = false;
+					multi.Check4 = false;
+					multi.Check5 = false;
+					multi.Check6 = false;
+					note.Sel1Open = note.Choice1 === "" ? true : false;
+					note.Sel2Open = true;
+					note.Sel3Open = note.Choice2 === "" ? true : false;
+					note.Sel4Open = note.Choice3 === "" ? true : false;
+					note.Sel5Open = note.Choice4 === "" ? true : false;
+					note.Sel6Open = note.Choice5 === "" ? true : false;
+					return;
+				case "C":
+					multi.Check1 = false;
+					multi.Check2 = false;
+					multi.Check3 = true;
+					multi.Check4 = false;
+					multi.Check5 = false;
+					multi.Check6 = false;
+					note.Sel1Open = note.Choice1 === "" ? true : false;
+					note.Sel2Open = note.Choice2 === "" ? true : false;
+					note.Sel3Open = true;
+					note.Sel4Open = note.Choice3 === "" ? true : false;
+					note.Sel5Open = note.Choice4 === "" ? true : false;
+					note.Sel6Open = note.Choice5 === "" ? true : false;
+					return;
+				case "D":
+					multi.Check1 = false;
+					multi.Check2 = false;
+					multi.Check3 = false;
+					multi.Check4 = true;
+					multi.Check5 = false;
+					multi.Check6 = false;
+					note.Sel1Open = note.Choice1 === "" ? true : false;
+					note.Sel2Open = note.Choice2 === "" ? true : false;
+					note.Sel3Open = note.Choice3 === "" ? true : false;
+					note.Sel4Open = true;
+					note.Sel5Open = note.Choice4 === "" ? true : false;
+					note.Sel6Open = note.Choice5 === "" ? true : false;
+					return;
+				case "E":
+					multi.Check1 = false;
+					multi.Check2 = false;
+					multi.Check3 = false;
+					multi.Check4 = false;
+					multi.Check5 = true;
+					multi.Check6 = false;
+					note.Sel1Open = note.Choice1 === "" ? true : false;
+					note.Sel2Open = note.Choice2 === "" ? true : false;
+					note.Sel3Open = note.Choice3 === "" ? true : false;
+					note.Sel4Open = note.Choice4 === "" ? true : false;
+					note.Sel5Open = true;
+					note.Sel6Open = note.Choice5 === "" ? true : false;
+					return;
+				case "F":
+					multi.Check1 = false;
+					multi.Check2 = false;
+					multi.Check3 = false;
+					multi.Check4 = false;
+					multi.Check5 = false;
+					multi.Check6 = true;
+					note.Sel1Open = note.Choice1 === "" ? true : false;
+					note.Sel2Open = note.Choice2 === "" ? true : false;
+					note.Sel3Open = note.Choice3 === "" ? true : false;
+					note.Sel4Open = note.Choice4 === "" ? true : false;
+					note.Sel5Open = note.Choice5 === "" ? true : false;
+					note.Sel6Open = true;
+					return;
+				default:
+					return;
 				}
-				return;
-            default:
-                return;
+		}
+		else{
+			switch (name) {
+				case "A":
+					if(multi.Check1 == false)
+					{
+	
+						multi.Check1 = true;
+						note.Sel1Open = true;
+					} else{
+						multi.Check1 = false;
+						note.Sel1Open = false;
+					}
+					return;
+				case "B":
+					if(multi.Check2 == false)
+					{
+						multi.Check2 = true;
+						note.Sel2Open = true;
+					} else{
+						multi.Check2 = false;
+						note.Sel2Open = false;
+					}
+					return;
+				case "C":
+					if(multi.Check3 == false)
+					{
+						multi.Check3 = true;
+						note.Sel3Open = true;
+					} else{
+						multi.Check3 = false;
+						note.Sel3Open = false;
+					}
+					return;
+				case "D":
+					if(multi.Check4 == false)
+					{
+						multi.Check4 = true;
+						note.Sel4Open = true;
+					} else{
+						multi.Check4 = false;
+						note.Sel4Open = false;
+					}
+					return;
+				case "E":
+					if(multi.Check5 == false)
+					{
+						multi.Check5 = true;
+						note.Sel5Open = true;
+					} else{
+						multi.Check5 = false;
+						note.Sel5Open = false;
+					}
+					return;
+				case "F":
+					if(multi.Check6 == false)
+					{
+						multi.Check6 = true;
+						note.Sel6Open = true;
+					} else{
+						multi.Check6 = false;
+						note.Sel6Open = false;
+					}
+					return;
+				default:
+					return;
+	
+		}
 		}
 	};
 
+
 	function handleMultiChange(event) {
 
-		checkMulti(event.target.getAttribute("id"));
+		var type = event.target.type;
+		
+		checkMulti(event.target.getAttribute("id"), type);
+
+		if(type === "radio"){
+			handleChange(event)
+			return
+		}
+
+
 		let newArray = [...multi.multiAnswer, event.target.value];
 		if (multi.multiAnswer.includes(event.target.value)) {
 		  newArray = newArray.filter(ans => ans !== event.target.value);
@@ -235,7 +368,6 @@ function DynamicForm(props) {
 			}
 		})
 
-		console.log(newArray.length)
 		if(newArray.length)
 		{
 			note.AnswerKey = newArray.toString();
@@ -245,12 +377,13 @@ function DynamicForm(props) {
 			note.AnswerKey = "";
 		}
 		handleChange("","AnswerKey",note.AnswerKey);
+		return
 	}
 
 	function handleChange(event, type, val1) {
 
 		//this is to control the multitple answerkey
-		if(type == "AnswerKey")
+		if(type === "AnswerKey")
 		{
 			handleInput(type);
 			setNote((prevNote) => {
@@ -261,11 +394,16 @@ function DynamicForm(props) {
 			});
 		}
 		else{
-			const { name, value } = event.target;	
+			const { name, value } = event.target;
 			// prevent a user from adding a question without answer key
-			if(value.length == 0)
+			if(value.length === 0)
 			{
 				note[name] = "";
+			}
+			console.log(value)
+			//assgin value in advance to update the add button
+			if(name === "AnswerKey"){
+				note[name] = value;	
 			}
 			handleInput(name, value);
 			setNote((prevNote) => {

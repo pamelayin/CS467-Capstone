@@ -91,7 +91,7 @@ app.post("/send/:quizId", async(req, res) => {
                 cid: 'banana'
             }]
         };
-    
+        
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.log(error);

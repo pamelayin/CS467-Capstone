@@ -85,7 +85,7 @@ const QuizModal = ({
 						<Row>
 							<p>
 								<strong>Total Score: </strong>
-								{answered_quiz.totalPointsGiven ? (
+								{answered_quiz.hasOwnProperty("totalPointsGiven") ? (
 									<span>
 										{answered_quiz.totalPointsGiven} / {quiz.totalScore} points
 										(
@@ -101,7 +101,7 @@ const QuizModal = ({
 							</p>
 							<p>
 								<strong>Time Used: </strong>
-								{answered_quiz.timeTaken ? (
+								{answered_quiz.hasOwnProperty('timeTaken') ? (
 									<span>
 										{answered_quiz.timeTaken} / {quiz.timeLimit} minutes
 									</span>
@@ -126,7 +126,11 @@ const QuizModal = ({
 					<Button variant="secondary" onClick={hideModal}>
 						Close
 					</Button>
-					<Button variant="danger" onClick={confirmUpdate} disabled={pointsData.length === 0}>
+					<Button
+						variant="danger"
+						onClick={confirmUpdate}
+						disabled={pointsData.length === 0}
+					>
 						Confirm Update
 					</Button>
 				</Modal.Footer>
