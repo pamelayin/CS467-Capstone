@@ -167,6 +167,14 @@ const RespondentQuiz = () => {
         }
     }, []);
 
+    // useEffect(() => {
+    //     window.addEventListener('unload', alertUser);
+    //     window.onunload = submitTest;
+    //     return () => {
+    //         window.removeEventListener('unload', alertUser)
+    //     }
+    // }, []);
+
     useEffect(() => {
         if(respondent && respondent.quizzes) {
             const quiz = respondent.quizzes.find(quiz => quiz.quiz_id === quizId);
