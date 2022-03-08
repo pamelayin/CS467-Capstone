@@ -191,7 +191,7 @@ function QuizDashboard() {
 			var totalScore = 0;
 			var totalTime = 0;
 			var high = 0;
-			var low = quiz.totalScore;
+			var low = Number.MAX_SAFE_INTEGER;
 			var avgScore = 0;
 			var avgTime = 0;
 			var notGraded = 0;
@@ -217,6 +217,11 @@ function QuizDashboard() {
 				}
 			}
 
+
+			if(low === Number.MAX_SAFE_INTEGER){
+				low = 0;
+			}
+			
 			avgScore = totalScore / respondents.length;
 			avgTime = totalTime / respondents.length;
 
