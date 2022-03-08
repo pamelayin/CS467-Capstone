@@ -197,7 +197,7 @@ function QuizDashboard() {
 			var notGraded = 0;
 
 			for (var i = 0; i < respondents.length; i++) {
-				if (!respondents[i].current_quiz.totalPointsGiven) {
+				if (!respondents[i].current_quiz.hasOwnProperty('totalPointsGiven')) {
 					notGraded++;
 				}
 				var curr_point = respondents[i].current_quiz.totalPointsGiven;
