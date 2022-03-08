@@ -10,8 +10,6 @@ function Questions(props) {
     useEffect(() => {
         if(props.points <= 0) {
             props.setCompleted(false);
-        } else {
-            props.setCompleted(true);
         }
     }, [props]);
 
