@@ -13,7 +13,7 @@ import Radium from "radium";
 
 import Questions from "../layouts/Questions";
 import DynamicForm from "../layouts/DynamicForm";
-import CreateQuizAlert from "../Alerts/CreateQuizAlert";
+import CreateQuizAlert from "../Alerts/AlertCreateQuiz";
 import {
 	clearErrors,
 	createQuiz,
@@ -925,8 +925,8 @@ function CreateQuiz(props) {
 
             if(title !== '' && timeLimit > 0 && completed) {
                 setConfirmMessage(
-                    "You have successfully created your quiz!" + 
-                    "Please click 'OK' to navigate to your dashboard." + 
+                    "You have successfully created your quiz! " + 
+                    "Please click 'OK' to navigate to your dashboard. " + 
                     "You can see newly created quiz and send out to your candidates on Past Quizzes page."
                     );
                 setQuizCreatedModal(true);
