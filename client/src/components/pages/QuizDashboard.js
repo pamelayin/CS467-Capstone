@@ -118,7 +118,6 @@ function QuizDashboard() {
 			},
 		],
 	};
-	console.log(scatterData['datasets']);
 
 	const donutOptions = {
 		layout: {
@@ -214,12 +213,9 @@ function QuizDashboard() {
 					if (curr_point < low) {
 						low = curr_point;
 					}
+				} else if (curr_point === 0) {
+					low = 0;
 				}
-			}
-
-
-			if(low === Number.MAX_SAFE_INTEGER){
-				low = 0;
 			}
 			
 			avgScore = totalScore / respondents.length;
