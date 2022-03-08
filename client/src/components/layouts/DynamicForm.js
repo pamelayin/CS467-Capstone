@@ -339,7 +339,7 @@ function DynamicForm(props) {
 				default:
 					return;
 	
-		}
+			}
 		}
 	};
 
@@ -400,7 +400,6 @@ function DynamicForm(props) {
 			{
 				note[name] = "";
 			}
-			console.log(value)
 			//assgin value in advance to update the add button
 			if(name === "AnswerKey"){
 				note[name] = value;	
@@ -419,7 +418,7 @@ function DynamicForm(props) {
 	function FormRenderCheck(type){
 		return(
 			<Form.Group>
-					<InputGroup >
+				<InputGroup >
 					<InputGroup.Text>Anwser Key</InputGroup.Text>
 						<div style={answerKeyWidth}>
 						<Form.Check
