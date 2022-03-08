@@ -142,6 +142,7 @@ function CreateQuiz(props) {
 			return
 		}
 		if(type === "radio"){
+			console.log("hi")
 			switch (name) {
 				case "A":
 					multi.Check1 = true;
@@ -304,6 +305,7 @@ function CreateQuiz(props) {
 
 	function handleMultiChange(event) {
 		var type = event.target.type
+
 		checkMulti(event.target.getAttribute("id"), type);
 		let newArray = [...multi.multiAnswer, event.target.value];
 		if (multi.multiAnswer.includes(event.target.value)) {
@@ -338,7 +340,7 @@ function CreateQuiz(props) {
 		if(type === "checkbox"){
 			return(
 				<Form.Group>
-						<InputGroup >
+					<InputGroup >
 						<InputGroup.Text>Anwser Key</InputGroup.Text>
 							<div style={answerKeyWidth}>
 							<Form.Check
@@ -416,7 +418,7 @@ function CreateQuiz(props) {
 		}else{
 			return(
 				<Form.Group>
-						<InputGroup >
+					<InputGroup >
 						<InputGroup.Text>Anwser Key</InputGroup.Text>
 							<div style={answerKeyWidth}>
 							<Form.Check
@@ -426,18 +428,18 @@ function CreateQuiz(props) {
 								name='AnswerKey'
 								Value = {tempNote.Choice1}
 								disabled= {tempNote.Choice1 == "" ? true : false}
-								checked= {tempNote.AnswerKey === tempNote.Choice1 ? true : false}
+								checked= {tempNote.AnswerKey == tempNote.Choice1 ? true : false}
 								inline = {true}
 								onChange={handleMultiChange}
 							 />
 							 <Form.Check
-								 type = {type}
+								type = {type}
 								id = "B"
 								label="B"
 								name='AnswerKey'
 								Value = {tempNote.Choice2}
 								disabled= {tempNote.Choice2 == "" ? true : false}
-								checked= {tempNote.AnswerKey === tempNote.Choice2 ? true : false}
+								checked= {tempNote.AnswerKey == tempNote.Choice2 ? true : false}
 								inline = {true}
 								onChange={handleMultiChange}
 	
@@ -449,7 +451,7 @@ function CreateQuiz(props) {
 								name='AnswerKey'
 								Value = {tempNote.Choice3}
 								disabled= {tempNote.Choice3 == "" ? true : false}
-								checked= {tempNote.AnswerKey === tempNote.Choice3 ? true : false}
+								checked= {tempNote.AnswerKey == tempNote.Choice3 ? true : false}
 								inline = {true}
 								onChange={handleMultiChange}
 							 />
@@ -460,7 +462,7 @@ function CreateQuiz(props) {
 								name='AnswerKey'
 								Value = {tempNote.Choice4}
 								disabled= {tempNote.Choice4 == "" ? true : false}
-								checked= {tempNote.AnswerKey === tempNote.Choice4 ? true : false}
+								checked= {tempNote.AnswerKey == tempNote.Choice4 ? true : false}
 								inline = {true}
 								onChange={handleMultiChange}
 							 />
@@ -471,7 +473,7 @@ function CreateQuiz(props) {
 								name='AnswerKey'
 								Value = {tempNote.Choice5}
 								disabled= {tempNote.Choice5 == "" ? true : false}
-								checked= {tempNote.AnswerKey === tempNote.Choice5 ? true : false}
+								checked= {tempNote.AnswerKey == tempNote.Choice5 ? true : false}
 								inline = {true}
 								onChange={handleMultiChange}
 							 />
@@ -482,7 +484,7 @@ function CreateQuiz(props) {
 								name='AnswerKey'
 								Value = {tempNote.Choice6}
 								disabled= {tempNote.Choice6 == "" ? true : false}
-								checked= {tempNote.AnswerKey === tempNote.Choice6 ? true : false}
+								checked= {tempNote.AnswerKey == tempNote.Choice6 ? true : false}
 								inline = {true}
 								onChange={handleMultiChange}
 							 />
@@ -540,6 +542,7 @@ function CreateQuiz(props) {
 									onChange={createTemp}
 									value={tempNote.Choice1}
 									placeholder="Selection A"
+									disabled={tempNote.Type === "TF" ? true : tempNote.Sel1Open}
 								/>
 								<Form.Control
 									type="text"
@@ -547,7 +550,7 @@ function CreateQuiz(props) {
 									onChange={createTemp}
 									value={tempNote.Choice2}
 									placeholder="Selection B"
-									disabled={tempNote.Choice1 === "" ? true : false}
+									disabled={tempNote.Type === "TF" ? true : tempNote.Sel2Open}
 								/>
 								<Form.Control
 									type="text"
@@ -555,7 +558,7 @@ function CreateQuiz(props) {
 									onChange={createTemp}
 									value={tempNote.Choice3}
 									placeholder="Selection C"
-									disabled={tempNote.Choice2 === "" ? true : false}
+									disabled={tempNote.Type === "TF" ? true : tempNote.Sel3Open}
 								/>
 								<Form.Control
 									type="text"
@@ -563,7 +566,7 @@ function CreateQuiz(props) {
 									onChange={createTemp}
 									value={tempNote.Choice4}
 									placeholder="Selection D"
-									disabled={tempNote.Choice3 === "" ? true : false}
+									disabled={tempNote.Type === "TF" ? true : tempNote.Sel4Open}
 								/>
 								<Form.Control
 									type="text"
@@ -571,7 +574,7 @@ function CreateQuiz(props) {
 									onChange={createTemp}
 									value={tempNote.Choice5}
 									placeholder="Selection E"
-									disabled={tempNote.Choice4 === "" ? true : false}
+									disabled={tempNote.Type === "TF" ? true : tempNote.Sel5Open}
 								/>
 								<Form.Control
 									type="text"
@@ -579,7 +582,7 @@ function CreateQuiz(props) {
 									onChange={createTemp}
 									value={tempNote.Choice6}
 									placeholder="Selection F"
-									disabled={tempNote.Choice5 === "" ? true : false}
+									disabled={tempNote.Type === "TF" ? true : tempNote.Sel6Open}
 								/>
 							</Form.Group>
 							<InputGroup className="mb-3">
@@ -733,8 +736,6 @@ function CreateQuiz(props) {
 			if(value.length == 0)
 			{
 				tempNote[name] = "";
-				console.log(tempNote[name])
-
 			}
 
 			//assgin value in advance to update the add button
@@ -763,7 +764,6 @@ function CreateQuiz(props) {
 
 	//Change actual data that needs to be saved
 	function changeData(actualData) {
-		console.log(tempNote);
 		actualData.Question = tempNote.Question;
 		actualData.points = tempNote.points;
 		actualData.Type = tempNote.Type;
@@ -820,7 +820,6 @@ function CreateQuiz(props) {
 	}
 
 	function deleteNote(id) {
-		console.log(id);
 		setNotes((prevNotes) => {
 			return prevNotes.filter((noteItem, index) => {
 				return index !== id;
@@ -850,6 +849,7 @@ function CreateQuiz(props) {
 			Choice5: "",
 			Choice6: "",
 			AnswerKey: "",
+			Sel1Open: true,
 			Sel2Open: true,
 			Sel3Open: true,
 			Sel4Open: true,
