@@ -71,7 +71,7 @@ function CreateQuiz(props) {
 		Question: "",
         points: 0,
 		Type: "NA",
-		Choice1: " ",
+		Choice1: "",
 		Choice2: "",
 		Choice3: "",
 		Choice4: "",
