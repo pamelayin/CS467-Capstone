@@ -8,6 +8,9 @@ About: This project allows employers to create and send software programming qui
 to candidates via unique email link, have candidates take timed quiz, grade the quiz automatically and manually, and view the 
 quiz ranking and other data analysis.<br/><br/>
 
+## Tech Stack
+MongoDB, Express, Node, React, Bootstrap, Nodemailer, Bcrypt, Radium, Axios
+
 ## Setup - Dependencies
 
 ### Backend Setup
